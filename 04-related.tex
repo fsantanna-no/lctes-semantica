@@ -1,0 +1,76 @@
+\section{Related Work}
+
+\CEU was strongly influenced by Esterel but they differ in the most fundamental 
+aspect of the notion of time~\cite{ceu.sensys13}.
+%
+Esterel defines time as a discrete sequence of logical unit instants or 
+``ticks''.
+At each tick, the program reacts to an arbitrary number of simultaneous input 
+events from the environment.
+%
+The presence of multiple inputs requires careful static analysis to detect and
+reject programs with \emph{causality cycles} and \emph{schizophrenia problems}%
+~\cite{esterel.constructive,esterel.d7,esterel.d6,esterel.d3,esterel.d5,esterel.d8,esterel.d1,esterel.schizo2}.
+%
+In contrast, \CEU defines time as a discrete sequence of reactions to
+unique input events.
+%
+In the formal semantics, ... \fs{como isso aparece na semantica} ...
+\CEU also rejects some syntactically correct programs to avoid infinite
+execution, but with simple restrictions in the abstract syntax tree.
+
+Another distinction is that, in Esterel, the behavior of internal and external
+events is equivalent, while in \CEU internal events introduce stack-based micro
+reactions within external reactions, providing more fine-grained control for
+intra-reaction execution.
+%
+In the formal semantics, ... \fs{como isso aparece na semantica} ...
+%
+Some variants of the Statecharts synchronous visual language also distinguish
+internal from external events~\cite{statecharts.variants}.
+In Statemate~\cite{statecharts.statemate}, \emph{``reactions to external and
+internal events (...) can be sensed only after completion of the step''},
+implying queue-based execution.
+In Stateflow~\cite{statecharts.stateflow}, \emph{``the receiving state (of the
+event) acts here as a function''}, which is similar to \CEU's
+stack-based execution.
+We are not aware of formalizations for these ideas for a deeper comparison with
+\CEU.
+
+Like other synchronous languages
+(%
+    \emph{Reactive C}~\cite{rp.rc},                 % 1991
+    \emph{Protothreads}~\cite{wsn.protothreads},    % 2006
+    \emph{SOL}~\cite{wsn.sol},                      % 2007
+    \emph{SC}~\cite{rp.synchc},                     % 2009
+    and
+    \emph{PRET-C}~\cite{rp.pretc}%                  % 2010
+),
+\CEU relies on deterministic scheduling to preserve intra-reaction determinism.
+%
+In addition, it also performs concurrency checks to detect trails that, when
+reordered, change the observable behavior of the program, i.e., trails that
+actually rely on deterministic scheduling~\cite{ceu.sensys13}.
+%
+Esterel is only deterministic with respect to external behavior: \emph{``the
+same sequence of inputs always produces the same sequence of 
+outputs''}~\cite{esterel.primer}.
+%
+However, the execution order for operations within a reaction is 
+non-deterministic: \emph{``if there is no control dependency, as in
+\code{(call~f1()~||~call~f2())},
+the order is unspecified and it would be an error to rely on 
+it''}~\cite{esterel.primer}.
+%
+For this reason, Esterel, does not support shared-memory concurrency:
+\emph{``if a variable is written by some thread, then it can neither be read
+nor be written by concurrent threads''}~\cite{esterel.primer}.
+
+Esterel describes a finalization mechanism in a standardization
+proposal~\cite{esterel.v7} that is similar to \CEU's.
+However, we are not aware of an open implementation or a formal semantics for a
+deeper comparison.
+
+\fs{outras linguagens sincronas}
+\fs{outras linguagens deterministicas}
+\fs{outras linguagens com terminacao}

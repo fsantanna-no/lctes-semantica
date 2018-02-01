@@ -1,0 +1,47 @@
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{mathtools}
+\usepackage{dsfont}
+
+% Céu.
+\newcommand{\CEU}{\textsc{C\'{e}u}\xspace}
+
+% Notes
+\usepackage[textsize=footnotesize]{todonotes}
+\newcommand{\rc}[1]{\todo[inline,color=green!40]{\textbf{Rodrigo}: #1}}
+\newcommand{\fs}[1]{\todo[inline,color=blue!40]{\textbf{Francisco}: #1}}
+\newcommand{\gl}[1]{\todo[inline,color=red!40]{\textbf{Guilherme}: #1}}
+
+% Concrete syntax.
+\usepackage{listings}
+\lstdefinelanguage{ceu}{%
+  language=C,
+  morekeywords={%
+    @const, @pure, @safe, CHAN, FOREVER, PAR, PROC, SIGNAL, abort, and,
+    await, bool, call, class, data, define, deterministic, do, each, else,
+    emit, end, escape, event, every, finalize, hor, implementation, in,
+    input, interface, loop, min, native, new, nohold, not, or, output, par,
+    pool, pure, return, s, signal, spawn, tag, then, this, traverse, until,
+    var, watching, when, with},
+}
+\lstset{
+  basicstyle=\ttfamily,
+  captionpos=b,
+  columns=flexible,
+  commentstyle=\rmfamily\itshape,
+  escapeinside={||},
+  frame=tb,
+  keepspaces=true,
+  keywordstyle=\bfseries,
+  language=ceu,
+  mathescape=true,
+  numbersep=4pt,
+  numberstyle=\scriptsize,
+  upquote=true,
+}
+%\newcommand{\code}[1]{{\small{\texttt{#1}}}}
+\let\code\lstinline
+\usepackage{xspace}
+\newcommand{\ax}{\code{[a]}\xspace}
+\newcommand{\bx}{\code{[b]}\xspace}

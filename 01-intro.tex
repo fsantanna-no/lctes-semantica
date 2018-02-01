@@ -1,0 +1,50 @@
+\section{Introduction}
+\label{sec.intro}
+
+\CEU~\cite{ceu.sensys13} is a programming language for embedded soft real-time
+systems that aims to offer a concurrent and expressive alternative to C and C++
+with the characteristics that follow:
+
+\begin{description}
+\item [Reactive:] code only executes in reactions to events.
+\item [Structured:] programs use structured control mechanisms, such as
+    \code{await} (to suspend a line of execution), and \code{par} (to combine
+    multiple lines of execution).
+\item [Synchronous:] reactions run atomically and to completion on each line of
+    execution, i.e., there's no implicit preemption or real parallelism.
+\end{description}
+
+Structured reactive programming eliminates the
+\emph{callback hell}~\cite{TODO}, letting programmers write code in
+direct/sequential style \cite{TODO}.
+%
+Previous work evaluates the expressiveness of \CEU in comparison to
+event-driven code in C and attests a reduction in source code size (around
+25\%) with a small increase in memory usage (around 5--10\% for \emph{text} and 
+\emph{data})~\cite{ceu.sensys13}.
+%
+\CEU has been used in the context of wireless sensor
+networks~\cite{ceu.sensys13,ceu.terra},
+multimedia systems~\cite{ceu.media.webmedia16}, and
+games \footnote{\fs{TODO}}.
+It has also been used as an alternative language in an undergradutate-level
+course on embedded systems for the past 5 years.
+
+\fs{Embedded systems requirements, determinism, termination}
+
+\begin{itemize}
+\item \CEU
+    \begin{itemize}
+    \item variaveis compartilhadas
+    \item concorrencia segura
+    \item terminacao e determinismo
+    \end{itemize}
+\item Modelo Sincrono
+    \begin{itemize}
+    \item conhecido como ammenable to verification
+    \item valido para \CEU?
+    \end{itemize}
+\end{itemize}
+
+%only the static semantics for embedded systems
+

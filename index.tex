@@ -1,0 +1,118 @@
+\documentclass[sigplan, anonymous, review]{acmart}
+
+\input{header}
+% Copyright
+%\setcopyright{none}
+%\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+\setcopyright{rightsretained}
+%\setcopyright{usgov}
+%\setcopyright{usgovmixed}
+%\setcopyright{cagov}
+%\setcopyright{cagovmixed}
+
+% DOI
+\acmDOI{10.475/123_4}
+
+% ISBN
+\acmISBN{123-4567-24-567/08/06}
+
+%Conference
+\acmConference[WOODSTOCK'97]{ACM Woodstock conference}{July 1997}{El
+  Paso, Texas USA}
+\acmYear{1997}
+\copyrightyear{2016}
+
+\acmPrice{15.00}
+
+%\acmBadgeL[http://ctuning.org/ae/ppopp2016.html]{ae-logo}
+%\acmBadgeR[http://ctuning.org/ae/ppopp2016.html]{ae-logo}
+
+\begin{document}
+
+\title[A Deterministic and Terminating Semantics for \CEU]
+{A Deterministic and Terminating Semantics
+  for the Synchronous Programming Language~\CEU}
+
+\author[R.\,C.\,M.~Santos]{Rodrigo C.\,M.~Santos}
+\email{rsantos@inf.puc-rio.br}
+\affiliation{PUC-Rio, Rio de Janeiro, Brazil}
+%
+\author[G.\,F.~Lima]{Guilherme F.~Lima}
+\email{glima@inf.puc-rio.br}
+\affiliation{PUC-Rio, Rio de Janeiro, Brazil}
+%
+\author[F.~Sant'Anna]{Francisco Sant'Anna}
+\email{francisco@ime.uerj.br}
+\affiliation{UERJ, Rio de Janeiro, Brazil}
+%
+\author[R.~Ierusalimschy]{Roberto Ierusalimschy}
+\email{roberto@inf.puc-rio.br}
+\affiliation{PUC-Rio, Rio de Janeiro, Brazil}
+%
+\author[E.\,H.~Haeusler]{Edward Hermann Haeusler}
+\email{hermann@inf.puc-rio.br}
+\affiliation{PUC-Rio, Rio de Janeiro, Brazil}
+
+\begin{abstract}
+\CEU is a synchronous programming language for embedded soft real-time systems.
+%
+It supports advanced features, such as safe shared-memory concurrency and
+abortion of execution lines, while enforcing internal determinism and
+time-bounded reactions.
+%
+In this paper, we present a small-step structural operational semantics for
+\CEU and prove that under it program reactions are deterministic and always
+terminate.
+%
+Thus, given the same timeline of input events, the same \CEU program in the
+same initial memory state will always react in bounded time and arrive at the
+same final memory state.
+%
+We also discuss some equivalence results and the relation between the proposed
+semantics and its actual implementation.
+\end{abstract}
+
+\terms{Languages, design, theory}
+\keywords{Operational semantics, \CEU, Synchronous languages}
+
+\begin{CCSXML}
+<ccs2012>
+ <concept>
+  <concept_id>10003752.10010124.10010131.10010134</concept_id>
+  <concept_desc>Theory of computation~Operational semantics</concept_desc>
+  <concept_significance>500</concept_significance>
+ </concept>
+ <concept>
+  <concept_id>10011007.10011006.10011008.10011009.10011014</concept_id>
+  <concept_desc>Software and its
+                engineering~Concurrent programming languages</concept_desc>
+  <concept_significance>500</concept_significance>
+ </concept>
+ <concept>
+  <concept_id>10010520.10010553.10010562.10010564</concept_id>
+  <concept_desc>Computer systems
+                organization~Embedded software</concept_desc>
+  <concept_significance>300</concept_significance>
+ </concept>
+</ccs2012>
+\end{CCSXML}
+\ccsdesc[500]{Theory of computation~Operational semantics}
+\ccsdesc[500]{Software and its engineering~Concurrent programming languages}
+\ccsdesc[300]{Computer systems organization~Embedded software}
+
+\maketitle
+
+\input{01-intro}
+\input{02-ceu}
+\input{03-semantics}
+\input{04-related}
+\input{05-conclusion}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{my,other}
+
+\appendix
+%\include{proofs}
+
+\end{document}
