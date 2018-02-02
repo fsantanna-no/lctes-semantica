@@ -56,6 +56,7 @@ emit $\T<id>$($\T<exp>$);    | \C{.6}{emits event passing value}               |
 $\T<stmt>$ ; $\T<stmt>$                       | \C{.45}{sequence}     |
 if $\T<exp>$ then $\T<stmts>$ else $\T<stmts>$ end | \C{.45}{conditional}  |
 loop do $\T<stmts>$ end                   | \C{.45}{repetition}   |
+every $\T<id>$ in $\T<id>$ do $\T<stmts>$ end      | \C{.45}{event iteration}   |
 finalize [$\T<stmts>$] with $\T<stmts>$ end    | \C{.45}{finalization} |
 
 |\C{1.}{Logical parallelism}|
@@ -232,16 +233,15 @@ and clock ticks in embedded systems.
 
 \subsubsection*{Internal events as subroutines}
 
-In \CEU, the queue-based processing of events described previously applies
-only to external input events, i.e., those events submitted to the program
-by the environment.
+In \CEU, queue-based processing of events applies only to external input
+events, i.e., events submitted to the program by the environment.
 %
-Internal events, which are those events generated internally by the program
-via \code{emit} statements, are processed in a stack-based manner.
+Internal events, which are events generated internally by the program via
+\code{emit} statements, are processed in a stack-based manner.
 %
-These internal events provide a fine-grained execution control and, because
-of their stack-based processing, can be used to implement a limited form of
-subroutine, as illustrated in Listing~\ref{lst.sub} below.
+Internal events provide a fine-grained execution control, and, because of their
+stack-based processing, can be used to implement a limited form of subroutines,
+as illustrated in Listing~\ref{lst.sub}:
 
 \begin{lstlisting}[
   numbers=left,
@@ -250,34 +250,38 @@ subroutine, as illustrated in Listing~\ref{lst.sub} below.
   caption={A \CEU program with a ``subroutine''.},
   label={lst.sub},
 ]
-event int* inc;     // subroutine |`|inc|'|
+event int* inc;         // declares subroutine "inc"
 par/or do
-    loop do         // definitions are loops
-        var int* p = await inc;
+    var int* p;
+    every p in inc do   // implements subroutine with an event iterator
         *p = *p + 1;
     end
 with
     var int v = 1;
-    $\cdots$
-    emit inc(&v);   // call |`|inc|'|
-    _assert(v==2);  // after return
+    emit inc(&v);       // calls "inc"
+    emit inc(&v);       // calls "inc"
+    _assert(v==3);      // asserts result after returns
 end
 \end{lstlisting}
 \vskip-\baselineskip
 
-In Listing~\ref{lst.sub}, the ``subroutine'' \code{inc} is defined as a loop
-(ln.~3--6) that continuously awaits its identifying event (ln.~4), and
-increments the value passed to it by reference (ln.~5).
+In the example, the ``subroutine'' \code{inc} is defined as an event iterator
+(ln.~4--6) that continuously awaits its identifying event (ln.~4), and
+increments the value passed by reference (ln.~5).
 %
-A trail in parallel (ln.~8--11) invokes the subroutine through an \code{emit}
-statement (ln.~10).
+A trail in parallel (ln.~8--11) invokes the subroutine through two consecutive
+\code{emit} statements (ln.~9--10).
 %
-Given the stack-based execution mode of internal events, as the emit executes,
-the calling trail pauses, the subroutine awakes (ln.~4), runs its body
-(yielding \code{v=2}), loops, and awaits the next ``call'' (ln.~4, again).
+Given the stack-based execution for internal events, as the first emit
+executes, the calling trail pauses (ln.~9), the subroutine awakes (ln.~4), runs
+its body (yielding \code{v=2}), iterates, and awaits the next ``call'' (ln.~4,
+again).
 %
-Only after this sequence does the calling trail resumes and moves on to
-execute the assertion (ln.~11).
+Only after this sequence does the calling trail resumes (ln.~9), makes a new
+invocation (ln.~10), and passes the assertion test (ln.~11).
+
+%- multiple executions
+%- footnote to distinguish from TECS
 
 \CEU also supports nested \code{emit} invocations for internal events.
 %
@@ -286,19 +290,27 @@ could \code{emit} another internal event after awaking (ln.~4), creating a
 new level in the stack.
 %
 We can think of the stack as a record of the nested, fine-grained internal
-reactions that happen inside the same bigger reaction to some external
+reactions that happen inside the same outer reaction to a single external
 event.
 
-This form of subroutine has a significant limitation though: it cannot
-express recursion (an \code{emit} to itself is always ignored as a running
-trail cannot be waiting on itself).
+This form of subroutines has a significant limitation though: it cannot
+express recursion, since an \code{emit} to itself is always ignored as a
+running trail cannot be waiting on itself.
 %
-That said, it is this very limitation that brings important safety
+That being said, it is this very limitation that brings important safety
 properties to subroutines.
 %
-First, such subroutines are guaranteed to react in bounded time.
+First, they guaranteed to react in bounded time.
 %
 Second, memory for locals is also bounded, not requiring data stacks.
+
+At first sight, an event iterator for event \code{A} seems like a syntactic
+sugar for a \code{loop} followed by and \code{await A}.
+However, event iterators have an important restriction to enforce reaction
+termination, as we discuss in Section~\ref{sec.sem}:
+    they cannot contain \code{break} statements.
+
+\begin{comment}
 %
 Third, \CEU subroutines can be safely used by the other primitives of the
 language, such as parallel compositions and the \code{await} statement,
@@ -313,12 +325,7 @@ Finally, in previous work, we built other advanced control mechanisms on top
 of internal events, such as resumable exceptions and reactive
 variables~\cite{ceu.rem13}.
 %
-%In Section~\ref{sec.adv.excpt} we show how to use them to implement
-%exceptions.
-%
-%8<- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-\gl{Revisei do início da Seção~2 até aqui.}
-%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ->8
+\end{comment}
 
 \subsection{Shared-Memory Concurrency}
     - referenciar warnings
