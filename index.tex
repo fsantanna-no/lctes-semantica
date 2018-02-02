@@ -57,20 +57,18 @@
 \begin{abstract}
 \CEU is a synchronous programming language for embedded soft real-time systems.
 %
-It supports advanced features, such as safe shared-memory concurrency and
-abortion of execution lines, while enforcing internal determinism and
-time-bounded reactions.
+It focus on control-flow safety features, such as safe shared-memory
+concurrency and safe abortion of lines of execution, while enforcing internal
+determinism and time-bounded reactions to the environment.
 %
-In this paper, we present a small-step structural operational semantics for
-\CEU and prove that under it program reactions are deterministic and always
-terminate.
+In this work, we present a small-step structural operational semantics for
+\CEU and a proof that reactions are deterministic and always terminate:
 %
-Thus, given the same timeline of input events, the same \CEU program in the
-same initial memory state will always react in bounded time and arrive at the
-same final memory state.
+For a given timeline of input events, multiple executions of the same program
+always react in bounded time and arrive at the same final memory state.
 %
-We also discuss some equivalence results and the relation between the proposed
-semantics and its actual implementation.
+%We also discuss some equivalence results and the relation between the proposed
+%semantics and its actual implementation.
 \end{abstract}
 
 \terms{Languages, design, theory}
