@@ -81,8 +81,9 @@ The \code{finalize} clause (ln.~5--7) ensures that, no matter how its enclosing
 trail terminates, the LED will be unconditionally turned off (ln.~6).
 
 The \code{par/or} composition, which stands for a \emph{parallel-or}, provides
-an orthogonal abortion mechanism in which its composed trails do not know when
-and how they are aborted (i.e., abortion is external to them).
+an orthogonal abortion mechanism~\cite{esterel.preemption} in which its
+composed trails do not know when and how they are aborted (i.e., abortion is
+external to them).
 %
 This is possible to do safely in synchronous languages due to the accurate
 control of concurrent activities, i.e., in between every reaction, the whole
@@ -412,88 +413,28 @@ the language.
 \subsection{Abortion and Finalization}
 \label{sec.ceu.fin}
 
-The \code{par/or} of \CEU is an \emph{orthogonal abortion
-mechanism}~\cite{esterel.preemption} because the two sides in the composition
-need not be tweaked with synchronization primitives or state variables in order
-to affect each other.
-%
-In addition, abortion is \emph{immediate} in the sense that it executes
-atomically in the current micro reaction.
-%
-Immediate orthogonal abortion is a distinctive feature of synchronous languages
-and cannot be expressed effectively in traditional (asynchronous)
-multi-threaded languages~\cite{esterel.preemption,sync_async.threadsstop}.
-
-However, aborting lines of execution that deal with external resources may lead
-to inconsistencies.
-%
-For this reason, \CEU provides a \code{finalize} construct to unconditionally
-execute a series of statements even if the enclosing block is aborted.
-
-\CEU also enforces the use of \code{finalize} for system calls that deal with
-pointers representing resources, as illustrated in the two examples of
-Figure~\ref{lst.fin.ceu}:
-%
-\begin{itemize}
-\item If \CEU \textbf{passes} a pointer to a system call (ln. \ax:5), the
-pointer represents a \textbf{local} resource (ln. \ax:2) that requires finalization
-(ln. \ax:7).
-\item If \CEU \textbf{receives} a pointer from a system call return (ln. \bx:4),
-the pointer represents an \textbf{external} resource (ln. \bx:2) that requires
-finalization (ln. \bx:6).
-\end{itemize}
-%
-\CEU tracks the interaction of system calls with pointers and requires
-finalization clauses to accompany them.
-%
-In the example in Figure~\ref{lst.fin.ceu}.a, the local variable \code{msg}
-(ln. 2) is an internal resource passed as a pointer to \code{\_send\_request}
-(ln. 5), which is an asynchronous call that transmits the buffer in the
-background.
-If the block aborts (ln. 11) before receiving an acknowledge from the
-environment (ln. 9), the local \code{msg} goes out of scope and the external
-transmission now holds a \emph{dangling pointer}.
-The finalization ensures that the transmission also aborts (ln. 7).
-%
-In the example in Figure~\ref{lst.fin.ceu}.b, the call to \code{\_fopen} (ln.
-4) returns an external file resource as a pointer.
-If the block aborts (ln. 12) during the \code{await A} (ln. 9), the file
-remains open as a \emph{memory leak}.
-The finalization ensures that the file closes properly (ln. 6).
-%
-In both cases, the code does not compile without the \code{finalize}
-construct.%
-\footnote{
-The compiler only forces the programmer to write the finalization clause, but
-cannot check if it actually handles the resource properly.
-}
-
-The finalization mechanism of \CEU is fundamental to preserve the orthogonality
-of the \code{par/or} construct since the clean up code is encapsulated in the
-aborted trail itself.
-
 \begin{figure}
-\begin{minipage}[t]{0.48\linewidth}
-\begin{lstlisting}[numbers=left,xleftmargin=3.5em,mathescape=true]
+\begin{minipage}[t]{0.45\linewidth}
+\begin{lstlisting}[numbers=right]
 par/or do
-   var _buffer_t msg;
+   var _msg_t msg;
    <...> // prepare msg
    finalize
-      _send_request(&msg);
+      _send(&msg);
    with
-      _send_cancel(&msg);
+      _cancel(&msg);
    end
    await SEND_ACK;
 with
    <...>
 end
-.
+//
 \end{lstlisting}
 \centering\small{\ax Local resource finalization}
 \end{minipage}
 %
-\begin{minipage}[t]{0.48\linewidth}
-\begin{lstlisting}[numbers=left,xleftmargin=3.5em]
+\begin{minipage}[t]{0.53\linewidth}
+\begin{lstlisting}[xleftmargin=2em]
 par/or do
    var _FILE* f;
    finalize
@@ -517,3 +458,61 @@ local resources and \emph{memory leaks} for external resources.
 \label{lst.fin.ceu}
 }
 \end{figure}
+
+The \code{par/or} of \CEU is an orthogonal abortion mechanism because the two
+sides in the composition need not be tweaked with synchronization primitives or
+state variables in order to affect each other.
+%
+In addition, abortion is \emph{immediate} in the sense that it executes
+atomically in the current micro reaction.
+%
+Immediate orthogonal abortion is a distinctive feature of synchronous languages
+and cannot be expressed effectively in traditional (asynchronous)
+multi-threaded languages~\cite{esterel.preemption,sync_async.threadsstop}.
+
+However, aborting lines of execution that deal with external resources may lead
+to inconsistencies.
+%
+For this reason, \CEU provides a \code{finalize} construct to unconditionally
+execute a series of statements even if the enclosing block is aborted.
+
+\CEU also enforces the use of \code{finalize} for system calls that deal with
+pointers representing resources, as illustrated in the two examples of
+Figure~\ref{lst.fin.ceu}:
+%
+\begin{itemize}
+    \item If \CEU \textbf{passes} a pointer to a system call (ln. \ax:5), the
+          pointer represents a \textbf{local} resource (ln. \ax:2) that
+          requires finalization (ln. \ax:7).
+    \item If \CEU \textbf{receives} a pointer from a system call return
+          (ln.  \bx:4), the pointer represents an \textbf{external} resource
+          (ln. \bx:2) that requires finalization (ln. \bx:6).
+\end{itemize}
+%
+\CEU tracks the interaction of system calls with pointers and requires
+finalization clauses to accompany them.
+%
+In the example in Figure~\ref{lst.fin.ceu}.a, the local variable \code{msg}
+(ln. 2) is an internal resource passed as a pointer to \code{_send} (ln. 5),
+which is an asynchronous call that transmits the buffer in the background.
+If the block aborts (ln. 11) before receiving an acknowledge from the
+environment (ln. 9), the local \code{msg} goes out of scope and the external
+transmission now holds a \emph{dangling pointer}.
+The finalization ensures that the transmission also aborts (ln. 7).
+%
+In the example in Figure~\ref{lst.fin.ceu}.b, the call to \code{_fopen} (ln.
+4) returns an external file resource as a pointer.
+If the block aborts (ln. 12) during the \code{await A} (ln. 9), the file
+remains open as a \emph{memory leak}.
+The finalization ensures that the file closes properly (ln. 6).
+%
+In both cases, the code does not compile without the \code{finalize}
+construct.%
+\footnote{
+The compiler only forces the programmer to write the finalization clause, but
+cannot check if it actually handles the resource properly.
+}
+
+The finalization mechanism of \CEU is fundamental to preserve the orthogonality
+of the \code{par/or} construct since the clean up code is encapsulated in the
+aborted trail itself.
