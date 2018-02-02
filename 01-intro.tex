@@ -1,10 +1,11 @@
 \section{Introduction}
 \label{sec.intro}
 
-\CEU~\cite{ceu.sensys13} is a programming language for embedded soft real-time
-systems that aims to offer a concurrent and expressive alternative to C and C++
-with the characteristics that follow:
-
+\CEU~\cite{ceu.sensys13,ceu.tecs17} is a Esterel-based~\cite{esterel.ieee91}
+programming language for embedded soft real-time systems that aims to offer a
+concurrent, safe, and expressive alternative to C with the characteristics that
+follow:
+%
 \begin{description}
 \item [Reactive:] code only executes in reactions to events.
 \item [Structured:] programs use structured control mechanisms, such as
@@ -13,38 +14,48 @@ with the characteristics that follow:
 \item [Synchronous:] reactions run atomically and to completion on each line of
     execution, i.e., there's no implicit preemption or real parallelism.
 \end{description}
-
-Structured reactive programming eliminates the
-\emph{callback hell}~\cite{TODO}, letting programmers write code in
-direct/sequential style \cite{TODO}.
 %
-Previous work evaluates the expressiveness of \CEU in comparison to
-event-driven code in C and attests a reduction in source code size (around
-25\%) with a small increase in memory usage (around 5--10\% for \emph{text} and 
-\emph{data})~\cite{ceu.sensys13}.
+Structured reactive programming let developers write code in direct/sequential
+style, recovering from the inversion of control imposed by event-driven
+execution~\cite{rp.deprecating,rp.rescala,sync_async.cooperative}.
 %
-\CEU has been used in the context of wireless sensor
-networks~\cite{ceu.sensys13,ceu.terra},
-multimedia systems~\cite{ceu.media.webmedia16}, and
-games \footnote{\fs{TODO}}.
-It has also been used as an alternative language in an undergradutate-level
-course on embedded systems for the past 5 years.
+Synchronous languages offer a simple run-to-completion model of execution that
+enable deterministic execution and make formal reasoning tractable.
+For this reason, it has been successfully adopted in safety-critical real-time
+embedded systems.~\cite{rp.twelve}
 
-\fs{Embedded systems requirements, determinism, termination}
+Previous work in the context of embedded sensor networks evaluates the
+expressiveness of \CEU in comparison to event-driven code in C and attests a
+reduction in source code size (around 25\%) with a small increase in memory
+usage (around 5--10\% for \emph{text} and \emph{data})~\cite{ceu.sensys13}.
+%
+\CEU has also been used in the context of multimedia
+systems~\cite{ceumedia.webmedia16} and games~\cite{ceu.mod15}, and as an
+alternative language in an undergraduate-level course on embedded systems for
+the past 6 years.
 
+\CEU inherits the synchronous and imperative mindset of Esterel but adopts a
+simpler semantics with fine-grained execution control.~\cite{ceu.tecs17}
+%
+The list that follows summarizes the semantic peculiarities of \CEU:
+%
 \begin{itemize}
-\item \CEU
-    \begin{itemize}
-    \item variaveis compartilhadas
-    \item concorrencia segura
-    \item terminacao e determinismo
-    \end{itemize}
-\item Modelo Sincrono
-    \begin{itemize}
-    \item conhecido como ammenable to verification
-    \item valido para \CEU?
-    \end{itemize}
+    \item Stack-based execution for internal events, which provides a limited
+          form of coroutines.
+    \item Fine-grained, intra-reaction deterministic execution, which allows
+          programs to safely share memory.
+    \item Finalization mechanism for abortion of lines of execution, which
+          safely release external resources.
+    \item First-class synchronized timers.
 \end{itemize}
 
-%only the static semantics for embedded systems
+In this work, we present a formal semantics for a subset of \CEU that focus on
+its peculiarities in comparison to other synchronous languages.
+\begin{itemize}
+    \item qual a abordagem / operational semantics / dois passos
+    \item quais os resultados / provas
+    \item quais os desafios e limitações
+    \item \gl{TODO}
+\end{itemize}
 
+\fs{Descrever seções.}
