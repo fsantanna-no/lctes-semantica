@@ -1,38 +1,38 @@
 \section{\CEU}
 \label{sec.ceu}
 
-\CEU is a synchronous reactive language inspired by
-Esterel~\cite{esterel.ieee91} in which programs advance in a sequence of
-discrete reactions to external events.
+\CEU is a synchronous reactive language in which programs advance in a sequence
+of discrete reactions to external events.
 %
-\CEU is designed for control-intensive applications, supporting concurrent
-lines of execution, known as \emph{trails}, and broadcast communication
+It is designed for control-intensive applications, supporting concurrent lines
+of execution, known as \emph{trails}, and instantaneous broadcast communication
 through events.
 %
 Computations within a reaction (such as expressions, assignments, and
-C~calls) execute in no time in accordance to the synchronous
+system calls) are also instantaneous in accordance to the synchronous
 hypothesis~\cite{rp.hypothesis}.
 %
-The \code{await} is the only \CEU statement that actually ``consumes'' time.
-%%
-An~\code{await} statement blocks the current trail allowing the program to
-advance its other trails; when all trails are blocked, the reaction
+\CEU provides an \code{await} statement which is the only that actually
+``consumes'' time.
+%
+An \code{await} statement blocks the current running trail allowing the program
+to advance its other trails; when all trails are blocked, the reaction
 terminates and control returns to the environment.
 
-In \CEU, every execution path within a loop must contain at least one
+In \CEU, every execution path within loops must contain at least one
 \code{await} statement~\cite{ceu.sensys13,esterel.primer}.
 %
-This restriction, which is checked statically by the \CEU compiler, ensures
-that every reaction runs in bounded time, eventually terminating with all
-program trails blocked in \code{await} statements.
+This restriction, which is statically checked by the compiler, ensures that
+every reaction runs in bounded time, eventually terminating with all trails
+blocked in \code{await} statements.
 %
-\CEU has a further restriction which it shares with Esterel and synchronous
-languages in general~\cite{esterel.preemption}: computations that actually
+\CEU has an additional restriction, which it shares with Esterel and
+synchronous languages in general~\cite{esterel.preemption}: computations that
 take a non-negligible time to run (e.g., cryptography or image processing
 algorithms) violate the zero-delay hypothesis, and thus cannot be directly
 implemented.
 
-Listing~\ref{lst.syntax} below shows a compact reference of~\CEU.
+Listing~\ref{lst.syntax} shows a compact reference of~\CEU:
 
 \bgroup
 \def\T<#1>{\langle\mathit{#1}\rangle}
@@ -42,65 +42,79 @@ Listing~\ref{lst.syntax} below shows a compact reference of~\CEU.
   caption={The concrete syntax of \CEU.},
   label={lst.syntax},
 ]
-|\C{1.}{Declarations:}|
-input  $\T<type>$ $\T<ids>$;|\C{.6}{declare external input events}|
-output $\T<type>$ $\T<ids>$;|\C{.6}{declare external output events}|
-event  $\T<type>$ $\T<ids>$;|\C{.6}{declare internal events}|
-var    $\T<type>$ $\T<id>$ = $\T<exp>$;|\C{.6}{declare and initialize variable}|
+|\C{1.}{Declarations}|
+input $\T<type>$ $\T<id>$; | \C{.6}{declares external input event} |
+event $\T<type>$ $\T<id>$; | \C{.6}{declares internal event}       |
+var   $\T<type>$ $\T<id>$; | \C{.6}{declares variable}             |
 
-|\C{1.}{Event handling:}|
-$\T<id>$ = await $\T<id>$;|\C{.6}{await event and assign the received value}|
-$\T<id>$ = await $\T<time>$;|\C{.6}{await time and assign the delayed delta}|
-emit $\T<id>$($\T<exp>$);|\C{.6}{emit event passing a value}|
+|\C{1.}{Event handling}|
+$\T<id>$ = await $\T<id>$;   | \C{.6}{awaits event and assigns received value} |
+$\T<id>$ = await $\T<time>$; | \C{.6}{awaits time and assigns delayed delta}   |
+emit $\T<id>$($\T<exp>$);    | \C{.6}{emits event passing value}               |
 
-|\C{1.}{Control-flow:}|
-$\T<stmt>$ ; $\T<stmt>$|\C{.45}{sequence}|
-if $\T<exp>$ then $\T<stmts>$ else $\T<stmts>$ end|\C{.45}{conditional}|
-loop do $\T<stmts>$ end|\C{.45}{repetition}|
-finalize $\T<stmts>$ with $\T<stmts>$ end|\C{.45}{finalization}|
+|\C{1.}{Control flow}|
+$\T<stmt>$ ; $\T<stmt>$                       | \C{.45}{sequence}     |
+if $\T<exp>$ then $\T<stmts>$ else $\T<stmts>$ end | \C{.45}{conditional}  |
+loop do $\T<stmts>$ end                   | \C{.45}{repetition}   |
+finalize [$\T<stmts>$] with $\T<stmts>$ end    | \C{.45}{finalization} |
 
-par/or  do $\T<stmts>$ with $\T<stmts>$ end|\C{.45}{aborts when any side terminates}|
-par/and do $\T<stmts>$ with $\T<stmts>$ end|\C{.45}{terminates when all sides terminate}|
-par     do $\T<stmts>$ with $\T<stmts>$ end|\C{.45}{never terminates}|
+|\C{1.}{Logical parallelism}|
+par/or  do $\T<stmts>$ with $\T<stmts>$ end | \C{.45}{aborts when any side ends}      |
+par/and do $\T<stmts>$ with $\T<stmts>$ end | \C{.45}{terminates when all sides ends} |
+par     do $\T<stmts>$ with $\T<stmts>$ end | \C{.45}{never terminates}               |
 
-|\C{1.}{Assignment \& integration with C:}|
-$\T<id>$ = $\T<exp>$;|\C{.45}{assign value to variable}|
-_$\T<id>$($\T<exps>$)|\C{.45}{call C function (id starts with `\_'\,)}|
+|\C{1.}{Assignment \& Integration with C}|
+$\T<id>$ = $\T<exp>$; | \C{.6}{assigns value to variable}                |
+_$\T<id>$($\T<exps>$) | \C{.6}{calls C function (id starts with `\_'\,)} |
 \end{lstlisting}
 \egroup
 
-To make matters concrete, consider the program of Listing~\ref{lst.ceu}.
+Listing~\ref{lst.ceu} shows a complete example in \CEU that blinks a LED with a
+frequency of 1 second, terminating with a button press always with the LED off.
 %
-This program continuously turns a LED~on for~2 seconds and off for~1 second,
-and terminates after~1 minute of activity with the LED off.
+The implementation first declares the \code{BUTTON} as an input event (ln.~1).
+Then, it uses a \code{par/or} composition to run two activities in parallel:
+a single statement that waits for a button press before terminating (ln.~3),
+and an endless loop that blinks the LED on and off (ln.~8--13).
+The \code{finalize} clause (ln.~5--7) ensures that, no matter how its enclosing
+trail terminates, the LED will be unconditionally turned off (ln.~6).
+
+The \code{par/or} composition, which stands for a \emph{parallel-or}, provides
+an orthogonal abortion mechanism in which its composed trails do not know when
+and how they are aborted (i.e., abortion is external to them).
 %
-The implementation uses a \code{par/or} to run two activities in parallel:
-an endless loop that blinks the LED on and off (lines~2--7), and a single
-statement that waits for~1 minute before terminating (line~9).
+This is possible to do safely in synchronous languages due to the accurate
+control of concurrent activities, i.e., in between every reaction, the whole
+system is idle and consistent~\cite{esterel.preemption}.
 %
-The \code{par/or} block stands for a \emph{parallel-or} composition; when
-executed it creates~$n$ parallel trails (in this case, $n=2$) and rejoins
-them when any of these~$n$ trails terminates, automatically aborting the
-other trails.
+The finalization mechanism extends orthogonal abortion to also work with
+activities that use stateful resources from the environment (such as files and
+network handlers), as we discuss in Section~\ref{sec.ceu.fin}.
+%
+\fs{First-class timers.}
 
 \begin{lstlisting}[
   numbers=left,
   basicstyle=\ttfamily\footnotesize,
   float=h,
-  caption={\CEU program that blinks a LED during 1 minute.},
+  caption={A program in \CEU that blinks a LED every second, terminating on a
+           button press in a consistent state.},
   label={lst.ceu},
 ]
+input void BUTTON;
 par/or do
+    await BUTTON;
+with
+    finalize with
+        _led(0);
+    end
     loop do
         _led(1);
-        await 2s;
+        await 1s;
         _led(0);
         await 1s;
     end
-with
-    await 1min;
 end
-_led(0);
 \end{lstlisting}
 
 In \CEU, any identifier prefixed with an underscore (e.g., \code{_led}) is
@@ -108,11 +122,11 @@ passed unchanged to the underlying~C compiler.
 %
 Therefore, access to~C is straightforward and syntactically traceable.
 %
-To ensure that programs operate synchronously, the compiler environment
-should only provide access to~C operations that are assumed run in zero
-time, such as non-blocking~I/O and access to \code{struct}'s.
+To ensure that programs operate under the synchronous hypothesis, the compiler
+environment should only provide access to~C operations that can be assumed to
+be instantaneous, such as non-blocking~I/O and simple accesses to data
+structures.
 
-
 \subsection{External and Internal Events}
 \label{sec.ceu.evts}
 
@@ -255,24 +269,23 @@ end
 \vskip-\baselineskip
 
 In Listing~\ref{lst.sub}, the ``subroutine'' \code{inc} is defined as a loop
-(lines~3--6) that continuously awaits its identifying event (line~4), and
-increments the value passed to it by reference (lines~5).
+(ln.~3--6) that continuously awaits its identifying event (ln.~4), and
+increments the value passed to it by reference (ln.~5).
 %
-A trail in parallel (lines~8--11) invokes the subroutine through the
-\code{emit} statement at line~10.
+A trail in parallel (ln.~8--11) invokes the subroutine through an \code{emit}
+statement (ln.~10).
 %
-Given the stack-based execution mode of internal events, after the emit
-statement at line~10 is executed, the calling trail pauses, the subroutine
-awakes (line~4), runs its body (yielding \code{v=2}), loops, and awaits the
-next ``call'' (line~4, again).
+Given the stack-based execution mode of internal events, as the emit executes,
+the calling trail pauses, the subroutine awakes (ln.~4), runs its body
+(yielding \code{v=2}), loops, and awaits the next ``call'' (ln.~4, again).
 %
 Only after this sequence does the calling trail resumes and moves on to
-execute the assertion on line~11.
+execute the assertion (ln.~11).
 
 \CEU also supports nested \code{emit} invocations for internal events.
 %
 For instance, the body of the subroutine \code{inc} in Listing~\ref{lst.sub}
-could \code{emit} another internal event after awaking (line~4), creating a
+could \code{emit} another internal event after awaking (ln.~4), creating a
 new level in the stack.
 %
 We can think of the stack as a record of the nested, fine-grained internal
@@ -322,7 +335,8 @@ environment.
 \begin{figure}[h]
 \begin{minipage}[h]{0.45\linewidth}
 \begin{lstlisting}[numbers=left,xleftmargin=3em]
-input void A, B;
+input void A;
+input void B;
 var int x = 1;
 par/and do
     await A;
@@ -390,6 +404,7 @@ Nonetheless, the static checks are optional and do not affect the semantics of
 the language.
 
 \subsection{Abortion and Finalization}
+\label{sec.ceu.fin}
 
 The \code{par/or} of \CEU is an \emph{orthogonal abortion
 mechanism}~\cite{esterel.preemption} because the two sides in the composition
