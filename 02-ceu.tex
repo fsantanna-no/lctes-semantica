@@ -328,7 +328,6 @@ variables~\cite{ceu.rem13}.
 \end{comment}
 
 \subsection{Shared-Memory Concurrency}
-    - referenciar warnings
 
 Embedded applications make extensive use of global memory and shared resources,
 such as through memory-mapped registers and system calls to device drivers.
@@ -338,7 +337,7 @@ environment.
 
 \begin{figure}[h]
 \begin{minipage}[h]{0.45\linewidth}
-\begin{lstlisting}[numbers=left,xleftmargin=3em]
+\begin{lstlisting}[numbers=right]
 input void A;
 input void B;
 var int x = 1;
@@ -353,9 +352,11 @@ end
 \centering\small{\ax Accesses to \code{x} are never concurrent.}
 \end{minipage}
 %
-\begin{minipage}[h]{0.45\linewidth}
-\begin{lstlisting}[numbers=left,xleftmargin=3em]
+\begin{minipage}[h]{0.53\linewidth}
+%\begin{lstlisting}
+\begin{lstlisting}[xleftmargin=2em]
 input void A;
+//
 var int y = 1;
 par/and do
     await A;
@@ -364,6 +365,7 @@ with
     await A;
     y = y * 2;
 end
+
 \end{lstlisting}
 \centering\small{\bx Accesses to \code{y} are concurrent but deterministic.}
 \end{minipage}
@@ -381,8 +383,8 @@ scheduled in lexical order, i.e., in the order they appear in the program
 source code.
 %
 For instance, consider the two examples in Figure~\ref{lst.shared}, both
-defining a shared variable (ln. 2), and assigning to it in parallel trails (ln.
-5, 8).
+defining shared variables (ln. 3), and assigning to them in parallel trails
+(ln. 6, 9).
 
 In the example \ax, the two assignments to \code{x} can only execute in
 reactions to different events \code{A} and \code{B}, which cannot occur
@@ -396,8 +398,8 @@ they execute in reaction to the same event \code{A}.
 Since \CEU employs lexical order for intra-reaction statements, the execution
 is still deterministic, and \code{y} always becomes \code{4} (\code{(1+1)*2}).
 %
-However, that an (apparently innocuous) change in the order of trails modifies
-the behavior of the program.
+However, note that an apparently innocuous change in the order of trails
+modifies the behavior of the program.
 %
 To mitigate this threat, \CEU performs concurrency checks at compile time to
 detect conflicting accesses to shared variables:
