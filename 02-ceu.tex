@@ -133,41 +133,37 @@ structures.
 \CEU defines time as a discrete sequence of reactions to unique external
 input events.
 %
-These external input events are received from the environment; each of them
-delimits a new logical unit of time and triggers a corresponding reaction.
+External input events are received from the environment, and each delimits a
+new logical unit of time that triggers an associated reaction.
 %
 The life-cycle of a program in \CEU can be summarized as
-follows~\cite{ceu.sensys13}.
+follows~\cite{ceu.sensys13}:
 %
-\begin{enumerate}
-\item The program initiates the ``boot reaction'' in a single trail
-  (parallel constructs may create new trails).
-  %
+\begin{enumerate}[i]
+\item The program initiates a ``boot reaction'' in a single trail (parallel
+      constructs may create new trails).
 \item Active trails execute until they await or terminate, one after
-  another.  This step is called a \emph{reaction chain}, and always runs in
-  bounded time.
-  %
-\item When all its trails are blocked, the program goes idle and the
-  environment takes control.
-  %
+      another.  This step is called a \emph{reaction chain}, and always runs in
+      bounded time.
+\item When all trails are blocked, the program goes idle and the environment
+      takes control.
 \item On the occurrence of a new external input event, the environment
-  awakes \emph{all} trails awaiting that event, and the program goes back to
-  step~(ii).
+      awakes \emph{all} trails awaiting that event, and the program goes back to
+      step~(i).
 \end{enumerate}
 
 A program must react to an event completely before handling the next one.
 %
-By the synchronous hypothesis, the time the program spends in step~(ii)
-above is conceptually zero (in practice, negligible).
+By the synchronous hypothesis, the time the program spends in step~(ii) is
+conceptually zero (in practice, negligible).
 %
-Thus, from the point of view of the environment, the program is always
-idle---on step~(iii).
+Hence, from the point of view of the environment, the program is always
+idle on step~(iii).
 %
-In practice, if a new external input event occurs while a reaction is being
-computed, the event is saved on a queue, which effectively schedules it to
-be processed by a subsequent reaction.
+In practice, if a new external input event occurs while a reaction executes,
+the event is saved on a queue, which effectively schedules it to be processed
+in a subsequent reaction.
 
-
 \subsubsection*{External events and discrete time}
 
 \begin{figure}[b]
@@ -177,10 +173,8 @@ be processed by a subsequent reaction.
 \label{fig.ticks}
 \end{figure}
 
-The processing of external input events induces a discrete notion of time in
-\CEU.
-%
-Figure~\ref{fig.ticks} illustrates this notion.
+The sequential processing of external input events induces a discrete notion of
+time in \CEU, as illustrated in Figure~\ref{fig.ticks}.
 %
 The continuous timeline shows an absolute reference clock with ``physical
 timestamps'' for the event occurrences (e.g., event~\code{C} occurs at
@@ -189,11 +183,11 @@ $17ms521us$).
 The discrete timeline shows how the same occurring events fit in the logical
 notion of time of \CEU.
 %
-The boot reaction \code{boot-0} happens before any input on program startup.
+The boot reaction \code{boot-0} happens before any input, at program startup.
 %
 Event~\code{A} ``physically'' occurs during \code{boot-0} but, because time
-is discrete, its corresponding reaction can only execute afterwards, at
-logical instant~\code{A-1}.
+is discrete, its corresponding reaction only executes afterwards, at logical
+instant~\code{A-1}.
 %
 Similarly, event~\code{B} occurs during~\code{A-1} and its reaction is
 postponed to execute at~\code{B-2}.
@@ -221,18 +215,21 @@ we discuss in Section~\ref{sec.sem}.
 %     ter determinismo.}
 %- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ->8
 
-In practice, the synchronous hypothesis for \CEU holds if reaction rate is
+In practice, the synchronous hypothesis for \CEU holds if reactions execute
 faster than the rate of incoming input events.
 %
-Otherwise, the program continuously accumulates a delay between the real
-occurrence time and actual reaction time of events.
+Otherwise, the program would continuously accumulate delays between physical
+occurrences and actual reactions for the input events.
 %
 In the soft real-time systems targeted by \CEU (e.g., sensor networks,
 multimedia systems, interactive games, etc.) such delay and postponed
 reactions might be tolerated by users as long as they are infrequent and the
 application does not take too long to catch up with real time.
+%
+Note that the synchronous semantics is the norm in typical event-driven
+systems, such as event dispatching in UI toolkits, game loops in game engines,
+and clock ticks in embedded systems.
 
-
 \subsubsection*{Internal events as subroutines}
 
 In \CEU, the queue-based processing of events described previously applies
