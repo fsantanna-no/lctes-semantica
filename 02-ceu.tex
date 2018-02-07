@@ -70,15 +70,17 @@ _$\T<id>$($\T<exps>$) | \C{.6}{calls C function (id starts with `\_'\,)} |
 \end{lstlisting}
 \egroup
 
-Listing~\ref{lst.ceu} shows a complete example in \CEU that blinks a LED with a
-frequency of 1 second, terminating with a button press always with the LED off.
+Listing~\ref{lst.ceu} shows a complete example in \CEU that blinks a LED
+whenever a radio packet is received, terminating with a button press always
+with the LED off.
 %
-The implementation first declares the \code{BUTTON} as an input event (ln.~1).
+The implementation first declares the \code{BUTTON} and \code{RADIO_RECV} as
+input events (ln.~1--2).
 Then, it uses a \code{par/or} composition to run two activities in parallel:
-a single statement that waits for a button press before terminating (ln.~3),
-and an endless loop that blinks the LED on and off (ln.~8--13).
-The \code{finalize} clause (ln.~5--7) ensures that, no matter how its enclosing
-trail terminates, the LED will be unconditionally turned off (ln.~6).
+a single statement that waits for a button press before terminating (ln.~4),
+and an endless loop that blinks the LED on and off (ln.~9--14).
+The \code{finalize} clause (ln.~6--8) ensures that, no matter how its enclosing
+trail terminates, the LED will be unconditionally turned off (ln.~7).
 
 The \code{par/or} composition, which stands for a \emph{parallel-or}, provides
 an orthogonal abortion mechanism~\cite{esterel.preemption} in which its
@@ -93,7 +95,6 @@ The finalization mechanism extends orthogonal abortion to also work with
 activities that use stateful resources from the environment (such as files and
 network handlers), as we discuss in Section~\ref{sec.ceu.fin}.
 %
-\fs{First-class timers.}
 
 \begin{lstlisting}[
   numbers=left,
@@ -104,6 +105,7 @@ network handlers), as we discuss in Section~\ref{sec.ceu.fin}.
   label={lst.ceu},
 ]
 input void BUTTON;
+input void RADIO_RECV;
 par/or do
     await BUTTON;
 with
@@ -112,9 +114,9 @@ with
     end
     loop do
         _led(1);
-        await 1s;
+        await RADIO_RECV;
         _led(0);
-        await 1s;
+        await RADIO_RECV;
     end
 end
 \end{lstlisting}
