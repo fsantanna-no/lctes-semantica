@@ -205,14 +205,15 @@ c) &\5\5 \1\xrightarrow[in]{*}\1
     \LL u,0,\epsilon \RR
 \end{align*}
 %
-First, a $\xrightarrow[out]{push}$ starts a nested reaction at level $1$ (case
-$a$).
-Then, a series of alternations between $\NST$ transitions followed by a single
-$\OUT$ transition represent nested reactions and stack operations (case $b$).
-Finally, at some point, a $\xrightarrow[out]{pop}$ lowers the stack level to
-$0$ and terminates the reaction.
+First (case $a$), a $\xrightarrow[out]{push}$ starts a nested reaction at level
+$1$.
+Then (case $b$), a series of alternations between $\NST$ transitions and a
+single $\OUT$ transition represent, respectively, nested reactions and stack
+operations.
+Finally (case $c$), at some point, a $\xrightarrow[out]{pop}$ decrements the
+stack level to $0$ and terminates the reaction.
 
-The $\NST$ transition rules for the primary expressions are as follows:
+The $\NST$ transition rules for primary expressions are as follows:
 %
 { \setlength{\jot}{20pt}
 \begin{align*}
@@ -230,7 +231,7 @@ The $\NST$ transition rules for the primary expressions are as follows:
 \end{align*}
 }
 %
-A $mem$ operation becomes a $nop$ which indicates termination (rule
+A $mem$ operation becomes a $@nop$ which indicates termination (rule
 \textbf{mem}).
 An $emitInt(id)$ generates an event $id$ and transits to a $@canrun(n)$ which
 can only resume at level $n$ (rule \textbf{emitInt}).
