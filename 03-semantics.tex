@@ -44,6 +44,7 @@ imperative languages).
       $|$ if mem(id) then p else p   (conditional)
       $|$ p ; p                      (sequence)
       $|$ loop p                     (repetition)
+      $|$ every id p                 (event iteration)
       $|$ p and p                    (par/and)
       $|$ p or p                     (par/or)
       $|$ fin p                      (finalization)
@@ -58,10 +59,6 @@ imperative languages).
 Listing~\ref{lst.formal.syntax} shows the syntax for a subset of \CEU that is 
 sufficient to describe all semantic peculiarities of the language.
 %
-Except for $fin$ and the expressions used internally by the semantics, which
-are prefixed with a character $@$, all other expressions are equivalent to
-their counterparts in the concrete language.
-
 The $mem(id)$ primitive represents all accesses, assignments, system calls, and
 output events that affect a memory location identified by $id$.
 %
@@ -79,6 +76,24 @@ occurrences in programs.
 Note that $mem$, $awaitExt$, and $awaitInt$ / $emitInt$ expressions do not
 share identifiers, i.e., an identifier is either a variable, an external event,
 or an internal event.
+
+In the concrete language, the \code{await} and \code{emit} primitives support
+communication of values between them, e.g., an \code{emit a(10)} awakes
+\code{v=await a} setting \code{v=10}.
+To reproduce this functionality in the formal semantics, we can use a shared
+variable to hold the value of an \code{emit} and access it after the
+corresponding \code{await}.
+
+A ``\code{finalize <A> with <B> end ; <C>}'' in the concrete language is
+equivalent to ``\code{<A> ; ((fin <B>) or <C>)}'' in the abstract syntax.
+In the concrete language, \code{<A>} and \code{<C>} execute in sequence, and
+the finalization code \code{<B>} is implicitly suspended waiting for \code{<C>}
+termination.
+In the formal language, \code{fin <B>} suspends forever when reached (it is an
+awaiting expression that never awakes).
+Hence, we need an explicit \code{or} to execute \code{<C>} in parallel, whose
+termination aborts \code{fin <B>}, which finally causes \code{<B>} to execute
+(by the semantic rules to be discussed).
 
 \subsection{Operational Semantics}
 
@@ -235,8 +250,8 @@ A $mem$ operation becomes a $@nop$ which indicates termination (rule
 \textbf{mem}).
 An $emitInt(id)$ generates an event $id$ and transits to a $@canrun(n)$ which
 can only resume at level $n$ (rule \textbf{emitInt}).
-Since nested rules cannot transit with $e \neq \epsilon$, this rule will cause
-rule \textbf{push} to execute at the outer level, creating a new level $n+1$ on
+Since nested rules can only transit with $e=\epsilon$, this rule causes rule
+\textbf{push} to execute at the outer level, creating a new level $n+1$ on
 the stack.
 Also, with the new stack level, the resulting $@canrun(n)$ itself cannot
 transit, providing the desired stack-based semantics for internal events.
@@ -408,7 +423,6 @@ side (rules \textbf{or-nop1} and \textbf{or-nop2}):
     & \textbf{(or-nop2)}   %\\
 \end{eqnarray*}
 }
-
 %
 The $clear$ function (Figure~\ref{fig.formal.clear}) concatenates all active
 $fin$ bodies of the side being aborted, so that they execute before the
@@ -421,8 +435,8 @@ function.
 %the concrete language to a $fin$ in the formal semantics.
 %
 Note also that there is a syntactic restriction that $fin$ bodies cannot
-contain awaiting expressions ($awaitExt$, $awaitInt$, and $fin$), i.e., they
-are guaranteed to execute entirely within a reaction.
+contain awaiting expressions ($awaitExt$, $awaitInt$, $every$, and $fin$),
+i.e., they are guaranteed to execute entirely within a reaction.
 
 Finally, a $break$ in one of the sides in parallel escapes the closest 
 enclosing $loop$, properly aborting the other side by applying the $clear$ 
@@ -450,8 +464,8 @@ function:
 \end{eqnarray*}
 }
 %
-A reaction eventually blocks in $awaitExt$, $awaitInt$, $fin$, and $@canrun$
-expressions in parallel trails.
+A reaction eventually blocks in $awaitExt$, $awaitInt$, $every$, $fin$, and
+$@canrun$ expressions in parallel trails.
 %
 If no trails are blocked in $@canrun$ expressions, it means that the program 
 cannot advance in the current reaction.
@@ -464,6 +478,7 @@ eventually resume in the current reaction (see rule \textbf{pop}).
 \begin{align*}
   bcast(e, awaitExt(e)) &= @nop                         \\
   bcast(e, awaitInt(e)) &= @nop                         \\
+  bcast(e, every~e~p)   &= p; every e p                 \\
   bcast(e, @canrun(n))  &= @canrun(n)                   \\
   bcast(e, fin~p)       &= fin~p                        \\
   bcast(e, p~;~q)       &= bcast(e,p)~;~q               \\
@@ -476,7 +491,8 @@ eventually resume in the current reaction (see rule \textbf{pop}).
 }
 \caption{
 The function $bcast$ awakes awaiting trails matching the event by converting
-\code{awaitExt} and \code{awaitInt} to \code{@nop} expressions.
+$awaitExt$ and $awaitInt$ to $@nop$ expressions, and by unwinding an $every$
+expression.
 \label{fig.bcast}
 }
 \end{figure}
@@ -486,6 +502,7 @@ The function $bcast$ awakes awaiting trails matching the event by converting
 \begin{align*}
   isblocked(n, \1 awaitExt(id)) &= true                                   \\
   isblocked(n, \1 awaitInt(id)) &= true                                   \\
+  isblocked(n, \1 every~e~p)    &= true                                   \\
   isblocked(n, \1 @canrun(m))   &= (n > m)                                \\
   isblocked(n, \1 fin~p)        &= true                                   \\
   isblocked(n, \1 p~;~q)        &= isblocked(n,p)                         \\
@@ -508,6 +525,7 @@ waiting for events, finalization clauses, or certain stack levels.
 \begin{align*}
   clear( awaitExt(e) ) &= @nop                  \\
   clear( awaitInt(e) ) &= @nop                  \\
+  clear( every~e~p )   &= @nop                  \\
   clear( @canrun(n) )  &= @nop                  \\
   clear( fin~p )       &= p                     \\
   clear( p~;~q )       &= clear(p)              \\
@@ -522,220 +540,5 @@ waiting for events, finalization clauses, or certain stack levels.
 The function $clear$ extracts $fin$ expressions in parallel and put their 
 bodies in sequence.
 \label{fig.formal.clear}
-}
-\end{figure}
-
-\subsection{Concrete Language Mapping}
-
-Most statements from \CEU (``concrete \CEU'') map directly to those presented 
-in the reduced syntax in Figure~\ref{lst.formal.syntax} (``abstract \CEU'').
-%, namely, the \code{if}, \code{`;'}, \code{loop}, \code{par/and}, and 
-%\code{par/or}.
-For instance, the \code{if} in the concrete language behaves exactly like the 
-$if$ in the formal semantics.
-However, there are some significant mismatches between the concrete and 
-abstract \CEU, and we (informally) present appropriate mappings in this 
-section.
-%
-Again, we are not considering side-effects, which are all mapped to the $mem$ 
-semantic construct.
-
-\begin{comment}
-$
-    \code{if}      \mapsto if   ,\2
-    \code{';'}     \mapsto ~';' ,\2
-    \code{loop}    \mapsto loop ,\2
-    \code{par/and} \mapsto and  ,\2
-    \code{par/or}  \mapsto or
-$.
-\end{comment}
-
-\subsubsection{await and emit}
-
-The concrete \code{await} and \code{emit} primitives support communication of 
-values between them.
-In the two-step translation in Figure~\ref{lst.map.emit.await}, we start with 
-the concrete program in \CEU (a), which communicates the value $1$ between the 
-\code{emit} and \code{await} in parallel.
-In the intermediate translation (b), we include the shared variable \code{e\_} 
-to hold the value being communicated between the two trails in order to 
-simplify the \code{emit}.
-Finally, we convert the program into the equivalent in the abstract syntax (c), 
-translating side-effect statements into $mem$ expressions.
-External events have a similar translation, i.e., each external event requires 
-a corresponding variable that is explicitly set by the environment before each 
-reaction.
-
-\begin{figure}[t]
-\begin{minipage}[t]{0.32\linewidth}
-\begin{lstlisting}
-par/or do
-  <...>
-  emit e => 1;
-with
-  v = await e;
-  _printf("%d\n",v);
-end
-
-.
-\end{lstlisting}
-\centering\small{(a)}
-\end{minipage}
-%
-\begin{minipage}[t]{0.32\linewidth}
-\begin{lstlisting}
-par/or do
-  <...>
-  e_ = 1;
-  emit e;
-with
-  await e;
-  v = e_;
-  _printf("%d\n",v);
-end
-\end{lstlisting}
-\centering\small{(b)}
-\end{minipage}
-%
-\begin{minipage}[t]{0.32\linewidth}
-\begin{lstlisting}
-<...> ; mem ; emit(e)
-        or
-await(e) ; mem ; mem
-
-
-
-
-
-.
-\end{lstlisting}
-\centering\small{(c)}
-\end{minipage}
-\caption{
-Two-step translation from concrete to abstract \code{emit} and \code{await} 
-expressions.
-The concrete code in (a) communicates the value \code{1} from the \code{emit} 
-to the \code{await}.
-The abstract code in (c) uses a shared variable to hold the value.
-\label{lst.map.emit.await}
-}
-\end{figure}
-
-\subsubsection{Finalization Blocks}
-\label{sec.formal.fins}
-
-The biggest mismatch between concrete and abstract \CEU is regarding the 
-\code{finalize} blocks, which require more complex modifications in the program
-for a proper mapping using $fin$ expressions.
-In the three-step translation in Figure~\ref{lst.map.fin}, we start with a 
-concrete program (a) that uses a \code{finalize} to safely \code{\_release} the 
-reference to \code{ptr} kept after the call to \code{\_hold}.
-In the translation, we first need to catch the outermost \code{do-end} 
-termination to run the finalization code.
-For this, we translate the block into a \code{par/or} (b) with the original 
-body in parallel with a $fin$ expression to run the finalization code.
-Note that the $fin$ has no transition rules in the semantics, keeping the 
-\code{par/or} alive.
-This way, the $fin$ body only executes when the \code{par/or} terminates either 
-normally (after the \code{await B}), or aborted from an outer composition.
-%
-However, the $fin$ still (incorrectly) executes even if the call to 
-\code{\_hold} is not reached in the body due to an abort before awaking from 
-the \code{await A}.
-%
-To deal with this issue, for each $fin$ we need a corresponding flag to keep 
-track of code that needs to be finalized (c).
-%
-The flag is initially set to false, avoiding the finalization code to execute.
-Only after the call to \code{\_hold} that we set the flag to true and enable 
-the $fin$ body to execute.
-%
-The complete translation substitutes the side-effect operations with $mem$ 
-expressions (d).
-
-\begin{figure}
-\begin{minipage}[t]{0.26\linewidth}
-\begin{lstlisting}
-do
-  var int* ptr = <...>;
-  await A;
-  finalize
-    _hold(ptr);
-  with
-    _release(ptr);
-  end
-  await B;
-end
-
-
-
-.
-\end{lstlisting}
-\centering\small{(a)}
-\end{minipage}
-%
-\begin{minipage}[t]{0.26\linewidth}
-\begin{lstlisting}
-par/or do
-  var int* ptr = <...>;
-  await A;
-  _hold(ptr);
-  await B;
-with
-  { fin
-      _release(ptr); }
-end
-
-
-
-
-.
-\end{lstlisting}
-\centering\small{(b)}
-\end{minipage}
-%
-\begin{minipage}[t]{0.26\linewidth}
-\begin{lstlisting}
-f_ = 0;
-par/or do
-  var int* ptr = <...>;
-  await A;
-  _hold(ptr);
-  f_ = 1;
-  await B;
-with
-  { fin
-      if f_ then
-        _release(ptr);
-      end }
-end
-.
-\end{lstlisting}
-\centering\small{(c)}
-\end{minipage}
-%
-\begin{minipage}[t]{0.18\linewidth}
-\begin{lstlisting}
-mem;
-(
-   mem;
-   await(A);
-   mem;
-   mem;
-   await(B);
-or
-   fin
-     if mem then
-       mem
-     else
-       nop
-)
-\end{lstlisting}
-\centering\small{(d)}
-\end{minipage}
-%
-\caption{
-Three-step translation from concrete to abstract finalization.
-\label{lst.map.fin}
 }
 \end{figure}

@@ -20,7 +20,9 @@ to advance its other trails; when all trails are blocked, the reaction
 terminates and control returns to the environment.
 
 In \CEU, every execution path within loops must contain at least one
-\code{await} statement~\cite{ceu.sensys13,esterel.primer}.
+\code{await} statement to an external input
+event~\cite{ceu.sensys13,esterel.primer}.
+% TODO: or every
 %
 This restriction, which is statically checked by the compiler, ensures that
 every reaction runs in bounded time, eventually terminating with all trails
@@ -74,7 +76,7 @@ Listing~\ref{lst.ceu} shows a complete example in \CEU that blinks a LED
 whenever a radio packet is received, terminating with a button press always
 with the LED off.
 %
-The implementation first declares the \code{BUTTON} and \code{RADIO_RECV} as
+The implementation first declares the \code{BUTTON} and \code{RADIO\_RECV} as
 input events (ln.~1--2).
 Then, it uses a \code{par/or} composition to run two activities in parallel:
 a single statement that waits for a button press before terminating (ln.~4),
@@ -121,7 +123,7 @@ with
 end
 \end{lstlisting}
 
-In \CEU, any identifier prefixed with an underscore (e.g., \code{_led}) is
+In \CEU, any identifier prefixed with an underscore (e.g., \code{\_led}) is
 passed unchanged to the underlying~C compiler.
 %
 Therefore, access to~C is straightforward and syntactically traceable.
@@ -307,11 +309,15 @@ First, they guaranteed to react in bounded time.
 %
 Second, memory for locals is also bounded, not requiring data stacks.
 
-At first sight, an event iterator for event \code{A} seems like a syntactic
-sugar for a \code{loop} followed by and \code{await A}.
-However, event iterators have an important restriction to enforce reaction
-termination, as we discuss in Section~\ref{sec.sem}:
-    they cannot contain \code{break} statements.
+At first sight, event iteration such as ``\code{every e do <...> end}'' seems
+to be equivalent to ``\code{loop do await e; <...> end}''.
+However, the \code{loop} variation would not compile because it does not
+contain a path to an external input \code{await} (\code{e} is an internal
+event).
+Event iterators have syntactic restrictions and cannot contain \code{await} or
+\code{break} statements.
+The absence of \code{break} guarantees that an iterator never terminates from
+itself, essentially behaving as safe blocking point in the program.
 
 \begin{comment}
 %
@@ -495,14 +501,14 @@ Figure~\ref{lst.fin.ceu}:
 finalization clauses to accompany them.
 %
 In the example in Figure~\ref{lst.fin.ceu}.a, the local variable \code{msg}
-(ln. 2) is an internal resource passed as a pointer to \code{_send} (ln. 5),
+(ln. 2) is an internal resource passed as a pointer to \code{\_send} (ln. 5),
 which is an asynchronous call that transmits the buffer in the background.
 If the block aborts (ln. 11) before receiving an acknowledge from the
 environment (ln. 9), the local \code{msg} goes out of scope and the external
 transmission now holds a \emph{dangling pointer}.
 The finalization ensures that the transmission also aborts (ln. 7).
 %
-In the example in Figure~\ref{lst.fin.ceu}.b, the call to \code{_fopen} (ln.
+In the example in Figure~\ref{lst.fin.ceu}.b, the call to \code{\_fopen} (ln.
 4) returns an external file resource as a pointer.
 If the block aborts (ln. 12) during the \code{await A} (ln. 9), the file
 remains open as a \emph{memory leak}.
