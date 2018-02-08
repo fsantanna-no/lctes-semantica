@@ -158,7 +158,7 @@ follows:
     & \textbf{(push)}   \\
 %%%
 & \frac
-    { \DS n>0, \2 ((p=@nop) \wedge isblocked(n,p)) }
+    { \DS n>0, \2 ((p=@nop) \vee isblocked(n,p)) }
 %   -----------------------------------------------------------
     { \DS \LL p,n,\epsilon \RR \OUT \LL p,n-1,\epsilon \RR }
     & \textbf{(pop)}    \\
@@ -545,3 +545,76 @@ bodies in sequence.
 \label{fig.formal.clear}
 }
 \end{figure}
+
+\subsection{Determinism, Termination, and Memory Bounds}
+
+- informal discussion
+
+\subsubsection*{Determinism}
+
+The proof for determinism relies on the fact all semantic rules are mutually
+exclusive, i.e., their preconditions are unique in the set of rules.
+This can be verified by simple rule inspections.
+
+Rule \textbf{push} is the only one with $e \neq \epsilon$ as a precondition,
+and is trivially mutually exclusive with all other rules.
+
+Rule \textbf{pop} either has $p=@nop$ or $isblocked(n,p)$ as preconditions.
+%
+Note that rule \textbf{pop} only syntactically applies to top-level
+transitions.
+For instance, it can never match $\NST$ rules for subprograms as in rule
+\textbf{seq-adv}.
+%
+Hence, for the first case, rule \textbf{pop} only applies, and is the only one
+to apply, to $nop$ as the whole program (i.e., a $nop$ not surrounded by other
+expressions, such as in rule \textbf{seq-nop}).
+%
+For the second case, we need to show that given $\LL p,n,\epsilon \RR$, no
+$\NST$ transitions apply with $isblocked(n,p)$ and vice versa.
+Except for $@canrun$, there are no $\NST$ transitions for the other blocking
+expressions ($awaitExt$, $awaitInt$, $every$, and $fin$).
+However, considering the precondition $\LL p,n,\epsilon \RR$,
+$isblocked(n,@canrun(n))$ is false.
+Hence, given the preconditions for rule \textbf{pop}, no $\NST$ transitions can
+occur.
+Conversely, if a $\NST$ transition is possible, then $isblocked(n,p)$ must be
+false.
+Again, except for $@canrun$, all other transitions do not involve blocking
+expressions, hence, for these transitions, $isblocked(n,p)$ must be false.
+For rule \textbf{canrun}, a transition can only occur if the current stack
+level matches $@canrun(n)$.
+In this case, $isblocked(n,@canrun(n))$ is false.
+
+Finally, we need to show that $\NST$ transitions are mutually exclusive among
+themselves.
+%
+Note that most rules have unique syntactic prefixes, e.g., $(@nop~@and~q)$
+(rule \textbf{and-nop1}) is trivially mutually exclusive with $(@nop~@loop~p)$
+(rule \textbf{or-nop1}).
+%
+The only exceptions are rules \textbf{and-adv1} vs. \textbf{and-adv2}, and
+\textbf{or-adv1} vs. \textbf{or-adv2}.
+In both cases, we need to show that if the left branch can advance, then it
+cannot be blocked and vice-versa, i.e., that 
+$\LL p,n,\epsilon \RR \NST \LL p',n,e \RR$ and $isblocked(n,p)$ are mutually
+exclusive.
+This is the same reasoning for rule \textbf{pop} above.
+
+\subsubsection*{Termination}
+
+- there is always a possible transition until n=0
+
+every cannot restart itself
+    - break disallowed
+    - emit ignored
+
+\subsubsection*{Memory Bounds}
+
+- program is finite
+- lexical scope
+    - no heap allocation
+- no code reentrancy
+    - reexecution only due to loops
+    - loop reuse nested vars
+- 
