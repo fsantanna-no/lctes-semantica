@@ -22,7 +22,6 @@ terminates and control returns to the environment.
 In \CEU, every execution path within loops must contain at least one
 \code{await} statement to an external input
 event~\cite{ceu.sensys13,esterel.primer}.
-% TODO: or every
 %
 This restriction, which is statically checked by the compiler, ensures that
 every reaction runs in bounded time, eventually terminating with all trails
@@ -314,27 +313,15 @@ to be equivalent to ``\code{loop do await e; <...> end}''.
 However, the \code{loop} variation would not compile because it does not
 contain a path to an external input \code{await} (\code{e} is an internal
 event).
+%
 Event iterators have syntactic restrictions and cannot contain \code{await} or
 \code{break} statements.
 The absence of \code{break} guarantees that an iterator never terminates from
 itself, essentially behaving as safe blocking point in the program.
-
-\begin{comment}
 %
-Third, \CEU subroutines can be safely used by the other primitives of the
-language, such as parallel compositions and the \code{await} statement,
-without breaking the programming model.
-%
-In particular, after calling a subroutine these primitives wait while
-keeping context information, such as locals and the program counter, which
-makes the calls behave similarly to those of
-coroutines~\cite{lua.coroutines}.
-%
-Finally, in previous work, we built other advanced control mechanisms on top
-of internal events, such as resumable exceptions and reactive
-variables~\cite{ceu.rem13}.
-%
-\end{comment}
+For this reason, the restriction that execution paths within loops must
+contains at least one external \code{await} is extended to contain an
+\code{every} statement alternatively.
 
 \subsection{Shared-Memory Concurrency}
 

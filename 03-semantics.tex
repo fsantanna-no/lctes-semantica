@@ -127,12 +127,13 @@ e, e' &\in \mathds{E \cup \{\epsilon\}}
     && (emitted~event,~possibly~none)
 \end{align*}
 %
-At the beginning of a reaction to an input event, the triple is initialized at
-stack level $0$ ($n=0$) and with the emitted event $id$ ($e=id$).
+At the beginning of a reaction to an input event $id$, the triple is
+initialized at stack level $0$ ($n=0$) and with the emitted event $id$
+($e=id$).
 %, but \code{emitInt} expressions can increase the stack level.
-At the end of a reaction, after a number of transitions, the triple will block
-with a (possibly) modified program $p'$, at stack level $0$, with no event
-emitted $\epsilon$:
+At the end of a reaction, after an arbitrary but finite number of transitions,
+the triple will block with a (possibly) modified program $p'$, at stack level
+$0$, with no event emitted $\epsilon$:
 %
 \begin{align*}
 \LL p,0,ext \RR
@@ -140,11 +141,13 @@ emitted $\epsilon$:
 \LL p',0,\epsilon \RR
 \end{align*}
 %
-We also define two transition rule subtypes $\OUT$ (for \emph{outermost}) and
-$\NST$ (for \emph{nested}).
+We also distinguish between two transition rule subtypes:
+    $\OUT$, for \emph{outermost} transitions; and
+    $\NST$, for \emph{nested} transitions.
 
 The $\OUT$ rules \textbf{push} and \textbf{pop} are non-recursive definitions
-that manipulate the stack level as follows:
+that only apply to the program as a whole and manipulate the stack level as
+follows:
 %
 { \setlength{\jot}{20pt}
 \begin{eqnarray*}

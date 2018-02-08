@@ -22,7 +22,7 @@ execution~\cite{rp.deprecating,rp.rescala,sync_async.cooperative}.
 Synchronous languages offer a simple run-to-completion model of execution that
 enable deterministic execution and make formal reasoning tractable.
 For this reason, it has been successfully adopted in safety-critical real-time
-embedded systems.~\cite{rp.twelve}
+embedded systems~\cite{rp.twelve}.
 
 Previous work in the context of embedded sensor networks evaluates the
 expressiveness of \CEU in comparison to event-driven code in C and attests a
@@ -30,9 +30,10 @@ reduction in source code size (around 25\%) with a small increase in memory
 usage (around 5--10\% for \emph{text} and \emph{data})~\cite{ceu.sensys13}.
 %
 \CEU has also been used in the context of multimedia
-systems~\cite{ceumedia.webmedia16} and games~\cite{ceu.mod15}, and as an
-alternative language in an undergraduate-level course on embedded systems for
-the past 6 years.
+systems~\cite{ceumedia.webmedia16} and games~\cite{ceu.mod15}.
+%, and as an
+%alternative language in an undergraduate-level course on embedded systems for
+%the past 6 years.
 
 \CEU inherits the synchronous and imperative mindset of Esterel but adopts a
 simpler semantics with fine-grained execution control.~\cite{ceu.tecs17}
@@ -40,13 +41,12 @@ simpler semantics with fine-grained execution control.~\cite{ceu.tecs17}
 The list that follows summarizes the semantic peculiarities of \CEU:
 %
 \begin{itemize}
+    \item Fine-grained, intra-reaction deterministic execution, which makes
+          \CEU fully deterministic.
     \item Stack-based execution for internal events, which provides a limited
-          form of coroutines.
-    \item Fine-grained, intra-reaction deterministic execution, which allows
-          programs to safely share memory.
-    \item Finalization mechanism for abortion of lines of execution, which
-          safely release external resources.
-    \item First-class synchronized timers.
+          but memory-bounded form of subroutines.
+    \item Finalization mechanism for lines of execution, which makes abortion
+          safe with regards to external resources.
 \end{itemize}
 
 In this work, we present a formal semantics for a subset of \CEU that focus on
