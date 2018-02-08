@@ -59,8 +59,8 @@ imperative languages).
 Listing~\ref{lst.formal.syntax} shows the syntax for a subset of \CEU that is 
 sufficient to describe all semantic peculiarities of the language.
 %
-The $mem(id)$ primitive represents all accesses, assignments, system calls, and
-output events that affect a memory location identified by $id$.
+The $mem(id)$ primitive represents all accesses, assignments, and system calls,
+that affect a memory location identified by $id$.
 %
 According to the synchronous hypothesis of \CEU, $mem$ expressions are 
 considered to be atomic and instantaneous.
@@ -73,33 +73,34 @@ occurrences in programs.
 %(it can be thought as a synonym for $mem(\epsilon)$, where $\epsilon$ is an 
 %unused identifier).
 %
-Note that $mem$, $awaitExt$, and $awaitInt$ / $emitInt$ expressions do not
+Note that $mem$, $awaitExt$, and $awaitInt$/$emitInt$ expressions do not
 share identifiers, i.e., an identifier is either a variable, an external event,
 or an internal event.
 
-In the concrete language, the \code{await} and \code{emit} primitives support
-communication of values between them, e.g., an \code{emit a(10)} awakes
-\code{v=await a} setting \code{v=10}.
+Regarding mismatches between the concrete and formal languages, the concrete
+\code{await} and \code{emit} primitives support communication of values between
+them, e.g., an ``\code{emit a(10)}'' awakes a ``\code{v=await a}'' setting
+\code{v=10}.
 To reproduce this functionality in the formal semantics, we can use a shared
 variable to hold the value of an \code{emit} and access it after the
 corresponding \code{await}.
-
-A ``\code{finalize <A> with <B> end ; <C>}'' in the concrete language is
+%
+Also, a ``\code{finalize <A> with <B> end ; <C>}'' in the concrete language is
 equivalent to ``\code{<A> ; ((fin <B>) or <C>)}'' in the abstract syntax.
 In the concrete language, \code{<A>} and \code{<C>} execute in sequence, and
 the finalization code \code{<B>} is implicitly suspended waiting for \code{<C>}
 termination.
-In the formal language, \code{fin <B>} suspends forever when reached (it is an
-awaiting expression that never awakes).
+In the formal language, ``\code{fin <B>}'' suspends forever when reached (it is
+an awaiting expression that never awakes).
 Hence, we need an explicit \code{or} to execute \code{<C>} in parallel, whose
-termination aborts \code{fin <B>}, which finally causes \code{<B>} to execute
-(by the semantic rules to be discussed).
+termination aborts ``\code{fin <B>}'', which finally causes \code{<B>} to
+execute (by the semantic rules to be discussed).
 
 \subsection{Operational Semantics}
 
 The core of our semantics describes how a program reacts to a single external 
-input event, i.e., starting from the input event, how the program behaves and 
-becomes idle again to proceed to the subsequent reaction.
+input event, i.e., starting from an input event, how the program behaves and 
+becomes idle again to proceed to a subsequent reaction.
 %
 We use a set of small-step operational rules, which are built in such a way 
 that at most one transition is possible at any time, resulting in deterministic 
@@ -142,8 +143,8 @@ $0$, with no event emitted $\epsilon$:
 \end{align*}
 %
 We also distinguish between two transition rule subtypes:
-    $\OUT$, for \emph{outermost} transitions; and
-    $\NST$, for \emph{nested} transitions.
+    \emph{outermost} transitions $\OUT$; and
+    \emph{nested} transitions $\NST$.
 
 The $\OUT$ rules \textbf{push} and \textbf{pop} are non-recursive definitions
 that only apply to the program as a whole and manipulate the stack level as
@@ -172,17 +173,17 @@ Rule \textbf{push} matches whenever there is an emitted event in the triple,
 and instantly broadcasts the event to the program, which means
     (a) awaking active \code{await} expressions altogether (see $bcast(p)$ in
         Figure~\ref{fig.bcast}),
-    (b) creating a nested reaction by increasing the stack level,
-    (c) and, at the same time, consuming the event ($e$ becomes $\epsilon$).
+    (b) creating a nested reaction by increasing the stack level, and, at the same time,
+    (c) consuming the event ($e$ becomes $\epsilon$).
 %
 Note that rule \textbf{push} is the only one in the semantics that matches an
 emitted event and also immediately consumes it.
 %
 The rule \textbf{pop} only decreases the stack level, not affecting the
-program, and does not apply if the program is not blocked (see $isblocked(n,p)$
-in Figure~\ref{fig.isblocked}).
+program, and only applies if the program is blocked (see $isblocked(n,p)$ in
+Figure~\ref{fig.isblocked}).
 This condition ensures that an \code{emit} only resumes after its internal
-reaction completes, as discussed in Section~\ref{sec.ceu.evts}.
+reaction completes and blocks, as discussed in Section~\ref{sec.ceu.evts}.
 
 Note that at the beginning of a reaction, an event $ext$ is emitted, which
 will trigger rule \textbf{push}, which will immediately raise the stack level
@@ -249,12 +250,12 @@ The $\NST$ transition rules for primary expressions are as follows:
 \end{align*}
 }
 %
-A $mem$ operation becomes a $@nop$ which indicates termination (rule
+A $mem$ operation becomes a $@nop$ which indicates the memory access (rule
 \textbf{mem}).
 An $emitInt(id)$ generates an event $id$ and transits to a $@canrun(n)$ which
 can only resume at level $n$ (rule \textbf{emitInt}).
-Since nested rules can only transit with $e=\epsilon$, this rule causes rule
-\textbf{push} to execute at the outer level, creating a new level $n+1$ on
+Since all $\NST$ rules can only transit with $e=\epsilon$, an $emitInt$ causes
+rule \textbf{push} to execute at the outer level, creating a new level $n+1$ on
 the stack.
 Also, with the new stack level, the resulting $@canrun(n)$ itself cannot
 transit, providing the desired stack-based semantics for internal events.
@@ -295,8 +296,7 @@ are straightforward:
 Given that our semantics focuses on control, rules \textbf{if-true} and 
 \textbf{if-false} are the only to query $mem$ expressions.
 %
-Function $val$ receives a memory identifier and returns the current memory
-value.
+Function $val$ receives a memory identifier and returns its current value.
 %
 %Although the value here is arbitrary, it is unique in a reaction, because a 
 %given expression can execute only once within it (remember that $loops$ must 
@@ -304,11 +304,11 @@ value.
 %reaction they are reached).
 %For all other rules, we omit these values (e.g., \textbf{seq-nop}).
 
-As determined for nested rules, compound expressions also can only have
-$\epsilon$ as a precondition and they never modify $n$.
-However, they can still emit an event to nest another reaction.
-For instance, in rule \textbf{seq-adv}, if the sub-expression $p$ emits event
-$e$, the whole composition also emits $e$.
+%As determined for nested rules, compound expressions also can only have
+%$\epsilon$ as a precondition and they never modify $n$.
+%However, they can still emit an event to nest another reaction.
+%For instance, in rule \textbf{seq-adv}, if the sub-expression $p$ emits event
+%$e$, the whole composition also emits $e$.
 %However, rules \textbf{push} and \textbf{pop} can only match at the outermost
 %level.
 
@@ -391,12 +391,12 @@ branches $q$:
 %
 Rules \textbf{and-expd} and \textbf{or-expd} insert a $@canrun(n)$ at the
 beginning of the right branch.
-This ensures that an $emitInt$ on the left branch, which would transit to a
+This ensures that an $emitInt$ on the left branch, which transits to a
 $@canrun(n)$, still resumes before the right branch starts.
 %
 The deterministic behavior of the semantics relies on the \emph{isblocked} 
-predicate (Figure~\ref{fig.isblocked}) which appears in rules \textbf{and-adv2}
-and \textbf{or-adv2}.
+predicate (see Figure~\ref{fig.isblocked}) which appears in rules
+\textbf{and-adv2} and \textbf{or-adv2}.
 These rules require the left branch $p$ to be blocked in order to allow the 
 right branch transition from $q$ to $q'$.
 
@@ -413,7 +413,10 @@ side (rules \textbf{or-nop1} and \textbf{or-nop2}):
 & \LL (@nop~@and~q), n, \epsilon \RR \NST \LL q,n,\epsilon \RR
     & \textbf{(and-nop1)}   \\
 %%%
-& \LL (p~@and~@nop), n, \epsilon \RR \NST \LL p,n,\epsilon \RR
+& \frac
+    { \DS isblocked(n,p) }
+%   -----------------------------------------------------------
+    { \DS \LL (p~@and~@nop), n, \epsilon \RR \NST \LL p,n,\epsilon \RR }
     & \textbf{(and-nop2)}   \\
 %%%
 & \LL (@nop~@or~q), n, \epsilon \RR \NST \LL clear(q),n,\epsilon \RR
@@ -427,8 +430,8 @@ side (rules \textbf{or-nop1} and \textbf{or-nop2}):
 \end{eqnarray*}
 }
 %
-The $clear$ function (Figure~\ref{fig.formal.clear}) concatenates all active
-$fin$ bodies of the side being aborted, so that they execute before the
+The $clear$ function (see Figure~\ref{fig.formal.clear}) concatenates all
+active $fin$ bodies of the side being aborted, so that they execute before the
 composition rejoins.
 Note that there are no transition rules for $fin$ expressions.
 This is because once reached, a $fin$ expression halts and will only execute 
@@ -481,7 +484,7 @@ eventually resume in the current reaction (see rule \textbf{pop}).
 \begin{align*}
   bcast(e, awaitExt(e)) &= @nop                         \\
   bcast(e, awaitInt(e)) &= @nop                         \\
-  bcast(e, every~e~p)   &= p; every e p                 \\
+  bcast(e, every~e~p)   &= p;~every~e~p                 \\
   bcast(e, @canrun(n))  &= @canrun(n)                   \\
   bcast(e, fin~p)       &= fin~p                        \\
   bcast(e, p~;~q)       &= bcast(e,p)~;~q               \\
@@ -494,8 +497,8 @@ eventually resume in the current reaction (see rule \textbf{pop}).
 }
 \caption{
 The function $bcast$ awakes awaiting trails matching the event by converting
-$awaitExt$ and $awaitInt$ to $@nop$ expressions, and by unwinding an $every$
-expression.
+$awaitExt$ and $awaitInt$ to $@nop$ expressions, and by unwinding $every$
+expressions.
 \label{fig.bcast}
 }
 \end{figure}
@@ -554,14 +557,14 @@ bodies in sequence.
 
 The proof for determinism relies on the fact all semantic rules are mutually
 exclusive, i.e., their preconditions are unique in the set of rules.
-This can be verified by simple rule inspections.
+This can be verified by direct inspection of rules.
 
 Rule \textbf{push} is the only one with $e \neq \epsilon$ as a precondition,
 and is trivially mutually exclusive with all other rules.
 
 Rule \textbf{pop} either has $p=@nop$ or $isblocked(n,p)$ as preconditions.
 %
-Note that rule \textbf{pop} only syntactically applies to top-level
+Note that rule \textbf{pop} only applies syntactically to top-level
 transitions.
 For instance, it can never match $\NST$ rules for subprograms as in rule
 \textbf{seq-adv}.
@@ -598,8 +601,7 @@ The only exceptions are rules \textbf{and-adv1} vs. \textbf{and-adv2}, and
 In both cases, we need to show that if the left branch can advance, then it
 cannot be blocked and vice-versa, i.e., that 
 $\LL p,n,\epsilon \RR \NST \LL p',n,e \RR$ and $isblocked(n,p)$ are mutually
-exclusive.
-This is the same reasoning for rule \textbf{pop} above.
+exclusive, which is exactly the same reasoning for rule \textbf{pop} above.
 
 \subsubsection*{Termination}
 
