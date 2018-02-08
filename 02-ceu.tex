@@ -9,15 +9,15 @@ of execution, known as \emph{trails}, and instantaneous broadcast communication
 through events.
 %
 Computations within a reaction (such as expressions, assignments, and
-system calls) are also instantaneous in accordance to the synchronous
+system calls) are also instantaneous considering the synchronous
 hypothesis~\cite{rp.hypothesis}.
 %
-\CEU provides an \code{await} statement which is the only that actually
-``consumes'' time.
+%\CEU provides an \code{await} statement which is the only that actually
+%``consumes'' time.
 %
-An \code{await} statement blocks the current running trail allowing the program
-to advance its other trails; when all trails are blocked, the reaction
-terminates and control returns to the environment.
+\CEU provides an \code{await} statement that blocks the current running trail
+allowing the program to advance its other trails; when all trails are blocked,
+the reaction terminates and control returns to the environment.
 
 In \CEU, every execution path within loops must contain at least one
 \code{await} statement to an external input
@@ -44,21 +44,20 @@ Listing~\ref{lst.syntax} shows a compact reference of~\CEU:
   label={lst.syntax},
 ]
 |\C{1.}{Declarations}|
-input $\T<type>$ $\T<id>$; | \C{.6}{declares external input event} |
-event $\T<type>$ $\T<id>$; | \C{.6}{declares internal event}       |
-var   $\T<type>$ $\T<id>$; | \C{.6}{declares variable}             |
+input $\T<type>$ $\T<id>$; | \C{.6}{declares an external input event} |
+event $\T<type>$ $\T<id>$; | \C{.6}{declares an internal event}       |
+var   $\T<type>$ $\T<id>$; | \C{.6}{declares a variable}              |
 
 |\C{1.}{Event handling}|
-$\T<id>$ = await $\T<id>$;   | \C{.6}{awaits event and assigns received value} |
-$\T<id>$ = await $\T<time>$; | \C{.6}{awaits time and assigns delayed delta}   |
-emit $\T<id>$($\T<exp>$);    | \C{.6}{emits event passing value}               |
+$\T<id>$ = await $\T<id>$;   | \C{.6}{awaits an event and assigns the received value} |
+emit $\T<id>$($\T<exp>$);    | \C{.6}{emits an event passing a value} |
 
 |\C{1.}{Control flow}|
-$\T<stmt>$ ; $\T<stmt>$                       | \C{.45}{sequence}     |
-if $\T<exp>$ then $\T<stmts>$ else $\T<stmts>$ end | \C{.45}{conditional}  |
-loop do $\T<stmts>$ end                   | \C{.45}{repetition}   |
-every $\T<id>$ in $\T<id>$ do $\T<stmts>$ end      | \C{.45}{event iteration}   |
-finalize [$\T<stmts>$] with $\T<stmts>$ end    | \C{.45}{finalization} |
+$\T<stmt>$ ; $\T<stmt>$                          | \C{.45}{sequence}     |
+if $\T<exp>$ then $\T<stmts>$ else $\T<stmts>$ end    | \C{.45}{conditional}  |
+loop do $\T<stmts>$ end                      | \C{.45}{repetition}   |
+every $\T<id>$ in $\T<id>$ do $\T<stmts>$ end         | \C{.45}{event iteration}   |
+finalize [$\T<stmts>$] with $\T<stmts>$ end       | \C{.45}{finalization} |
 
 |\C{1.}{Logical parallelism}|
 par/or  do $\T<stmts>$ with $\T<stmts>$ end | \C{.45}{aborts when any side ends}      |
@@ -66,12 +65,12 @@ par/and do $\T<stmts>$ with $\T<stmts>$ end | \C{.45}{terminates when all sides 
 par     do $\T<stmts>$ with $\T<stmts>$ end | \C{.45}{never terminates}               |
 
 |\C{1.}{Assignment \& Integration with C}|
-$\T<id>$ = $\T<exp>$; | \C{.6}{assigns value to variable}                |
-_$\T<id>$($\T<exps>$) | \C{.6}{calls C function (id starts with `\_'\,)} |
+$\T<id>$ = $\T<exp>$; | \C{.6}{assigns a value to a variable}              |
+_$\T<id>$($\T<exps>$) | \C{.6}{calls a C function (id starts with `\_'\,)} |
 \end{lstlisting}
 \egroup
 
-Listing~\ref{lst.ceu} shows a complete example in \CEU that blinks a LED
+Listing~\ref{lst.ceu} shows a complete example in \CEU that toggles a LED
 whenever a radio packet is received, terminating with a button press always
 with the LED off.
 %
@@ -79,7 +78,8 @@ The implementation first declares the \code{BUTTON} and \code{RADIO\_RECV} as
 input events (ln.~1--2).
 Then, it uses a \code{par/or} composition to run two activities in parallel:
 a single statement that waits for a button press before terminating (ln.~4),
-and an endless loop that blinks the LED on and off (ln.~9--14).
+and an endless loop that toggles the LED on and off on radio receives
+(ln.~9--14).
 The \code{finalize} clause (ln.~6--8) ensures that, no matter how its enclosing
 trail terminates, the LED will be unconditionally turned off (ln.~7).
 
@@ -88,9 +88,9 @@ an orthogonal abortion mechanism~\cite{esterel.preemption} in which its
 composed trails do not know when and how they are aborted (i.e., abortion is
 external to them).
 %
-This is possible to do safely in synchronous languages due to the accurate
-control of concurrent activities, i.e., in between every reaction, the whole
-system is idle and consistent~\cite{esterel.preemption}.
+%This is possible to do safely in synchronous languages due to the accurate
+%control of concurrent activities, i.e., in between every reaction, the whole
+%system is idle and consistent~\cite{esterel.preemption}.
 %
 The finalization mechanism extends orthogonal abortion to also work with
 activities that use stateful resources from the environment (such as files and
@@ -101,8 +101,8 @@ network handlers), as we discuss in Section~\ref{sec.ceu.fin}.
   numbers=left,
   basicstyle=\ttfamily\footnotesize,
   float=h,
-  caption={A program in \CEU that blinks a LED every second, terminating on a
-           button press in a consistent state.},
+  caption={A program in \CEU that toggles a LED on every radio receive,
+           terminating on a button press in a consistent state.},
   label={lst.ceu},
 ]
 input void BUTTON;
@@ -154,7 +154,7 @@ follows~\cite{ceu.sensys13}:
       takes control.
 \item On the occurrence of a new external input event, the environment
       awakes \emph{all} trails awaiting that event, and the program goes back to
-      step~(i).
+      step~(ii).
 \end{enumerate}
 
 A program must react to an event completely before handling the next one.
@@ -226,10 +226,11 @@ faster than the rate of incoming input events.
 Otherwise, the program would continuously accumulate delays between physical
 occurrences and actual reactions for the input events.
 %
-In the soft real-time systems targeted by \CEU (e.g., sensor networks,
-multimedia systems, interactive games, etc.) such delay and postponed
-reactions might be tolerated by users as long as they are infrequent and the
-application does not take too long to catch up with real time.
+Considering the context soft real-time systems,
+%targeted by \CEU (e.g., sensor networks, multimedia systems, interactive games, etc.)
+such delays and postponed reactions might be tolerated as long as they are
+infrequent and the application does not take too long to catch up with real
+time.
 %
 Note that the synchronous semantics is the norm in typical event-driven
 systems, such as event dispatching in UI toolkits, game loops in game engines,
@@ -257,14 +258,14 @@ as illustrated in Listing~\ref{lst.sub}:
 event int* inc;         // declares subroutine "inc"
 par/or do
     var int* p;
-    every p in inc do   // implements subroutine with an event iterator
+    every p in inc do   // implements "inc" through an event iterator
         *p = *p + 1;
     end
 with
     var int v = 1;
     emit inc(&v);       // calls "inc"
     emit inc(&v);       // calls "inc"
-    _assert(v==3);      // asserts result after returns
+    _assert(v==3);      // asserts result after the two returns
 end
 \end{lstlisting}
 \vskip-\baselineskip
@@ -287,11 +288,9 @@ invocation (ln.~10), and passes the assertion test (ln.~11).
 %- multiple executions
 %- footnote to distinguish from TECS
 
-\CEU also supports nested \code{emit} invocations for internal events.
-%
-For instance, the body of the subroutine \code{inc} in Listing~\ref{lst.sub}
-could \code{emit} another internal event after awaking (ln.~4), creating a
-new level in the stack.
+\CEU also supports nested \code{emit} invocations, e.g., the body of the
+subroutine \code{inc} (ln.~5) could \code{emit} an event targeting another
+subroutine, creating a new level in the stack.
 %
 We can think of the stack as a record of the nested, fine-grained internal
 reactions that happen inside the same outer reaction to a single external
@@ -304,24 +303,24 @@ running trail cannot be waiting on itself.
 That being said, it is this very limitation that brings important safety
 properties to subroutines.
 %
-First, they guaranteed to react in bounded time.
+First, they are guaranteed to react in bounded time.
 %
 Second, memory for locals is also bounded, not requiring data stacks.
 
-At first sight, event iteration such as ``\code{every e do <...> end}'' seems
+At first sight, event iteration such as in ``\code{every e do <...> end}'' seems
 to be equivalent to ``\code{loop do await e; <...> end}''.
 However, the \code{loop} variation would not compile because it does not
 contain a path to an external input \code{await} (\code{e} is an internal
 event).
 %
-Event iterators have syntactic restrictions and cannot contain \code{await} or
-\code{break} statements.
+However, event iterators enforce syntactic restrictions and cannot contain
+\code{await} or \code{break} statements.
 The absence of \code{break} guarantees that an iterator never terminates from
-itself, essentially behaving as safe blocking point in the program.
+itself, essentially behaving as a safe blocking point in the program.
 %
 For this reason, the restriction that execution paths within loops must
-contains at least one external \code{await} is extended to contain an
-\code{every} statement alternatively.
+contain at least one external \code{await} is extended to alternatively contain
+an \code{every} statement.
 
 \subsection{Shared-Memory Concurrency}
 
@@ -352,7 +351,7 @@ end
 %\begin{lstlisting}
 \begin{lstlisting}[xleftmargin=2em]
 input void A;
-//
+// (empty line)
 var int y = 1;
 par/and do
     await A;
@@ -402,8 +401,8 @@ detect conflicting accesses to shared variables:
 if a variable is written in a trail segment, then a concurrent trail segment
 cannot read or write to that variable~\cite{ceu.sensys13}.
 %
-Nonetheless, the static checks are optional and do not affect the semantics of
-the language.
+Nonetheless, the static checks are optional and are not a prerequisite for the
+deterministic semantics of the language.
 
 \subsection{Abortion and Finalization}
 \label{sec.ceu.fin}
@@ -469,7 +468,8 @@ However, aborting lines of execution that deal with external resources may lead
 to inconsistencies.
 %
 For this reason, \CEU provides a \code{finalize} construct to unconditionally
-execute a series of statements even if the enclosing block is aborted.
+execute a series of statements even if the enclosing block is externally
+aborted.
 
 \CEU also enforces the use of \code{finalize} for system calls that deal with
 pointers representing resources, as illustrated in the two examples of

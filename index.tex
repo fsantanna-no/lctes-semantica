@@ -30,7 +30,7 @@
 
 \begin{document}
 
-\title[A Deterministic and Terminating Semantics for \CEU]
+\title[A Memory-Bounded, Deterministic, and Terminating Semantics for \CEU]
 {A Deterministic and Terminating Semantics
   for the Synchronous Programming Language~\CEU}
 
@@ -58,14 +58,15 @@
 \CEU is a synchronous programming language for embedded soft real-time systems.
 %
 It focus on control-flow safety features, such as safe shared-memory
-concurrency and safe abortion of lines of execution, while enforcing internal
-determinism and time-bounded reactions to the environment.
+concurrency and safe abortion of lines of execution, while enforcing
+memory-bounded, deterministic, and terminating reactions to the environment.
 %
 In this work, we present a small-step structural operational semantics for
-\CEU and a proof that reactions are deterministic and always terminate:
+\CEU and a proof that reactions have the properties enumerated above:
 %
-For a given arbitrary timeline of input events, multiple executions of the same
-program always react in bounded time and arrive at the same final memory state.
+that for a given arbitrary timeline of input events, multiple executions of the
+same program always react in bounded time and arrive at the same final finite
+memory state.
 %
 %We also discuss some equivalence results and the relation between the proposed
 %semantics and its actual implementation.
