@@ -128,28 +128,34 @@ occurrences in programs.
 %The special notation $nop$ is used to represent an innocuous $mem$ expression 
 %(it can be thought as a synonym for $mem(\epsilon)$, where $\epsilon$ is an 
 %unused identifier).
-%
-Note that $\ceu{\Mem}$, $\ceu{\AwaitExt}$, and~$\ceu{\AwaitInt}$ and~$\ceu{\EmitInt}$ expressions do not
-share identifiers, i.e., an identifier is either a variable, an external event,
+
+We assume that $\ceu{\Mem}$, $\ceu{\AwaitExt}$, and~$\ceu{\AwaitInt}$ and~$\ceu{\EmitInt}$ expressions do not
+share identifiers: any identifier is either a variable, an external event,
 or an internal event.
 
-Regarding mismatches between the concrete and abstract languages, the concrete
+Most expressions in the abstract language are mapped to
+their counterparts in the concrete language.  The exceptions are the
+finalization block~$\ceu{\Fin{p}}$ and the \texttt{@}-expressions, which are
+internal expressions that result from the
+expansion of awaits, emits, and loops by the transition rules to be discussed.
+
+Regarding other mismatches between the concrete and abstract languages, the concrete
 \code{await} and \code{emit} primitives support communication of values between
 them, e.g., an ``\code{emit a(10)}'' awakes a ``\code{v=await a}'' setting
-\code{v=10}.
+variable~\code{v} to~10.
 To reproduce this functionality in the formal semantics, we can use a shared
-variable to hold the value of an \code{emit} and access it after the
-corresponding \code{await}.
+variable to hold the value of an $\ceu{\EmitInt}$ and access it after the
+corresponding $\ceu{\AwaitInt}$.
 %
-Also, a ``\code{finalize <A> with <B> end ; <C>}'' in the concrete language is
-equivalent to ``\code{<A> ; ((fin <B>) or <C>)}'' in the abstract syntax.
-In the concrete language, \code{<A>} and \code{<C>} execute in sequence, and
-the finalization code \code{<B>} is implicitly suspended waiting for \code{<C>}
+Also, a ``\code{finalize $A$ with $B$ end; $C$}'' in the concrete language is
+equivalent to ``\ceu{A;\;((\Fin{B})\ \Or\ C)}'' in the abstract language.
+In the concrete language, $A$ and~$C$ execute in sequence, and
+the finalization code~$B$ is implicitly suspended waiting for~$C$
 termination.
-In the formal language, ``\code{fin <B>}'' suspends forever when reached (it is
+In the abstract language, ``$\ceu{\Fin B}$'' suspends forever when reached (it is
 an awaiting expression that never awakes).
-Hence, we need an explicit \code{or} to execute \code{<C>} in parallel, whose
-termination aborts ``\code{fin <B>}'', which finally causes \code{<B>} to
+Hence, we need an explicit \code{or} to execute~$C$ in parallel, whose
+termination aborts ``$\ceu{\Fin B}$'', which finally causes~$B$ to
 execute (by the semantic rules to be discussed).
 
 \subsection{Operational Semantics}
@@ -162,49 +168,45 @@ We use a set of small-step operational rules, which are built in such a way
 that at most one transition is possible at any time, resulting in deterministic 
 reactions.
 %
-The transition rules map a triple with a program $p$, a stack level $n$, and an
-emitted event $e$ to a modified triple as follows:
+The transition rules map a triple with a program~$p$, a stack level~$n$, and an
+emitted event~$e$ to a modified triple as follows:
+\[
+  \<p, n, e>\to\<p',n',e'>
+\]
+where~$p,p'\in\P$ are abstract-language programs, $n,n'\in\N$ are
+nonnegative integers representing the current stack level,
+and~$e,e'\in\E\cup\{\nil\}$ are the events emitted before and after
+the transition, both possibly the empty event~($\nil$).
+
+% \begin{align*}
+% p, p' &\in\P
+%     && (program~as~described~in~Listing~\ref{lst.formal.syntax})
+% \\
+% n, n' &\in\N
+%     && (current~stack~level)
+% \\
+% e, e' &\in\E \cup \{\epsilon\}
+%     && (emitted~event,~possibly~none)
+% \end{align*}
 %
-\begin{align*}
-\LL p,  n,  e  \RR &\1\xrightarrow\1
-\LL p', n', e' \RR
-    & \textbf{(rule-general)}
-\end{align*}
-%
-where
-%
-\begin{align*}
-p, p' &\in P
-    && (program~as~described~in~Listing~\ref{lst.formal.syntax})
-\\
-n, n' &\in \mathbf{N}
-    && (current~stack~level)
-\\
-e, e' &\in \mathbf{E} \cup \{\epsilon\}
-    && (emitted~event,~possibly~none)
-\end{align*}
-%
-At the beginning of a reaction to an input event $id$, the triple is
-initialized at stack level $0$ ($n=0$) and with the emitted event $id$
+At the beginning of a reaction to an input event~$id$, the triple is
+initialized at stack level $0$ ($n=0$) and with the emitted event
 ($e=id$).
 %, but \code{emitInt} expressions can increase the stack level.
 At the end of a reaction, after an arbitrary but finite number of transitions,
-the triple will block with a (possibly) modified program $p'$, at stack level
-$0$, with no event emitted $\epsilon$:
+the triple will block with a (possibly) modified program~$p'$, at stack
+level~$0$, and with no event emitted~$(\nil)$:
 %
-\begin{align*}
-\LL p,0,ext \RR
-    & \1\xrightarrow{*}\1
-\LL p',0,\epsilon \RR
-\end{align*}
-%
-We also distinguish between two transition rule subtypes:
-    \emph{outermost} transitions $\OUT$; and
+\[
+  \<p,0,e>\xrightarrow{*}\<p',0,\nil>
+\]
+
+We distinguish between two types of transition rules:
+    \emph{outermost} transitions $\OUT$ and
     \emph{nested} transitions $\NST$.
 
 The $\OUT$ rules \textbf{push} and \textbf{pop} are non-recursive definitions
-that only apply to the program as a whole and manipulate the stack level as
-follows:
+that only apply to the program as a whole and manipulate the stack level:
 %
 { \setlength{\jot}{20pt}
 \begin{eqnarray*}
