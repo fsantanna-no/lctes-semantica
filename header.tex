@@ -1,9 +1,6 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-
 \usepackage{mathtools}
-\usepackage{dsfont}
-
 \usepackage{enumerate}
 
 % Céu.
@@ -47,3 +44,34 @@
 \usepackage{xspace}
 \newcommand{\ax}{\code{[a]}\xspace}
 \newcommand{\bx}{\code{[b]}\xspace}
+
+% Abstract syntax.
+\makeatletter
+\def\@int{\mathit{int}}
+\def\@ext{\mathit{ext}}
+\def\@ceuop#1{\mathop{\normalfont{\texttt{#1}}}}%
+\def\@ceubin#1{\mathbin{\normalfont{\texttt{#1}}}}%
+\def\ceu{\protect\@ceu}
+\def\@ceu#1{%
+  \bgroup
+  \def\Id{\mathit{id}}%
+  \def\Mem{\@ceuop{mem}}%
+  \def\AwaitExt{\@ceuop{await}\nolimits_\@ext}%
+  \def\AwaitInt{\@ceuop{await}\nolimits_\@int}%
+  \def\EmitInt{\@ceuop{emit}\nolimits_\@int}%
+  \def\Break{\@ceuop{break}}%
+  \def\Ifelse##1##2##3{\@ceuop{if}##1\@ceuop{then}{##2}\@ceuop{else}{##3}}%
+  \def\Loop{\@ceuop{loop}}%
+  \def\Every{\@ceuop{every}}%
+  \def\And{\@ceubin{and}}%
+  \def\Or{\@ceubin{or}}%
+  \def\Fin{\@ceuop{fin}}%
+  \def\AtLoop{\@ceuop{@loop}}%
+  \def\AtAnd{\@ceubin{@and}}%
+  \def\AtOr{\@ceubin{@or}}%
+  \def\CanRun{\@ceuop{@canrun}}%
+  \def\Nop{\@ceuop{@nop}}%
+  \ensuremath{#1}\ignorespaces
+  \egroup
+}
+\makeatother

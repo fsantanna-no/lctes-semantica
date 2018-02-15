@@ -1,5 +1,5 @@
-\newcommand{\NST}{\1\xrightarrow[nst]\1}
-\newcommand{\OUT}{\1\xrightarrow[out]\1}
+\newcommand{\NST}{\1\xrightarrow[\mathit{nst}]\1}
+\newcommand{\OUT}{\1\xrightarrow[\mathit{out}]\1}
 \newcommand{\LL}{\langle}
 \newcommand{\RR}{\rangle}
 \newcommand{\DS}{\displaystyle}
@@ -12,57 +12,113 @@
 \section{Formal Semantics}
 \label{sec.sem}
 
-%\begin{document}
-
-In this section, we introduce a reduced syntax of \CEU and propose an 
+In this section, we introduce a reduced syntax for \CEU and propose an 
 operational semantics to formally describe the language.
 We describe a small synchronous kernel highlighting the peculiarities of \CEU, 
-in particular the stack-based execution for internal events.
+in particular, the stack-based execution for internal events.
 %
 For the sake of simplicity, we focus on the control aspects of the language, 
-leaving out side effects and system calls (which behave like in conventional 
+leaving out side-effects and system calls (which behave like in conventional 
 imperative languages).
 
 \subsection{Abstract Syntax}
 \label{sec.sem.syntax}
 
-\begin{lstlisting}[
-  %numbers=left,
-  basicstyle=\ttfamily\footnotesize,
-  float=h,
-  caption={Reduced syntax of \CEU.},
-  label={lst.formal.syntax},
-  mathescape=true
-]
-                                   // primary expressions
-  p ::= mem(id)                    (any memory access to `id')
-      $|$ awaitExt(id)               (await external event `id')
-      $|$ awaitInt(id)               (await internal event `id')
-      $|$ emitInt(id)                (emit internal event `id')
-      $|$ break                      (loop escape)
-                                   // compound expressions
-      $|$ if mem(id) then p else p   (conditional)
-      $|$ p ; p                      (sequence)
-      $|$ loop p                     (repetition)
-      $|$ every id p                 (event iteration)
-      $|$ p and p                    (par/and)
-      $|$ p or p                     (par/or)
-      $|$ fin p                      (finalization)
-                                   // derived by semantic rules
-      $|$ p @loop p                  (unwinded loop)
-      $|$ p @and q                   (unwinded par/and)
-      $|$ p @or q                    (unwinded par/or)
-      $|$ @canrun(n)                 (can run on stack level `n')
-      $|$ @nop                       (terminated expression)
-\end{lstlisting}
+% \begin{lstlisting}[
+%   %numbers=left,
+%   basicstyle=\ttfamily\footnotesize,
+%   float=h,
+%   caption={Reduced syntax of \CEU.},
+%   label={lst.formal.syntax},
+%   mathescape=true
+% ]
+%                                    // primary expressions
+%   p ::= mem(id)                    (any memory access to `id')
+%       $|$ awaitExt(id)               (await external event `id')
+%       $|$ awaitInt(id)               (await internal event `id')
+%       $|$ emitInt(id)                (emit internal event `id')
+%       $|$ break                      (loop escape)
+%                                    // compound expressions
+%       $|$ if mem(id) then p else p   (conditional)
+%       $|$ p ; p                      (sequence)
+%       $|$ loop p                     (repetition)
+%       $|$ every id p                 (event iteration)
+%       $|$ p and p                    (par/and)
+%       $|$ p or p                     (par/or)
+%       $|$ fin p                      (finalization)
+%                                    // derived by semantic rules
+%       $|$ p @loop p                  (unwinded loop)
+%       $|$ p @and q                   (unwinded par/and)
+%       $|$ p @or q                    (unwinded par/or)
+%       $|$ @canrun(n)                 (can run on stack level `n')
+%       $|$ @nop                       (terminated expression)
+% \end{lstlisting}
 
-Listing~\ref{lst.formal.syntax} shows the syntax for a subset of \CEU that is 
+The grammar below defines the syntax of a subset of \CEU that is
 sufficient to describe all semantic peculiarities of the language.
+\bgroup
+\def\lbl#1{\qquad\text{\emph{#1}}}%
+\newdimen\X
+\X=-1\jot
+\begin{alignat*}{2}
+  p\Coloneqq
+      &\enspace\ceu{\Mem(\Id)}
+      &&\lbl{any memory access to~``$\ceu\Id$''}\\[\X]
+      %%
+  \mid&\enspace\ceu{\AwaitExt(\Id)}
+      &&\lbl{await external event~``$\ceu\Id$''}\\[\X]
+      %%
+  \mid&\enspace\ceu{\AwaitInt(\Id)}
+      &&\lbl{await internal event~``$\ceu\Id$''}\\[\X]
+      %%
+  \mid&\enspace\ceu{\EmitInt(\Id)}
+      &&\lbl{emit internal event~``$\ceu\Id$''}\\[\X]
+      %%
+  \mid&\enspace\ceu{\Break}
+      &&\lbl{loop escape}\\[\X]
+      %%
+  \mid&\enspace\ceu{\Ifelse{b}{p_1}{p_2}}
+      &&\lbl{conditional}\\[\X]
+      %%
+  \mid&\enspace\ceu{p1\,;\,p2}
+      &&\lbl{sequence}\\[\X]
+      %%
+  \mid&\enspace\ceu{\Loop p_1}
+      &&\lbl{repetition}\\[\X]
+      %%
+  \mid&\enspace\ceu{\Every{\Id}\ p_1}
+      &&\lbl{event iteration}\\[\X]
+      %%
+  \mid&\enspace\ceu{p_1\And p_2}
+      &&\lbl{par/and}\\[\X]
+      %%
+  \mid&\enspace\ceu{p_2\Or p_2}
+      &&\lbl{par/or}\\[\X]
+      %%
+  \mid&\enspace\ceu{\Fin p}
+      &&\lbl{finalization}\\[\X]
+      %%
+  \mid&\enspace\ceu{p_1\AtLoop p_2}
+      &&\lbl{unwinded loop}\\[\X]
+      %%
+  \mid&\enspace\ceu{p_1\AtAnd\ p_2}
+      &&\lbl{unwinded par/and}\\[\X]
+      %%
+  \mid&\enspace\ceu{p_1\AtOr\ p_2}
+      &&\lbl{unwinded par/or}\\[\X]
+      %%
+  \mid&\enspace\ceu{\CanRun(n)}
+      &&\lbl{can run on stack level~$n$}\\[\X]
+      %%
+  \mid&\enspace\ceu{\Nop}
+      &&\lbl{terminated program}
+\end{alignat*}
+\egroup
+
+The~$\ceu{\Mem(id)}$ primitive represents all accesses, assignments, and system calls
+that affect a memory location identified by~$id$.
 %
-The $mem(id)$ primitive represents all accesses, assignments, and system calls,
-that affect a memory location identified by $id$.
-%
-According to the synchronous hypothesis of \CEU, $mem$ expressions are 
+According to the synchronous hypothesis of \CEU, $\ceu{\Mem}$ expressions are 
 considered to be atomic and instantaneous.
 %
 As the challenging parts of \CEU reside on its control structures, we are not 
@@ -73,11 +129,11 @@ occurrences in programs.
 %(it can be thought as a synonym for $mem(\epsilon)$, where $\epsilon$ is an 
 %unused identifier).
 %
-Note that $mem$, $awaitExt$, and $awaitInt$/$emitInt$ expressions do not
+Note that $\ceu{\Mem}$, $\ceu{\AwaitExt}$, and~$\ceu{\AwaitInt}$ and~$\ceu{\EmitInt}$ expressions do not
 share identifiers, i.e., an identifier is either a variable, an external event,
 or an internal event.
 
-Regarding mismatches between the concrete and formal languages, the concrete
+Regarding mismatches between the concrete and abstract languages, the concrete
 \code{await} and \code{emit} primitives support communication of values between
 them, e.g., an ``\code{emit a(10)}'' awakes a ``\code{v=await a}'' setting
 \code{v=10}.
@@ -121,10 +177,10 @@ where
 p, p' &\in P
     && (program~as~described~in~Listing~\ref{lst.formal.syntax})
 \\
-n, n' &\in \mathds{N}
+n, n' &\in \mathbf{N}
     && (current~stack~level)
 \\
-e, e' &\in \mathds{E \cup \{\epsilon\}}
+e, e' &\in \mathbf{E} \cup \{\epsilon\}
     && (emitted~event,~possibly~none)
 \end{align*}
 %
