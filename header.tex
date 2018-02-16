@@ -83,31 +83,26 @@
 }
 \makeatother
 
-% Proof trees (also used to typeset the rules).
+% Proof trees (used to typeset proofs and rules).
 \usepackage{bussproofs}
 \def\labelSpacing{0em}
 \def\ScoreOverhang{0em}
-%\EnableBpAbbreviations
 
-% Functions bcast, isblocked and clear.
+% Functions bcast, clear, eval, and isblocked.
 \let\op\operatorname
 \def\bcast{\op{\mathit{bcast}}}
+\def\clear{\op{\mathit{clear}}}
+\def\eval{\op{\mathit{eval}}}
 \def\isblocked{\op{\mathit{isblocked}}}
 
 % Rule labels.
 \makeatletter
 \def\@R#1{{\bfseries#1}}
 \def\Rtag#1{\tag{\@R{#1}}\label{R:#1}}
-\def\R#1{%
-  \ifthenelse{\equal{#1}{push}}%
-  {\hyperref[R:#1]{\@R{push}}}%
- {\ifthenelse{\equal{#1}{pop}}%
-  {\hyperref[R:#1]{\@R{pop}}}%
-  {\abort}%
-}}
+\def\R#1{\hyperref[R:#1]{\@R{#1}}}
 \makeatother
 
-% Rule arrows.
+% Transition arrows.
 \makeatletter
 \newcommand{\@trans}[2][]{%
   \setbox0=\hbox{$\mathord{\longrightarrow}$}%

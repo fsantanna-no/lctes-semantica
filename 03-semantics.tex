@@ -332,70 +332,109 @@ Finally, a last~$\out[pop]$ transition decrements the
 stack level to~0 and terminates the reaction.
 
 The~$\nst$ transition rules for atomic expressions are defined as follows:
-%
-{ \setlength{\jot}{20pt}
 \begin{align*}
-\LL mem(id), n, \epsilon \RR &\NST
-\LL @nop, n, \epsilon \RR
-    & \textbf{(mem)}        \\
-%%%
-\LL emit(id), n, \epsilon \RR &\NST
-\LL @canrun(n), n, id \RR
-    & \textbf{(emitInt)}    \\
-%%%
-\LL @canrun(n), n, \epsilon \RR &\NST
-\LL @nop, n, \epsilon \RR
-    & \textbf{(canrun)}     \\
+  \<\ceu{\Mem(\Id)},n,\nil>
+  &\nst\<\ceu{\Nop},n,\nil>\Rtag{mem}\\
+  %%
+  \<\ceu{\EmitInt(\Id)},n,\nil>
+  &\nst\<\ceu{\CanRun(n)},n,\ceu{\Id}>\Rtag{emit-int}\\
+  %%
+  \<\ceu{\CanRun(n)},n,\nil>
+  &\nst\<\ceu{\Nop},n,\nil>\Rtag{can-run}
 \end{align*}
-}
-%
-A $mem$ operation becomes a $@nop$ which indicates the memory access (rule
-\textbf{mem}).
-An $emitInt(id)$ generates an event $id$ and transits to a $@canrun(n)$ which
-can only resume at level $n$ (rule \textbf{emitInt}).
-Since all $\NST$ rules can only transit with $e=\epsilon$, an $emitInt$ causes
-rule \textbf{push} to execute at the outer level, creating a new level $n+1$ on
+
+%-
+% { \setlength{\jot}{20pt}
+% \begin{align*}
+% \LL mem(id), n, \epsilon \RR &\NST
+% \LL @nop, n, \epsilon \RR
+%     & \textbf{(mem)}        \\
+% %%%
+% \LL emit(id), n, \epsilon \RR &\NST
+% \LL @canrun(n), n, id \RR
+%     & \textbf{(emitInt)}    \\
+% %%%
+% \LL @canrun(n), n, \epsilon \RR &\NST
+% \LL @nop, n, \epsilon \RR
+%     & \textbf{(canrun)}     \\
+% \end{align*}
+% }
+%-
+
+A $\ceu{\Mem}$ operation becomes a $\ceu{\Nop}$ which indicates the memory access (rule
+\R{mem}).
+An $\ceu{\EmitInt(id)}$ generates an event $\ceu{\Id}$ and transits to a $\ceu{\CanRun(n)}$ which
+can only resume at level~$n$ (rule \R{emit-int}).
+Since all~$\nst$ rules can only transit with $e=\nil$, an $\ceu{\EmitInt}$ causes
+rule \R{push} to execute at the outer level, creating a new level~$n+1$ on
 the stack.
-Also, with the new stack level, the resulting $@canrun(n)$ itself cannot
-transit, providing the desired stack-based semantics for internal events.
+Also, with the new stack level, the resulting $\ceu{\CanRun}(n)$ itself cannot
+transit (rule~\R{can-run}), providing the desired stack-based semantics for internal events.
 
 Proceeding to compound expressions, the rules for conditionals and sequences 
 are straightforward:
 %
-{ \setlength{\jot}{20pt}
-\begin{eqnarray*}
-& \frac
-    { \DS val(id) \neq 0 }
-%   -----------------------------------------------------------
-    { \DS \LL (if~mem(id)~then~p~else~q),n,\epsilon \RR \NST
-          \LL p, n, \epsilon \RR }
-    & \textbf{(if-true)}       \\
-%%%
-& \frac
-    { \DS val(id,n) = 0 }
-%   -----------------------------------------------------------
-    { \DS \LL (if~mem(id)~then~p~else~q),n,\epsilon \RR \NST
-          \LL q,n,\epsilon \RR }
-    & \textbf{(if-false)}       \\
-%%%
-& \frac
-    { \DS \LL p,n,\epsilon \RR \NST \LL p',n,e \RR }
-%   -----------------------------------------------------------
-    { \DS \LL (p~;~q), n, \epsilon \RR \NST \LL (p'~;~q), n, e \RR }
-    & \textbf{(seq-adv)}      \\
-%%%
-& \LL (@nop~;~q),n,\epsilon \RR \NST  \LL q,n,\epsilon \RR
-    & \textbf{(seq-nop)}      \\
-%%%
-& \LL (break~;~q),n,\epsilon \RR \NST \LL break,n,\epsilon \RR
-    & \textbf{(seq-brk)}
-\end{eqnarray*}
-}
+\begin{gather*}
+  \AxiomC{$\eval(\ceu{\Mem(\Id)})$}
+  \UnaryInfC{$\<\ceu{\Ifelse{\Mem(\Id)}{p}{q}},n,\nil>\nst\<p,n,\nil>$}
+  \DisplayProof
+  \Rtag{if-true}\\[2\jot]
+  %%
+  \AxiomC{$\lnot\eval(\ceu{\Mem(\Id)})$}
+  \UnaryInfC{$\<\ceu{\Ifelse{\Mem(\Id)}{p}{q}},n,\nil>\nst\<q,n,\nil>$}
+  \DisplayProof
+  \Rtag{if-false}\\[2\jot]
+  %%
+  \AxiomC{$\<p,n,\nil>\nst\<p',n,e>$}
+  \UnaryInfC{$\<\ceu{p\,;\,q},n,\nil>\nst\<\ceu{p';\,q},n,e>$}
+  \DisplayProof
+  \Rtag{seq-adv}
+\end{gather*}
+\vskip-\belowdisplayskip
+\vskip-\abovedisplayskip
+\vskip2\jot
+\begin{align*}
+  \<\ceu{\Nop;\,q},n,\nil>&\nst\<q,n,\nil>\Rtag{seq-nop}\\[2\jot]
+  %%
+  \<\ceu{\Break;\,q},n,\nil>&\nst\<\ceu{\Break},n,\nil>\Rtag{seq-brk}
+\end{align*}
+
+%-
+% { \setlength{\jot}{20pt}
+% \begin{eqnarray*}
+% & \frac
+%     { \DS val(id) \neq 0 }
+% %   -----------------------------------------------------------
+%     { \DS \LL (if~mem(id)~then~p~else~q),n,\epsilon \RR \NST
+%           \LL p, n, \epsilon \RR }
+%     & \textbf{(if-true)}       \\
+% %%%
+% & \frac
+%     { \DS val(id,n) = 0 }
+% %   -----------------------------------------------------------
+%     { \DS \LL (if~mem(id)~then~p~else~q),n,\epsilon \RR \NST
+%           \LL q,n,\epsilon \RR }
+%     & \textbf{(if-false)}       \\
+% %%%
+% & \frac
+%     { \DS \LL p,n,\epsilon \RR \NST \LL p',n,e \RR }
+% %   -----------------------------------------------------------
+%     { \DS \LL (p~;~q), n, \epsilon \RR \NST \LL (p'~;~q), n, e \RR }
+%     & \textbf{(seq-adv)}      \\
+% %%%
+% & \LL (@nop~;~q),n,\epsilon \RR \NST  \LL q,n,\epsilon \RR
+%     & \textbf{(seq-nop)}      \\
+% %%%
+% & \LL (break~;~q),n,\epsilon \RR \NST \LL break,n,\epsilon \RR
+%     & \textbf{(seq-brk)}
+% \end{eqnarray*}
+% }
+%-
+
+Given that our semantics focuses on control, rules \R{if-true} and
+\R{if-false} are the only to query~$\ceu{\Mem}$ expressions.
 %
-Given that our semantics focuses on control, rules \textbf{if-true} and 
-\textbf{if-false} are the only to query $mem$ expressions.
-%
-Function $val$ receives a memory identifier and returns its current value.
+Function~$\eval$ evaluates a given~$\ceu{\Mem}$ expression.
 %
 %Although the value here is arbitrary, it is unique in a reaction, because a 
 %given expression can execute only once within it (remember that $loops$ must 
@@ -411,242 +450,455 @@ Function $val$ receives a memory identifier and returns its current value.
 %However, rules \textbf{push} and \textbf{pop} can only match at the outermost
 %level.
 
-The rules for loops are analogous to sequences, but use \code{`@'} as 
+The rules for loops are analogous to sequences, but use ``\code{@}'' as
 separators to properly bind breaks to their enclosing loops:
-%
-{ \setlength{\jot}{20pt}
-\begin{eqnarray*}
-& \LL (loop~p),n,\epsilon \RR \NST \LL (p~@loop~p), n, \epsilon \RR
-    & \textbf{(loop-expd)}       \\
-%%%
-& \frac
-    { \DS \LL p,n,\epsilon \RR \NST \LL p',n,e \RR }
-% -----------------------------------------------------------
-    { \DS \LL (p~@loop~q),n,\epsilon \RR \NST \LL (p'~@loop~q), n, e \RR }
-    & \textbf{(loop-adv)}    \\
-%%%
-& \LL (@nop~@loop~p), n, \epsilon \RR \NST \LL (loop~p), n, \epsilon \RR
-    & \textbf{(loop-nop)}    \\
-%%%
-& \LL (break~@loop~p), n, \epsilon \RR \NST \LL @nop, n, \epsilon \RR
-    & \textbf{(loop-brk)}
-\end{eqnarray*}
-}
+\begin{align*}
+  \<\ceu{\Loop{p}},n,\nil>
+  &\nst\<\ceu{p\AtLoop{p}},n,\nil>\Rtag{loop-expd}\\[2\jot]
+  %%
+  &\hskip-6.35em
+  \AxiomC{$\<p,n,\nil>\nst\<p',n,e>$}
+  \UnaryInfC{$\<\ceu{p\AtLoop{p}},n,\nil>\nst\<\ceu{p'\AtLoop{p}},n,e>$}
+  \DisplayProof
+  \Rtag{loop-adv}\\[2\jot]
+  %%
+  \<\ceu{\Nop\AtLoop{p}},n,\nil>
+  &\nst\<\ceu{\Loop{p}},n,\nil>\Rtag{loop-nop}\\[2\jot]
+  %%
+  \<\ceu{\Break\AtLoop{p}},n,\nil>
+  &\nst\<\ceu{\Nop},n,\nil>\Rtag{loop-brk}
+\end{align*}
 
+%-
+% %
+% { \setlength{\jot}{20pt}
+% \begin{eqnarray*}
+% & \LL (loop~p),n,\epsilon \RR \NST \LL (p~@loop~p), n, \epsilon \RR
+%     & \textbf{(loop-expd)}       \\
+% %%%
+% & \frac
+%     { \DS \LL p,n,\epsilon \RR \NST \LL p',n,e \RR }
+% % -----------------------------------------------------------
+%     { \DS \LL (p~@loop~q),n,\epsilon \RR \NST \LL (p'~@loop~q), n, e \RR }
+%     & \textbf{(loop-adv)}    \\
+% %%%
+% & \LL (@nop~@loop~p), n, \epsilon \RR \NST \LL (loop~p), n, \epsilon \RR
+%     & \textbf{(loop-nop)}    \\
+% %%%
+% & \LL (break~@loop~p), n, \epsilon \RR \NST \LL @nop, n, \epsilon \RR
+%     & \textbf{(loop-brk)}
+% \end{eqnarray*}
+% }
+%-
+
+When a program encounters a $\ceu{\Loop}$, it first expands its body in sequence with 
+itself (rule \R{loop-expd}).
+Rules \R{loop-adv} and \R{loop-nop} are similar to rules 
+\R{seq-adv} and \R{seq-nop}, advancing the loop until a~$\ceu{\Nop}$ is reached.
+However, what follows the loop is the loop itself (rule \R{loop-nop}).
+Note that if we used ``\code{;}'' as a separator in loops, rules
+\R{loop-brk} and \R{seq-brk} would conflict.
 %
-When a program encounters a $loop$, it first expands its body in sequence with 
-itself (rule \textbf{loop-expd}).
-Rules \textbf{loop-adv} and \textbf{loop-nop} are similar to rules 
-\textbf{seq-adv} and \textbf{seq-nop}, advancing the loop until they reach a 
-$@nop$.
-However, what follows the loop is the loop itself (rule \textbf{loop-nop}).
-Note that if we used \code{`;'} as a separator in loops, rules 
-\textbf{loop-brk} and \textbf{seq-brk} would conflict.
-%
-Rule \textbf{loop-brk} escapes the enclosing loop, transforming everything into 
-a $@nop$.
+Rule \R{loop-brk} escapes the enclosing loop, transforming everything into 
+a~$\ceu{\Nop}$.
 %Rule \textbf{loop-brk} escapes the enclosing loop, transforming everything 
 %into a $clear(p)$.
 %We cannot simply transform the loop into a $nop$ because its body may be a 
 %parallel composition containing finalization blocks.
 
-Proceeding to parallel compositions, the semantic rules for $and$ and $or$ 
-always force transitions on their left branches $p$ to occur before their right 
-branches $q$:
-%
-{ \setlength{\jot}{20pt}
-\begin{eqnarray*}
-& \LL (p~and~q),n,\epsilon \RR \NST \LL (p~@and~(@canrun(n)~;~q)),n,\epsilon \RR
-    & \textbf{(and-expd)}       \\
-%%%
-& \frac
-    { \DS \LL p,n,\epsilon \RR \NST \LL p',n,e \RR }
-%   -----------------------------------------------------------
-    { \DS \LL (p~@and~q),n,\epsilon \NST \LL (p'~@and~q),n,e \RR }
-    & \textbf{(and-adv1)}      \\
-%%%
-& \frac
-    { \DS isblocked(n,p) \1,\2 \LL q,n,\epsilon \RR \NST \LL q',n,e \RR }
-%   -----------------------------------------------------------
-    { \DS \LL (p~@and~q),n,\epsilon \RR \NST \LL (p~@and~q'), n, e \RR }
-    & \textbf{(and-adv2)}      \\
-%%%
-& \LL (p~or~q), n, \epsilon \RR \NST \LL (p~@or~(@canrun(n)~;~q)), n, \epsilon \RR
-    & \textbf{(or-expd)}       \\
-%%%
-& \frac
-    { \DS \LL p,n,\epsilon \RR \NST \LL p',n,e \RR }
-%   -----------------------------------------------------------
-    { \DS \LL (p~@or~q),n,\epsilon \RR \NST \LL (p'~@or~q), n, e \RR }
-    & \textbf{(or-adv1)}   \\
-%%%
-& \frac
-    { \DS isblocked(n,p) \1,\2 \LL q,n,\epsilon \RR \NST \LL q',n,e \RR }
-%   -----------------------------------------------------------
-    { \DS \LL (p~@or~q),n,\epsilon \RR \NST \LL (p~@or~q'), n, e \RR }
-    & \textbf{(or-adv2)}   %\\
-\end{eqnarray*}
-}
-%
-Rules \textbf{and-expd} and \textbf{or-expd} insert a $@canrun(n)$ at the
+The semantic rules for~$\ceu{\And}$ and~$\ceu{\Or}$ compositions
+force transitions on their left branches~$p$ to occur before their right
+branches~$q$:
+\begin{gather*}
+  \hskip-.5em
+  \<\ceu{p\And{q}},n,\nil>
+  \nst\<\ceu{p\And(\CanRun(n);q)},n,\nil>
+  \Rtag{and-expd}\\[2\jot]
+  %%
+  \AxiomC{$\<p,n,\nil>\nst\<p',n,e>$}
+  \UnaryInfC{$\<\ceu{p\AtAnd{q}},n,\nil>\nst\<\ceu{p'\AtAnd{q}},n,e>$}
+  \DisplayProof
+  \Rtag{and-adv1}\\[2\jot]
+  %%
+  \AxiomC{$\isblocked(p,n)$}
+  \AxiomC{$\<q,n,\nil>\nst\<q',n,e>$}
+  \BinaryInfC{$\<\ceu{p\AtAnd{q}},n,\nil>\nst\<\ceu{p\AtAnd{q'}},n,e>$}
+  \DisplayProof
+  \Rtag{and-adv2}\\[2\jot]
+  %%
+  \<\ceu{p\Or{q}},n,\nil>
+  \nst\<\ceu{p\Or(\CanRun(n);q)},n,\nil>
+  \Rtag{or-expd}\\[2\jot]
+  %%
+  \AxiomC{$\<p,n,\nil>\nst\<p',n,e>$}
+  \UnaryInfC{$\<\ceu{p\AtOr{q}},n,\nil>\nst\<\ceu{p'\AtOr{q}},n,e>$}
+  \DisplayProof
+  \Rtag{or-adv1}\\[2\jot]
+  %%
+  \AxiomC{$\isblocked(p,n)$}
+  \AxiomC{$\<q,n,\nil>\nst\<q',n,e>$}
+  \BinaryInfC{$\<\ceu{p\AtOr{q}},n,\nil>\nst\<\ceu{p\AtOr{q'}},n,e>$}
+  \DisplayProof
+  \Rtag{or-adv2}
+\end{gather*}
+
+%-
+% { \setlength{\jot}{20pt}
+% \begin{eqnarray*}
+% & \LL (p~and~q),n,\epsilon \RR \NST \LL (p~@and~(@canrun(n)~;~q)),n,\epsilon \RR
+%     & \textbf{(and-expd)}       \\
+% %%%
+% & \frac
+%     { \DS \LL p,n,\epsilon \RR \NST \LL p',n,e \RR }
+% %   -----------------------------------------------------------
+%     { \DS \LL (p~@and~q),n,\epsilon \NST \LL (p'~@and~q),n,e \RR }
+%     & \textbf{(and-adv1)}      \\
+% %%%
+% & \frac
+%     { \DS isblocked(n,p) \1,\2 \LL q,n,\epsilon \RR \NST \LL q',n,e \RR }
+% %   -----------------------------------------------------------
+%     { \DS \LL (p~@and~q),n,\epsilon \RR \NST \LL (p~@and~q'), n, e \RR }
+%     & \textbf{(and-adv2)}      \\
+% %%%
+% & \LL (p~or~q), n, \epsilon \RR \NST \LL (p~@or~(@canrun(n)~;~q)), n, \epsilon \RR
+%     & \textbf{(or-expd)}       \\
+% %%%
+% & \frac
+%     { \DS \LL p,n,\epsilon \RR \NST \LL p',n,e \RR }
+% %   -----------------------------------------------------------
+%     { \DS \LL (p~@or~q),n,\epsilon \RR \NST \LL (p'~@or~q), n, e \RR }
+%     & \textbf{(or-adv1)}   \\
+% %%%
+% & \frac
+%     { \DS isblocked(n,p) \1,\2 \LL q,n,\epsilon \RR \NST \LL q',n,e \RR }
+% %   -----------------------------------------------------------
+%     { \DS \LL (p~@or~q),n,\epsilon \RR \NST \LL (p~@or~q'), n, e \RR }
+%     & \textbf{(or-adv2)}   %\\
+% \end{eqnarray*}
+% }
+%-
+
+Rules \R{and-expd} and \R{or-expd} insert a~$\ceu{\CanRun(n)}$ at the
 beginning of the right branch.
-This ensures that an $emitInt$ on the left branch, which transits to a
-$@canrun(n)$, still resumes before the right branch starts.
+This ensures that~any $\ceu{\EmitInt}$ on the left branch, which transits to a~$\ceu{\CanRun(n)}$, still resumes before the right branch starts.
 %
 The deterministic behavior of the semantics relies on the \emph{isblocked} 
 predicate (see Figure~\ref{fig.isblocked}) which appears in rules
-\textbf{and-adv2} and \textbf{or-adv2}.
-These rules require the left branch $p$ to be blocked in order to allow the 
-right branch transition from $q$ to $q'$.
+\R{and-adv2} and \R{or-adv2}.
+These rules require the left branch~$p$ to be blocked for the
+right branch to transition from~$q$ to~$q'$.
 
-For a parallel $@and$, if one of the sides terminates, the composition is
-simply substituted by the other side (rules \textbf{and-nop1} and
-\textbf{and-nop2}.
+In a parallel~$\ceu{\AtAnd}$, if one of the sides terminates, the composition is
+simply substituted by the other side (rules \R{and-nop1} and
+\R{and-nop2} below).
 %
-For a parallel $or$, if one of the sides terminates, the whole composition 
-terminates, also applying the $clear$ function to properly finalize the aborted 
-side (rules \textbf{or-nop1} and \textbf{or-nop2}):
-%
-{ \setlength{\jot}{20pt}
-\begin{eqnarray*}
-& \LL (@nop~@and~q), n, \epsilon \RR \NST \LL q,n,\epsilon \RR
-    & \textbf{(and-nop1)}   \\
-%%%
-& \frac
-    { \DS isblocked(n,p) }
-%   -----------------------------------------------------------
-    { \DS \LL (p~@and~@nop), n, \epsilon \RR \NST \LL p,n,\epsilon \RR }
-    & \textbf{(and-nop2)}   \\
-%%%
-& \LL (@nop~@or~q), n, \epsilon \RR \NST \LL clear(q),n,\epsilon \RR
-    & \textbf{(or-nop1)}   \\
-%%%
-& \frac
-    { \DS isblocked(n,p) }
-%   -----------------------------------------------------------
-    { \DS \LL (p~@or~@nop), n, \epsilon \RR \NST \LL clear(p),n,\epsilon \RR }
-    & \textbf{(or-nop2)}   %\\
-\end{eqnarray*}
-}
-%
-The $clear$ function (see Figure~\ref{fig.formal.clear}) concatenates all
-active $fin$ bodies of the side being aborted, so that they execute before the
+In a parallel~$\ceu{\AtOr}$, however, if one of the sides terminates, the whole composition
+terminates and function~$\clear$ is used to properly finalize the aborted
+side (rules \R{or-nop1} and \R{or-nop2}).
+\begin{gather*}
+  \<\ceu{{\Nop}\AtAnd{q}},n,\nil>\nst\<q,n,\nil>\Rtag{and-nop1}\\[2\jot]
+  %%
+  \AxiomC{$\isblocked(p,n)$}
+  \UnaryInfC{$\<\ceu{p\AtAnd{\Nop}},n,\nil>\nst\<p,n,\nil>$}
+  \DisplayProof
+  \Rtag{and-nop2}\\[2\jot]
+  %%
+  \<\ceu{{\Nop}\AtOr{q}},n,\nil>\nst\<\clear(q),n,\nil>\Rtag{or-nop1}\\[2\jot]
+  %%
+  \AxiomC{$\isblocked(p,n)$}
+  \UnaryInfC{$\<\ceu{p\AtOr{\Nop}},n,\nil>\nst\<\clear(p),n,\nil>$}
+  \DisplayProof
+  \Rtag{or-nop2}
+\end{gather*}
+
+%-
+% { \setlength{\jot}{20pt}
+% \begin{eqnarray*}
+% & \LL (@nop~@and~q), n, \epsilon \RR \NST \LL q,n,\epsilon \RR
+%     & \textbf{(and-nop1)}   \\
+% %%%
+% & \frac
+%     { \DS isblocked(n,p) }
+% %   -----------------------------------------------------------
+%     { \DS \LL (p~@and~@nop), n, \epsilon \RR \NST \LL p,n,\epsilon \RR }
+%     & \textbf{(and-nop2)}   \\
+% %%%
+% & \LL (@nop~@or~q), n, \epsilon \RR \NST \LL clear(q),n,\epsilon \RR
+%     & \textbf{(or-nop1)}   \\
+% %%%
+% & \frac
+%     { \DS isblocked(n,p) }
+% %   -----------------------------------------------------------
+%     { \DS \LL (p~@or~@nop), n, \epsilon \RR \NST \LL clear(p),n,\epsilon \RR }
+%     & \textbf{(or-nop2)}   %\\
+% \end{eqnarray*}
+% }
+%-
+
+The~$\clear$ function (see Figure~\ref{fig.clear}) concatenates all
+active~$\ceu{\Fin}$ bodies of the side being aborted, so that they execute before the
 composition rejoins.
-Note that there are no transition rules for $fin$ expressions.
-This is because once reached, a $fin$ expression halts and will only execute 
-when it is aborted by a trail in parallel and is expanded by the $clear$ 
+Note that there are no transition rules for~$\ceu{\Fin}$ expressions.
+This is because once reached, a $\ceu{\Fin}$ expression halts and will only execute 
+when it is aborted by a parallel trail and is expanded by the~$\clear$ 
 function.
 %In Section~\ref{sec.formal.fins}, we show how to map a finalization block in 
 %the concrete language to a $fin$ in the formal semantics.
 %
-Note also that there is a syntactic restriction that $fin$ bodies cannot
-contain awaiting expressions ($awaitExt$, $awaitInt$, $every$, and $fin$),
-i.e., they are guaranteed to execute entirely within a reaction.
+Note also that there is a syntactic restriction that postulates that~$\ceu{\Fin}$ bodies cannot
+contain awaiting expressions ($\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$,
+$\ceu{\Every}$, or $\ceu{\Fin}$),
+i.e., the result of a~$\clear$ call is guaranteed to execute entirely within a reaction.
 
-Finally, a $break$ in one of the sides in parallel escapes the closest 
-enclosing $loop$, properly aborting the other side by applying the $clear$ 
+Finally, a~$\ceu{\Break}$ in one of the sides in parallel escapes the closest
+enclosing~$\ceu{\Loop}$, properly aborting the other side by applying the~$\clear$
 function:
+\begin{gather*}
+  \hskip-.5em
+  \<\ceu{{\Break}\AtAnd{q}},n,\nil>\nst\<\ceu{\clear(q);\Break},n,\nil>
+  \Rtag{and-brk1}\\[2\jot]
+  %%
+  \hskip-.5em
+  \AxiomC{$\isblocked(p,n)$}
+  \UnaryInfC{$\<\ceu{p\AtAnd{\Break}},n,\nil>
+    \nst\<\ceu{\clear(p);\Break},n,\nil>$}
+  \DisplayProof
+  \Rtag{and-brk2}\\[2\jot]
+  %%
+  \<\ceu{{\Break}\AtOr{q}},n,\nil>\nst\<\ceu{\clear(q);\Break},n,\nil>
+  \Rtag{or-brk1}\\[2\jot]
+  %%
+  \AxiomC{$\isblocked(p,n)$}
+  \UnaryInfC{$\<\ceu{p\AtOr{\Break}},n,\nil>
+    \nst\<\ceu{\clear(p);\Break},n,\nil>$}
+  \DisplayProof
+  \Rtag{or-brk2}
+\end{gather*}
+
+%-
+% { \setlength{\jot}{20pt}
+% \begin{eqnarray*}
+% & \LL (break~@and~q), n, \epsilon \RR \NST \LL (clear(q)~;~break),n,\epsilon \RR
+%     & \textbf{(and-brk1)}   \\
+% %%%
+% & \frac
+%     { \DS isblocked(n,p) }
+% %   -----------------------------------------------------------
+%     { \DS \LL (p~@and~break), n, \epsilon \RR \NST \LL (clear(p)~;~break),n,\epsilon \RR }
+%     & \textbf{(and-brk2)}   \\
+% %%%
+% & \LL (break~@or~q),n,\epsilon \RR \NST \LL (clear(q)~;~break),n,\epsilon \RR
+%     & \textbf{(or-brk1)}   \\
+% %%%
+% & \frac
+%     { \DS isblocked(n,p) }
+% %   -----------------------------------------------------------
+%     { \DS \LL (p~@or~break),n,\epsilon \RR \NST \LL (clear(p)~;~break),n,\epsilon \RR }
+%     & \textbf{(or-brk2)}   %\\
+% \end{eqnarray*}
+% }
+%-
+
+A reaction eventually blocks in~$\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$, $\ceu{\Every}$, $\ceu{\Fin}$,
+and~$\ceu{\CanRun}$ expressions in parallel trails.
 %
-{ \setlength{\jot}{20pt}
-\begin{eqnarray*}
-& \LL (break~@and~q), n, \epsilon \RR \NST \LL (clear(q)~;~break),n,\epsilon \RR
-    & \textbf{(and-brk1)}   \\
-%%%
-& \frac
-    { \DS isblocked(n,p) }
-%   -----------------------------------------------------------
-    { \DS \LL (p~@and~break), n, \epsilon \RR \NST \LL (clear(p)~;~break),n,\epsilon \RR }
-    & \textbf{(and-brk2)}   \\
-%%%
-& \LL (break~@or~q),n,\epsilon \RR \NST \LL (clear(q)~;~break),n,\epsilon \RR
-    & \textbf{(or-brk1)}   \\
-%%%
-& \frac
-    { \DS isblocked(n,p) }
-%   -----------------------------------------------------------
-    { \DS \LL (p~@or~break),n,\epsilon \RR \NST \LL (clear(p)~;~break),n,\epsilon \RR }
-    & \textbf{(or-brk2)}   %\\
-\end{eqnarray*}
-}
-%
-A reaction eventually blocks in $awaitExt$, $awaitInt$, $every$, $fin$, and
-$@canrun$ expressions in parallel trails.
-%
-If no trails are blocked in $@canrun$ expressions, it means that the program 
+If no trails are blocked in~$\ceu{\CanRun}$ expressions, it means that the program
 cannot advance in the current reaction.
 %
-However, $@canrun$ expressions can still resume in lower stack indexes and will
-eventually resume in the current reaction (see rule \textbf{pop}).
+However, $\ceu{\CanRun}$ expressions can still resume in lower stack indexes and will
+eventually resume in the current reaction (see rule \R{pop}).
 
-\begin{figure}
-{\small
-\begin{align*}
-  bcast(e, awaitExt(e)) &= @nop                         \\
-  bcast(e, awaitInt(e)) &= @nop                         \\
-  bcast(e, every~e~p)   &= p;~every~e~p                 \\
-  bcast(e, @canrun(n))  &= @canrun(n)                   \\
-  bcast(e, fin~p)       &= fin~p                        \\
-  bcast(e, p~;~q)       &= bcast(e,p)~;~q               \\
-  bcast(e, p~@loop~q)   &= bcast(e,p)~@loop~q           \\
-  bcast(e, p~@and~q)    &= bcast(e,p)~@and~bcast(e,q)   \\
-  bcast(e, p~@or~q)     &= bcast(e,p)~@or~bcast(e,q)    \\
-  bcast(e, \_)          &= \bot \2 (mem,emitInt,break,if,  \\
-                                 & \5\5 loop,and,or,@nop) %\\
-\end{align*}
+\begin{figure}[h]
+\small
+\begin{gather*}
+  \boxed{
+    \begin{align*}
+      %%
+      %%-
+      \intertext{\llap{(i)~}Function~$\bcast$:}
+      %%-
+      %%
+      \bcast(\ceu{\AwaitExt(e)},e)
+      &=\ceu{\Nop}\\[-1\jot]
+      %%
+      \bcast(\ceu{\AwaitInt(e)},e)
+      &=\ceu{\Nop}\\[-1\jot]
+      %%
+      \bcast(\ceu{\Every{e}\ {p}},e)
+      &=\ceu{p;\,\Every{e}\ {p}}\\[-1\jot]
+      %%
+      \bcast(\ceu{\CanRun(n)},e)
+      &=\ceu{\CanRun(n)}\\[-1\jot]
+      %%
+      \bcast(\ceu{\Fin{p}},e)
+      &=\ceu{\Fin{p}}\\[-1\jot]
+      %%
+      \bcast(\ceu{p;\,q})
+      &=\ceu{\bcast(p,e);\,q}\\[-1\jot]
+      %%
+      \bcast(\ceu{p\AtLoop{q}},e)
+      &=\ceu{\bcast(p,e)\AtLoop{q}}\\[-1\jot]
+      %%
+      \bcast(\ceu{p\AtAnd{q}},e)
+      &=\ceu{{\bcast(p,e)}\AtAnd{\bcast(q,e)}}\\[-1\jot]
+      %%
+      \bcast(\ceu{p\AtOr{q}},e)
+      &=\ceu{{\bcast(p,e)}\AtOr{\bcast(q,e)}}\\[-1\jot]
+      %%
+      bcast(\_,e)
+      &=\bot\enspace
+        (\ceu{\Mem},\ceu{\EmitInt},\ceu{\Break},\\[-1\jot]
+      &\quad\ceu{\Ifelse{}{}},\ceu{\Loop},\ceu{\And},\ceu{\Or},\ceu{\Nop})
+      \\[1\jot]
+      %%
+      %%-
+      \intertext{\llap{(ii)~}Predicate~$\isblocked$:}
+      %%-
+      %%
+      \isblocked(\ceu{\AwaitExt(\Id)},n)
+      &=\mathit{true}\\[-1\jot]
+      %%
+      \isblocked(\ceu{\AwaitInt(\Id)},n)
+      &=\mathit{true}\\[-1\jot]
+      %%
+      \isblocked(\ceu{\Every{e}\ {p}},n)
+      &=\mathit{true}\\[-1\jot]
+      %%
+      \isblocked(\ceu{\CanRun(m)},n)
+      &=(n>m)\\[-1\jot]
+      %%
+      \isblocked(\ceu{\Fin{p}},n)
+      &=\mathit{true}\\[-1\jot]
+      %%
+      \isblocked(\ceu{p;\,q},n)
+      &=\isblocked(p,n)\\[-1\jot]
+      %%
+      \isblocked(\ceu{p\AtLoop{q}},n)
+      &=\isblocked(p,n)\\[-1\jot]
+      %%
+      \isblocked(\ceu{p\AtAnd{q}},n)
+      &=\isblocked(p,n)\land\isblocked(q,n)\\[-1\jot]
+      %%
+      \isblocked(\ceu{p\AtOr{q}},n)
+      &=\isblocked(p,n)\land\isblocked(q,n)\\[-1\jot]
+      %%
+      \isblocked(\_,n)
+      &=\mathit{false}\enspace
+        (\ceu{\Mem},\ceu{\EmitInt},\ceu{\Break},\\[-1\jot]
+      &\quad\ceu{\Ifelse{}{}},\ceu{\Loop},\ceu{\And},\ceu{\Or},\ceu{\Nop})
+        \\[1\jot]
+      %%
+      %%-
+      \intertext{\llap{(iii)~}Function~$\clear$:}
+      %%-
+      %%
+      \clear(\ceu{\AwaitExt(e)})
+      &=\ceu{\Nop}\\[-1\jot]
+      %%
+      \clear(\ceu{\AwaitInt(e)})
+      &=\ceu{\Nop}\\[-1\jot]
+      %%
+      \clear(\ceu{\Every{e}\ p})
+      %%
+      &=\ceu{\Nop}\\[-1\jot]
+      %%
+      \clear(\ceu{\CanRun(n)})
+      &=\ceu{\Nop}\\[-1\jot]
+      %%
+      \clear(\ceu{\Fin{p}})
+      &=p\\[-1\jot]
+      %%
+      \clear(\ceu{p;\,q})
+      &=\clear(p)\\[-1\jot]
+      %%
+      \clear(\ceu{p\AtLoop{q}})
+      &=\clear(p)\\[-1\jot]
+      %%
+      \clear(\ceu{p\AtAnd{q}})
+      &=\ceu{\clear(p);\,\clear(q)}\\[-1\jot]
+      %%
+      \clear(\ceu{p\AtOr{q}})
+      &=\ceu{\clear(p);\,\clear(q)}\\[-1\jot]
+      %%
+      \clear(\_)
+      &=\bot\enspace
+        (\ceu{\Mem},\ceu{\EmitInt},\ceu{\Break},\\[-1\jot]
+      &\quad\ceu{\Ifelse{}{}},\ceu{\Loop},\ceu{\And},\ceu{\Or},\ceu{\Nop})
+    \end{align*}}
+\end{gather*}
+\vskip-2\belowdisplayskip
+\caption{%
+  (i)~Function~$\bcast$ awakes awaiting trails matching the event by
+  converting~$\ceu{\protect\AwaitExt}$ and~$\ceu{\protect\AwaitInt}$
+  to~$\ceu{\protect\Nop}$ expressions, and by unwinding $\ceu{\protect\Every}$
+  expressions.
+  %%
+  \enspace(ii)~Predicate~$\isblocked$ is true only if all branches in parallel
+  are blocked waiting for events, for finalization clauses, or for certain
+  stack levels.
+  %%
+  \enspace(iii)~Function~$\clear$ extracts~$\ceu{\protect\Fin}$ expressions in
+  parallel and put their bodies in sequence.
 }
-\caption{
-The function $bcast$ awakes awaiting trails matching the event by converting
-$awaitExt$ and $awaitInt$ to $@nop$ expressions, and by unwinding $every$
-expressions.
 \label{fig.bcast}
-}
-\end{figure}
-
-\begin{figure}
-{\small
-\begin{align*}
-  isblocked(n, \1 awaitExt(id)) &= true                                   \\
-  isblocked(n, \1 awaitInt(id)) &= true                                   \\
-  isblocked(n, \1 every~e~p)    &= true                                   \\
-  isblocked(n, \1 @canrun(m))   &= (n > m)                                \\
-  isblocked(n, \1 fin~p)        &= true                                   \\
-  isblocked(n, \1 p~;~q)        &= isblocked(n,p)                         \\
-  isblocked(n, \1 p~@loop~q)    &= isblocked(n,p)                         \\
-  isblocked(n, \1 p~@and~q)     &= isblocked(n,p) \wedge isblocked(n,q)   \\
-  isblocked(n, \1 p~@or~q)      &= isblocked(n,p) \wedge isblocked(n,q)   \\
-  isblocked(n, \1 \_)           &= false \2 (mem,emitInt,break,if,        \\
-                                & \5\5\5\1 loop,and,or,@nop)   %\\
-\end{align*}
-}
-\caption{
-The predicate $isblocked$ is true only if all branches in parallel are blocked
-waiting for events, finalization clauses, or certain stack levels.
 \label{fig.isblocked}
-}
+\label{fig.clear}
 \end{figure}
 
-\begin{figure}[b]
-{\small
-\begin{align*}
-  clear( awaitExt(e) ) &= @nop                  \\
-  clear( awaitInt(e) ) &= @nop                  \\
-  clear( every~e~p )   &= @nop                  \\
-  clear( @canrun(n) )  &= @nop                  \\
-  clear( fin~p )       &= p                     \\
-  clear( p~;~q )       &= clear(p)              \\
-  clear( p~@loop~q )   &= clear(p)              \\
-  clear( p~@and~q )    &= clear(p)~;~clear(q)   \\
-  clear( p~@or~q )     &= clear(p)~;~clear(q)   \\
-  clear( \_ )          &= \bot \2 (mem,emitInt,break,if, \\
-                                  & \5\5 loop,and,or,@nop) %\\ 
-\end{align*}
-}
-\caption{
-The function $clear$ extracts $fin$ expressions in parallel and put their 
-bodies in sequence.
-\label{fig.formal.clear}
-}
-\end{figure}
+%-
+% {\small
+% \begin{align*}
+%   bcast(e, awaitExt(e)) &= @nop                         \\
+%   bcast(e, awaitInt(e)) &= @nop                         \\
+%   bcast(e, every~e~p)   &= p;~every~e~p                 \\
+%   bcast(e, @canrun(n))  &= @canrun(n)                   \\
+%   bcast(e, fin~p)       &= fin~p                        \\
+%   bcast(e, p~;~q)       &= bcast(e,p)~;~q               \\
+%   bcast(e, p~@loop~q)   &= bcast(e,p)~@loop~q           \\
+%   bcast(e, p~@and~q)    &= bcast(e,p)~@and~bcast(e,q)   \\
+%   bcast(e, p~@or~q)     &= bcast(e,p)~@or~bcast(e,q)    \\
+%   bcast(e, \_)          &= \bot \2 (mem,emitInt,break,if,  \\
+%                                  & \5\5 loop,and,or,@nop) %\\
+% \end{align*}
+% }
+%-
+
+%
+%-
+% {\small
+% \begin{align*}
+%   isblocked(n, \1 awaitExt(id)) &= true                                   \\
+%   isblocked(n, \1 awaitInt(id)) &= true                                   \\
+%   isblocked(n, \1 every~e~p)    &= true                                   \\
+%   isblocked(n, \1 @canrun(m))   &= (n > m)                                \\
+%   isblocked(n, \1 fin~p)        &= true                                   \\
+%   isblocked(n, \1 p~;~q)        &= isblocked(n,p)                         \\
+%   isblocked(n, \1 p~@loop~q)    &= isblocked(n,p)                         \\
+%   isblocked(n, \1 p~@and~q)     &= isblocked(n,p) \wedge isblocked(n,q)   \\
+%   isblocked(n, \1 p~@or~q)      &= isblocked(n,p) \wedge isblocked(n,q)   \\
+%   isblocked(n, \1 \_)           &= false \2 (mem,emitInt,break,if,        \\
+%                                 & \5\5\5\1 loop,and,or,@nop)   %\\
+% \end{align*}
+% }
+%-
+
+%-
+% {\small
+% \begin{align*}
+%   clear( awaitExt(e) ) &= @nop                  \\
+%   clear( awaitInt(e) ) &= @nop                  \\
+%   clear( every~e~p )   &= @nop                  \\
+%   clear( @canrun(n) )  &= @nop                  \\
+%   clear( fin~p )       &= p                     \\
+%   clear( p~;~q )       &= clear(p)              \\
+%   clear( p~@loop~q )   &= clear(p)              \\
+%   clear( p~@and~q )    &= clear(p)~;~clear(q)   \\
+%   clear( p~@or~q )     &= clear(p)~;~clear(q)   \\
+%   clear( \_ )          &= \bot \2 (mem,emitInt,break,if, \\
+%                                   & \5\5 loop,and,or,@nop) %\\ 
+% \end{align*}
+% }
+%-
 
 \subsection{Determinism, Termination, and Memory Bounds}
 
