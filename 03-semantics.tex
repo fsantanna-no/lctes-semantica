@@ -24,6 +24,7 @@ imperative languages).
 \subsection{Abstract Syntax}
 \label{sec.sem.syntax}
 
+%-
 % \begin{lstlisting}[
 %   %numbers=left,
 %   basicstyle=\ttfamily\footnotesize,
@@ -53,6 +54,7 @@ imperative languages).
 %       $|$ @canrun(n)                 (can run on stack level `n')
 %       $|$ @nop                       (terminated expression)
 % \end{lstlisting}
+%-
 
 The grammar below defines the syntax of a subset of \CEU that is
 sufficient to describe all semantic peculiarities of the language.
@@ -171,13 +173,19 @@ reactions.
 The transition rules map a triple with a program~$p$, a stack level~$n$, and an
 emitted event~$e$ to a modified triple as follows:
 \[
-  \<p, n, e>\to\<p',n',e'>
+  \<p,n,e>\trans\<p',n',e'>\,,
 \]
 where~$p,p'\in\P$ are abstract-language programs, $n,n'\in\N$ are
 nonnegative integers representing the current stack level,
-and~$e,e'\in\E\cup\{\nil\}$ are the events emitted before and after
-the transition, both possibly the empty event~($\nil$).
+and~$e,e'\in\E\cup\{\nil\}$ are the events emitted before and after the
+transition (both possibly the empty event~$\nil$).
 
+We will refer to the triples on the left-hand and right-hand sides of
+symbol~$\to$ as \emph{descriptions} (denoted~$\delta$).  The triple on the
+left-hand side of symbol~$\to$ is called the \emph{input description}, and
+the triple on its right-hand side is called the \emph{output description}.
+
+%-
 % \begin{align*}
 % p, p' &\in\P
 %     && (program~as~described~in~Listing~\ref{lst.formal.syntax})
@@ -188,109 +196,142 @@ the transition, both possibly the empty event~($\nil$).
 % e, e' &\in\E \cup \{\epsilon\}
 %     && (emitted~event,~possibly~none)
 % \end{align*}
-%
-At the beginning of a reaction to an input event~$id$, the triple is
-initialized at stack level $0$ ($n=0$) and with the emitted event
+%-
+
+At the beginning of a reaction to an input event~$id$, the input description is
+initialized with stack level~0 ($n=0$) and with the emitted event
 ($e=id$).
 %, but \code{emitInt} expressions can increase the stack level.
 At the end of a reaction, after an arbitrary but finite number of transitions,
-the triple will block with a (possibly) modified program~$p'$, at stack
-level~$0$, and with no event emitted~$(\nil)$:
-%
+the last output description will block with a (possibly) modified program~$p'$, at stack
+level~0, and with no event emitted~($\nil$):
 \[
-  \<p,0,e>\xrightarrow{*}\<p',0,\nil>
+  \<p,0,e>\mathbin{\trans[*]}\<p',0,\nil>\,.
 \]
 
 We distinguish between two types of transition rules:
-    \emph{outermost} transitions $\OUT$ and
-    \emph{nested} transitions $\NST$.
+    \emph{outermost} transitions $\out$ and
+    \emph{nested} transitions $\nst$\,.
 
-The $\OUT$ rules \textbf{push} and \textbf{pop} are non-recursive definitions
+\subsubsection*{Outermost transitions}
+
+The~$\out$ rules \R{push} and \R{pop} are non-recursive definitions
 that only apply to the program as a whole and manipulate the stack level:
-%
-{ \setlength{\jot}{20pt}
-\begin{eqnarray*}
-& \frac
-    { \DS e \neq \epsilon }
-%   -----------------------------------------------------------
-    { \DS \LL p,n,e \RR \OUT \LL bcast(p),n+1,\epsilon \RR }
-    & \textbf{(push)}   \\
-%%%
-& \frac
-    { \DS n>0, \2 ((p=@nop) \vee isblocked(n,p)) }
-%   -----------------------------------------------------------
-    { \DS \LL p,n,\epsilon \RR \OUT \LL p,n-1,\epsilon \RR }
-    & \textbf{(pop)}    \\
-%%%
-%& \LL p,0,\epsilon \RR \1\xrightarrow\1 \bot
-    %& \textbf{(end)}    %\\
-\end{eqnarray*}
-}
-%
-Rule \textbf{push} matches whenever there is an emitted event in the triple,
+\begin{align*}
+  &\AxiomC{$e\ne\nil$}
+  \UnaryInfC{$\<p,n,e>\out\<\bcast(p,e),n+1,\nil>$}
+  \DisplayProof
+  \Rtag{push}\\[2\jot]
+  %%
+  &\AxiomC{$n>0$}
+  \AxiomC{$\ceu{p=\Nop}\vee\isblocked(p,n)$}
+  \BinaryInfC{$\<p,n,\nil>\out\<p,n-1,\nil>$}
+  \DisplayProof
+  \Rtag{pop}
+\end{align*}
+
+%-
+% { \setlength{\jot}{20pt}
+% \begin{eqnarray*}
+% & \frac
+%     { \DS e \neq \epsilon }
+% %   -----------------------------------------------------------
+%     { \DS \LL p,n,e \RR \OUT \LL bcast(p),n+1,\epsilon \RR }
+%     & \textbf{(push)}   \\
+% %%%
+% & \frac
+%     { \DS n>0, \2 ((p=@nop) \vee isblocked(n,p)) }
+% %   -----------------------------------------------------------
+%     { \DS \LL p,n,\epsilon \RR \OUT \LL p,n-1,\epsilon \RR }
+%     & \textbf{(pop)}    \\
+% %%%
+% %& \LL p,0,\epsilon \RR \1\xrightarrow\1 \bot
+%     %& \textbf{(end)}    %\\
+% \end{eqnarray*}
+% }
+%-
+
+Rule \R{push} matches whenever there is an emitted event in the input
+description,
 and instantly broadcasts the event to the program, which means
-    (a) awaking active \code{await} expressions altogether (see $bcast(p)$ in
+    (a)~awaking active $\ceu{\AwaitExt}$ or $\ceu{\AwaitInt}$ expressions altogether (see function~$\bcast$ in
         Figure~\ref{fig.bcast}),
-    (b) creating a nested reaction by increasing the stack level, and, at the same time,
-    (c) consuming the event ($e$ becomes $\epsilon$).
+    (b)~creating a nested reaction by increasing the stack level, and, at the same time, and
+    (c)~consuming the event ($e$ becomes~$\nil$).
 %
-Note that rule \textbf{push} is the only one in the semantics that matches an
+Rule \R{push} is the only rule in the semantics that matches an
 emitted event and also immediately consumes it.
-%
-The rule \textbf{pop} only decreases the stack level, not affecting the
-program, and only applies if the program is blocked (see $isblocked(n,p)$ in
+
+Rule \R{pop} only decreases the stack level, not affecting the
+program, and only applies if the program is blocked (see function~$\isblocked$ in
 Figure~\ref{fig.isblocked}).
-This condition ensures that an \code{emit} only resumes after its internal
+This condition ensures that an $\ceu{\EmitInt}$ only resumes after its internal
 reaction completes and blocks, as discussed in Section~\ref{sec.ceu.evts}.
 
-Note that at the beginning of a reaction, an event $ext$ is emitted, which
+At the beginning of the reaction, an external event is emitted, which
 will trigger rule \textbf{push}, which will immediately raise the stack level
-to $1$.
-Since rule \textbf{pop} is the only to decrease the stack level and only
-applies to a blocked or terminated program, the semantics guarantees that a
-reaction only terminates with a blocked program at stack level $0$.
+to~1.
+At the end of the reaction, the program will block or terminate and
+successive applications of
+rule~\R{pop} will eventually lead to a description containing this
+same program at stack level~0.
+(Rule \R{pop} is the only rule that decreases the stack level.)
 
-The $\NST$ rules are recursive definitions but do not affect the stack level
-and never have an emitted event as a precondition:
+\subsubsection*{Nested transitions}
+
+The~$\nst$ rules are recursive definitions with the following general
+format:
+\[
+\<p,n,\nil>\nst\<p',n,e>.
+\]
 %
+%-
+% \begin{align*}
+% \LL p, n,\epsilon \RR &\NST
+% \LL p',n,e        \RR
+%     & \textbf{(rule-inner)}
+% \end{align*}
+%-
+%
+Nested transitions do not affect the stack level and never have an emitted
+event as a precondition.  The distinction between~$\out$ and~$\nst$ prevents
+rules \R{push} and \R{pop} from matching and, consequently, from
+inadvertently modifying the current stack level before the nested reaction
+is complete.
+
+A complete reaction consists of the following series of transitions:
 \begin{align*}
-\LL p, n,\epsilon \RR &\NST
-\LL p',n,e        \RR
-    & \textbf{(rule-inner)}
+  \<p,0,e_\ext>\out[push]\<p_1,1,\nil>
+  \Big[\null\nst[*]\null\out\null\Big]\!\!\ast
+  \null\nst[*]\null\out[pop]\<p',0,\nil>\,.
 \end{align*}
 %
-The distinction between $\OUT$ and $\NST$ prevents rules \textbf{push} and
-\textbf{pop} to match and inadvertently modify the current stack level before
-completing a nested reaction.
+%-
+% \begin{align*}
+% a) &\5\5
+%     \LL p,0,ext \RR
+%         \1\xrightarrow[out]{push}\1
+%     \LL q,1,\epsilon \RR
+% \\
+% b) &\5\5 \1[ \1\xrightarrow[in]{*}\1
+%     \LL r,i,e \RR
+%         \1\xrightarrow[out]\1
+%     \LL s,j,\epsilon \RR \1]*
+% \\
+% c) &\5\5 \1\xrightarrow[in]{*}\1
+%     \LL t,k,\epsilon \RR
+%         \1\xrightarrow[out]{pop}\1
+%     \LL u,0,\epsilon \RR
+% \end{align*}
+%-
 %
-A complete reaction behaves as follows:
-%
-\begin{align*}
-a) &\5\5
-    \LL p,0,ext \RR
-        \1\xrightarrow[out]{push}\1
-    \LL q,1,\epsilon \RR
-\\
-b) &\5\5 \1[ \1\xrightarrow[in]{*}\1
-    \LL r,i,e \RR
-        \1\xrightarrow[out]\1
-    \LL s,j,\epsilon \RR \1]*
-\\
-c) &\5\5 \1\xrightarrow[in]{*}\1
-    \LL t,k,\epsilon \RR
-        \1\xrightarrow[out]{pop}\1
-    \LL u,0,\epsilon \RR
-\end{align*}
-%
-First (case $a$), a $\xrightarrow[out]{push}$ starts a nested reaction at level
-$1$.
-Then (case $b$), a series of alternations between $\NST$ transitions and a
-single $\OUT$ transition represent, respectively, nested reactions and stack
-operations.
-Finally (case $c$), at some point, a $\xrightarrow[out]{pop}$ decrements the
-stack level to $0$ and terminates the reaction.
+First, a~$\out[push]$ starts a nested reaction at level~1.
+Then, a series of alternations between zero or more~$\nst$ transitions (nested reactions) and a
+single~$\out$ transition (stack operation) takes place.
+Finally, a last~$\out[pop]$ transition decrements the
+stack level to~0 and terminates the reaction.
 
-The $\NST$ transition rules for primary expressions are as follows:
+The~$\nst$ transition rules for atomic expressions are defined as follows:
 %
 { \setlength{\jot}{20pt}
 \begin{align*}

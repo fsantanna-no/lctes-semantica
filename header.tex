@@ -2,6 +2,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{mathtools}
 \usepackage{enumerate}
+\usepackage{etoolbox}
 
 % Céu.
 \newcommand{\CEU}{\textsc{C\'{e}u}\xspace}
@@ -54,6 +55,7 @@
 \makeatletter
 \def\@int{\mathit{int}}
 \def\@ext{\mathit{ext}}
+\let\ext\@ext
 \def\@ceuop#1{\mathop{\normalfont{\texttt{#1}}}}%
 \def\@ceubin#1{\mathbin{\normalfont{\texttt{#1}}}}%
 \def\ceu{\protect\@ceu}
@@ -79,4 +81,48 @@
   \ensuremath{#1}\ignorespaces
   \egroup
 }
+\makeatother
+
+% Proof trees (also used to typeset the rules).
+\usepackage{bussproofs}
+\def\labelSpacing{0em}
+\def\ScoreOverhang{0em}
+%\EnableBpAbbreviations
+
+% Functions bcast, isblocked and clear.
+\let\op\operatorname
+\def\bcast{\op{\mathit{bcast}}}
+\def\isblocked{\op{\mathit{isblocked}}}
+
+% Rule labels.
+\makeatletter
+\def\@R#1{{\bfseries#1}}
+\def\Rtag#1{\tag{\@R{#1}}\label{R:#1}}
+\def\R#1{%
+  \ifthenelse{\equal{#1}{push}}%
+  {\hyperref[R:#1]{\@R{push}}}%
+ {\ifthenelse{\equal{#1}{pop}}%
+  {\hyperref[R:#1]{\@R{pop}}}%
+  {\abort}%
+}}
+\makeatother
+
+% Rule arrows.
+\makeatletter
+\newcommand{\@trans}[2][]{%
+  \setbox0=\hbox{$\mathord{\longrightarrow}$}%
+  \mathbin{%
+    \mathrlap{\longrightarrow}%
+    \notblank{#2}{%
+      \rlap{\raisebox{-3pt}{\makebox[\wd0][c]{\ensuremath{\scriptstyle#2}}}}%
+    }{}%
+    \notblank{#1}{%
+      \rlap{\raisebox{5pt}{\makebox[\wd0][c]{\ensuremath{\scriptstyle#1}}}}%
+    }{}%
+    \phantom{\longrightarrow}%
+  }%
+}
+\newcommand{\trans}[1][]{\@trans[#1]{}}
+\newcommand{\out}[1][]{\@trans[#1]{\mathit{out\,\;}}}
+\newcommand{\nst}[1][]{\@trans[#1]{\mathit{nst\,\;}}}
 \makeatother
