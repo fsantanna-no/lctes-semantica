@@ -1,3 +1,182 @@
 \appendix
 \section{Proofs}
 \label{sec.proofs}
+
+\theoremstyle{remark}
+\newtheorem{case}{Case}
+\makeatletter
+\newtheoremstyle{subcase}%
+  {\thm@preskip\topsep \divide\thm@preskip\tw@}% space above
+  {\thm@postskip\thm@preskip}% space below
+  {\addtolength{\@totalleftmargin}{\parindent}%
+    \addtolength{\linewidth}{-\parindent}%
+    \parshape 1 \parindent \linewidth
+    \normalfont}% body font
+  {\z@}% indent amount
+  {\itshape}% head font
+  {.}% punctuation after head
+  {.5em}% spacing after head
+  {}% head spec
+\makeatletter
+\theoremstyle{subcase}
+\newtheorem{subcase}{Case}
+\numberwithin{subcase}{case}
+\AtBeginEnvironment{proof}{\setcounter{case}{0}}
+\AtBeginEnvironment{case}{\setcounter{subcase}{0}}
+
+% \makeatletter
+% \newcommand\case{\@startsection{paragraph}{4}{\z@}%
+%    {-.5\baselineskip \@plus -2\p@ \@minus -.2\p@}%
+%    {-3.5\p@}%
+%    {\@parfont}}
+%  \def\@parfont{\itshape}
+% \makeatother
+
+\begin{lemma}
+  If~$\delta\out\delta_1$ and~$\delta\out\delta_2$ then~$\delta_1=\delta_2$.
+\end{lemma}
+\begin{proof}
+  The lemma is vacuously true if~$\delta$ cannot be advanced by~$\out$
+  transitions.  Suppose that is not the case and let~$\delta=\<p,n,e>$,
+  $\delta_1=\<p_1,n_1,e_1>$ and~$\delta_2=\<p_2,n_2,e_2>$.  Then, there are
+  two possibilities.
+  \begin{case}
+    $e\ne\nil$.  Both transitions are applications of rule~\R{push}.
+    Hence~$p_1=p_2=\bcast(p,e)$, $n_1=n_2=n+1$, and~$e_1=e_2=\nil$.
+  \end{case}
+  \begin{case}
+    $e=\nil$.  Both transitions are applications of rule~\R{pop}.
+    Hence~$p_1=p_2=p$, $n_1=n_2=n-1$, and~$e_1=e_2=\nil$.\qedhere
+  \end{case}
+\end{proof}
+
+\begin{lemma}
+  If~$\delta\nst\delta_1$ and~$\delta\nst\delta_2$ then~$\delta_1=\delta_2$.
+\end{lemma}
+\begin{proof}
+  By induction on the structure of~$\nst$ derivations.  The lemma is
+  vacuously true if~$\delta$ cannot be advanced by~$\nst$ transitions.
+  Suppose that is not the case and let~$\delta=\<p,n,e>$,
+  $\delta_1=\<p_1,n_1,e_1>$ and~$\delta_2=\<p_2,n_2,e_2>$.  Then, by the
+  hypothesis of the lemma, there are derivations~$\pi_1$ and~$\pi_2$ such
+  that
+  \begin{align*}
+    \pi_1&\Vdash\<p,n,e>\nst\<p_1,n_1,e_1>\\
+    \pi_2&\Vdash\<p,n,e>\nst\<p_2,n_2,e_2>
+  \end{align*}
+  i.e., the conclusion of~$\pi_1$ is~$\<p,n,e>\nst\<p_1,n_1,e_1>$ and the
+  conclusion of~$\pi_2$ is~$\<p,n,e>\nst\<p_2,n_2,e_2>$.
+
+  By the definition of transition~$\nst$, we have that~$e=\nil$ and
+  $n_1=n_2=n$.  It remains to be shown that~$p_1=p_2$ and~$e_1=e_2$.
+
+  Depending on the structure of program~$p$, the following~11 cases are
+  possible.  (Note that~$p$ cannot be an~$\ceu{\AwaitExt}$,
+  $\ceu{\AwaitInt}$, $\ceu{\Break}$, $\ceu{\Every}$, $\ceu{\Fin}$,
+  or~$\ceu{\Nop}$ expression as there are no~$\nst$ rules to transition such
+  programs.)
+
+  \begin{case}
+    $p=\ceu{\Mem(\Id)}$.
+    %%
+    Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{mem}, i.e.,
+    their conclusions are obtained by an application of this rule.
+    Hence~$p_1=p_2=\ceu{\Nop}$ and~$e_1=e_2=\nil$.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{\EmitInt(e')}$.
+    %%
+    Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{emit-int}.
+    Hence~$p_1=p_2=\ceu{\CanRun(n)}$ and~$e_1=e_2=e'$.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{\CanRun(n)}$.
+    %%
+    Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{can-run}.
+    Hence~$p_1=p_2=\ceu{\Nop}$ and~$e_1=e_2=\nil$.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{\Ifelse{\Mem(\Id)}{p'}{p''}}$.  There are two subcases.
+    \begin{subcase}
+      $\eval(\ceu{\Mem(\Id)})$ is true.
+      %%
+      Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{if-true}.
+      Hence~$p_1=p_2=p'$ and~$e_1=e_2=\nil$.
+    \end{subcase}
+    \begin{subcase}
+      $\eval(\ceu{\Mem(\Id)})$ is false.
+      %%
+      Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{if-false}.
+      Hence~$p_1=p_2=p''$ and~$e_1=e_2=\nil$.
+    \end{subcase}
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{p';\,p''}$.  There are three subcases.
+    \begin{subcase}
+      $p'=\ceu{\Nop}$.
+      %%
+      Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{seq-nop}.
+    \end{subcase}
+    \begin{subcase}
+      $p'=\ceu{\Break}$.
+      %%
+      Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{seq-brk}.
+    \end{subcase}
+    \begin{subcase}
+      $p'\ne\ceu{\Nop},\ceu{\Break}$.
+      %%
+      Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{seq-adv}.
+    \end{subcase}
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{\Loop{p'}}$.
+    %%
+    Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{loop-expd}.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{p'\AtLoop{p''}}$.  There are three subcases.
+    \begin{subcase}
+      $p'=\ceu{\Nop}$.
+      %%
+      Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{loop-nop}.
+    \end{subcase}
+    \begin{subcase}
+      $p'=\ceu{\Break}$.
+      %%
+      Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{loop-break}.
+    \end{subcase}
+    \begin{subcase}
+      $p'\ne\ceu{\Nop},\ceu{\Break}$.
+      %%
+      Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{loop-adv}.
+    \end{subcase}
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{p'\And{p''}}$.
+    %%
+    Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{and-expd}.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{p'\AtAnd{p''}}$.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{p'\Or{p''}}$.
+    %%
+    Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{and-expd}.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{p'\AtOr{p''}}$.
+  \end{case}
+\end{proof}
+
+% LocalWords:  subcase subcases
