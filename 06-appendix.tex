@@ -2,8 +2,6 @@
 \section{Proofs}
 \label{sec.proofs}
 
-\theoremstyle{remark}
-\newtheorem{case}{Case}
 \makeatletter
 \newtheoremstyle{subcase}%
   {\thm@preskip\topsep \divide\thm@preskip\tw@}% space above
@@ -17,12 +15,34 @@
   {.}% punctuation after head
   {.5em}% spacing after head
   {}% head spec
+\newtheoremstyle{subsubcase}%
+  {\thm@preskip\topsep \divide\thm@preskip\tw@}% space above
+  {\thm@postskip\thm@preskip}% space below
+  {\addtolength{\@totalleftmargin}{\parindent}%
+    \addtolength{\linewidth}{-\parindent}%
+    \parshape 1 2\parindent \linewidth
+    \normalfont}% body font
+  {\z@}% indent amount
+  {\itshape}% head font
+  {.}% punctuation after head
+  {.5em}% spacing after head
+  {}% head spec
 \makeatletter
+
+\theoremstyle{remark}
+\newtheorem{case}{Case}
+
 \theoremstyle{subcase}
 \newtheorem{subcase}{Case}
 \numberwithin{subcase}{case}
+
+\theoremstyle{subsubcase}
+\newtheorem{subsubcase}{Case}
+\numberwithin{subsubcase}{subcase}
+
 \AtBeginEnvironment{proof}{\setcounter{case}{0}}
 \AtBeginEnvironment{case}{\setcounter{subcase}{0}}
+\AtBeginEnvironment{subcase}{\setcounter{subsubcase}{0}}
 
 % \makeatletter
 % \newcommand\case{\@startsection{paragraph}{4}{\z@}%
@@ -32,7 +52,8 @@
 %  \def\@parfont{\itshape}
 % \makeatother
 
-\begin{lemma}
+
+\begin{lemma}\label{lem.det-out}
   If~$\delta\out\delta_1$ and~$\delta\out\delta_2$ then~$\delta_1=\delta_2$.
 \end{lemma}
 \begin{proof}
@@ -50,7 +71,8 @@
   \end{case}
 \end{proof}
 
-\begin{lemma}
+
+\begin{lemma}\label{lem.det-nst}
   If~$\delta\nst\delta_1$ and~$\delta\nst\delta_2$ then~$\delta_1=\delta_2$.
 \end{lemma}
 \begin{proof}
@@ -79,22 +101,22 @@
   \begin{case}
     $p=\ceu{\Mem(\Id)}$.
     %%
-    Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{mem}, i.e.,
-    their conclusions are obtained by an application of this rule.
+    Then derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{mem},
+    i.e., their conclusions are obtained by an application of this rule.
     Hence~$p_1=p_2=\ceu{\Nop}$ and~$e_1=e_2=\nil$.
   \end{case}
 
   \begin{case}
     $p=\ceu{\EmitInt(e')}$.
     %%
-    Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{emit-int}.
+    Then~$\pi_1$ and~$\pi_2$ are instances of~\R{emit-int}.
     Hence~$p_1=p_2=\ceu{\CanRun(n)}$ and~$e_1=e_2=e'$.
   \end{case}
 
   \begin{case}
     $p=\ceu{\CanRun(n)}$.
     %%
-    Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{can-run}.
+    Then~$\pi_1$ and~$\pi_2$ are instances of~\R{can-run}.
     Hence~$p_1=p_2=\ceu{\Nop}$ and~$e_1=e_2=\nil$.
   \end{case}
 
@@ -103,13 +125,13 @@
     \begin{subcase}
       $\eval(\ceu{\Mem(\Id)})$ is true.
       %%
-      Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{if-true}.
+      Then~$\pi_1$ and~$\pi_2$ are instances of~\R{if-true}.
       Hence~$p_1=p_2=p'$ and~$e_1=e_2=\nil$.
     \end{subcase}
     \begin{subcase}
       $\eval(\ceu{\Mem(\Id)})$ is false.
       %%
-      Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{if-false}.
+      Then~$\pi_1$ and~$\pi_2$ are instances of~\R{if-false}.
       Hence~$p_1=p_2=p''$ and~$e_1=e_2=\nil$.
     \end{subcase}
   \end{case}
@@ -119,24 +141,35 @@
     \begin{subcase}
       $p'=\ceu{\Nop}$.
       %%
-      Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{seq-nop}.
+      Then~$\pi_1$ and~$\pi_2$ are instances of~\R{seq-nop}.
+      Hence~$p_1=p_2=p''$ and~$e_1=e_2=\nil$.
     \end{subcase}
     \begin{subcase}
       $p'=\ceu{\Break}$.
       %%
-      Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{seq-brk}.
+      Then~$\pi_1$ and~$\pi_2$ are instances of~\R{seq-brk}.
+      Hence~$p_1=p_2=\ceu{\Break}$ and~$e_1=e_2=\nil$.
     \end{subcase}
     \begin{subcase}
       $p'\ne\ceu{\Nop},\ceu{\Break}$.
       %%
-      Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{seq-adv}.
+      Then~$\pi_1$ and~$\pi_2$ are instances of~\R{seq-adv}.
+      Thus there are derivations~$\pi_1'$ and~$\pi_2'$ such that
+      \begin{align*}
+        \pi_1'&\Vdash\<p',n,\nil>\nst\<p_1',n,e_1'>\\
+        \pi_2'&\Vdash\<p',n,\nil>\nst\<p_2',n,e_2'>
+      \end{align*}
+      for some~$p_1',p_2'\in\P$ and~$e_1',e_2'\in\E$.  By induction
+      hypothesis, $p_1'=p_2'$ and~$e_1'=e_2'$.
+      Hence~$p_1=\ceu{p_1';p''}=\ceu{p_2';p''}=p_2$ and~$e_1=e_1'=e_2'=e_2$.
     \end{subcase}
   \end{case}
 
   \begin{case}
     $p=\ceu{\Loop{p'}}$.
     %%
-    Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{loop-expd}.
+    Then~$\pi_1$ and~$\pi_2$ are instances of~\R{loop-expd}.
+    Hence~$p_1=p_2=\ceu{p'\AtLoop{p'}}$ and~$e_1=e_2=\nil$.
   \end{case}
 
   \begin{case}
@@ -144,38 +177,149 @@
     \begin{subcase}
       $p'=\ceu{\Nop}$.
       %%
-      Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{loop-nop}.
+      Then~$\pi_1$ and~$\pi_2$ are instances of~\R{loop-nop}.
+      Hence~$p_1=p_2=\ceu{\Loop{p''}}$ and~$e_1=e_2=\nil$.
     \end{subcase}
     \begin{subcase}
       $p'=\ceu{\Break}$.
       %%
-      Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{loop-break}.
+      Then~$\pi_1$ and~$\pi_2$ are instances of~\R{loop-break}.
+      Hence~$p_1=p_2=\ceu{\Nop}$ and~$e_1=e_2=\nil$.
     \end{subcase}
     \begin{subcase}
       $p'\ne\ceu{\Nop},\ceu{\Break}$.
       %%
-      Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{loop-adv}.
+      Then~$\pi_1$ and~$\pi_2$ are instances of~\R{loop-adv}.
+      Thus there are derivations~$\pi_1'$ and~$\pi_2'$ such that
+      \begin{align*}
+        \pi_1'&\Vdash\<p',n,\nil>\nst\<p_1',n,e_1'>\\
+        \pi_2'&\Vdash\<p',n,\nil>\nst\<p_2',n,e_2'>
+      \end{align*}
+      for some~$p_1',p_2'\in\P$ and~$e_1',e_2'\in\E$.  By induction
+      hypothesis, $p_1'=p_2'$ and~$e_1'=e_2'$.
+      Hence~$p_1=\ceu{p_1'\AtLoop{p''}}=\ceu{p_2'\AtLoop{p''}}=p_2$
+      and~$e_1=e_1'=e_2'=e_2$.
     \end{subcase}
   \end{case}
 
   \begin{case}
     $p=\ceu{p'\And{p''}}$.
     %%
-    Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{and-expd}.
+    Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-expd}.
+    Hence~$p_1=p_2=\ceu{{p'}\And{(\CanRun(n);\,p'')}}$ and~$e_1=e_2=\nil$.
   \end{case}
 
   \begin{case}
-    $p=\ceu{p'\AtAnd{p''}}$.
+    $p=\ceu{p'\AtAnd{p''}}$.  There are two subcases.
+    \begin{subcase}
+      $\isblocked(p',n)$~is false.  There are three subcases.
+      \begin{subsubcase}
+        $p'=\ceu{\Nop}$.
+        %%
+        Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-nop1}.
+        Hence~$p_1=p_2=p''$ and~$e_1=e_2\nil$.
+      \end{subsubcase}
+      \begin{subsubcase}\label{lem.det-nst.and-brk1}
+        $p'=\ceu{\Break}$.
+        %%
+        Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-brk1}.
+        Hence~$p_1=p_2=\ceu{\clear(p'');\Break}$ and~$e_1=e_2\nil$.
+      \end{subsubcase}
+      \begin{subsubcase}\label{lem.det-nst.and-adv1}
+        $p'\ne\ceu{\Nop},\ceu{\Break}$.
+        %%
+        Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-adv1}.
+        Thus there are derivations~$\pi_1'$ and~$\pi_2'$ such that
+        \begin{align*}
+          \pi_1'&\Vdash\<p',n,\nil>\nst\<p_1',n,e_1'>\\
+          \pi_2'&\Vdash\<p',n,\nil>\nst\<p_2',n,e_2'>
+        \end{align*}
+        for some~$p_1',p_2'\in\P$ and~$e_1',e_2'\in\E$.  By induction
+        hypothesis, $p_1'=p_2'$ and~$e_1'=e_2'$.
+        Hence~$p_1=\ceu{{p_1'}\And{p''}}=\ceu{{p_2'}\And{p''}}=p_2$
+        and~$e_1=e_1'=e_2'=e_2$.
+      \end{subsubcase}
+    \end{subcase}
+    \begin{subcase}
+      $\isblocked(p',n)$~is true.  There are three subcases.
+      \begin{subsubcase}
+        $p''=\ceu{\Nop}$.
+        %%
+        Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-nop2}.
+        Hence~$p_1=p_2=p'$ and~$e_1=e_2\nil$.
+      \end{subsubcase}
+      \begin{subsubcase}\label{lem.det-nst.and-brk2}
+        $p''=\ceu{\Break}$.
+        %%
+        Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-brk2}.
+        Hence~$p_1=p_2=\ceu{\clear(p');\Break}$ and~$e_1=e_2=\nil$.
+      \end{subsubcase}
+      \begin{subsubcase}\label{lem.det-nst.and-adv2}
+        $p''\ne\ceu{\Nop},\ceu{\Break}$.
+        %%
+        Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-adv2}.  Thus there
+        are derivations~$\pi_1''$ and~$\pi_2''$ such that
+        \begin{align*}
+          \pi_1''&\Vdash\<p'',n,\nil>\nst\<p_1'',n,e_1''>\\
+          \pi_2''&\Vdash\<p'',n,\nil>\nst\<p_2'',n,e_2''>
+        \end{align*}
+        for some~$p_1'',p_2''\in\P$ and~$e_1'',e_2''\in\E$.  By induction
+        hypothesis, $p_1''=p_2''$ and~$e_1''=e_2''$.
+        Hence~$p_1=\ceu{{p'}\And{p_1''}}=\ceu{{p'}\And{p_2''}}=p_2$
+        and~$e_1=e_1''=e_2''=e_2$.
+      \end{subsubcase}
+    \end{subcase}
   \end{case}
 
   \begin{case}
     $p=\ceu{p'\Or{p''}}$.
     %%
-    Derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{and-expd}.
+    Then~$\pi_1$ and~$\pi_2$ are instances of~\R{or-expd}.
+    Hence~$p_1=p_2=\ceu{{p'}\Or{(\CanRun(n);\,p'')}}$ and~$e_1=e_2=\nil$.
   \end{case}
 
   \begin{case}
-    $p=\ceu{p'\AtOr{p''}}$.
+    $p=\ceu{p'\AtOr{p''}}$.  There are two subcases.
+    \begin{subcase}
+      $\isblocked(p',n)$~is false.  There are three subcases.
+      \begin{subsubcase}
+        $p'=\ceu{\Nop}$.
+        %%
+        Then~$\pi_1$ and~$\pi_2$ are instances of~\R{or-nop1}.
+        Hence~$p_1=p_2=\clear(p'')$ and~$e_1=e_2\nil$.
+      \end{subsubcase}
+      \begin{subsubcase}
+        $p'=\ceu{\Break}$.
+        %%
+        Similar to Case~\ref{lem.det-nst.and-brk1}.
+      \end{subsubcase}
+      \begin{subsubcase}
+        $p'\ne\ceu{\Nop},\ceu{\Break}$.
+        %%
+        Similar to Case~\ref{lem.det-nst.and-adv1}.
+      \end{subsubcase}
+    \end{subcase}
+    \begin{subcase}
+      $\isblocked(p',n)$~is true.  There are three subcases.
+      \begin{subsubcase}
+        $p''=\ceu{\Nop}$.
+        %%
+        Then~$\pi_1$ and~$\pi_2$ are instances of~\R{or-nop1}.
+        Hence~$p_1=p_2=\clear(p')$ and~$e_1=e_2\nil$.
+      \end{subsubcase}
+      \begin{subsubcase}
+        $p''=\ceu{\Break}$.
+        %%
+        Similar to Case~\ref{lem.det-nst.and-brk2}.
+      \end{subsubcase}
+      \begin{subsubcase}
+        $p''\ne\ceu{\Nop},\ceu{\Break}$.
+        %%
+        Similar to Case~\ref{lem.det-nst.and-adv2}.
+        %%
+        \qedhere
+      \end{subsubcase}
+    \end{subcase}
   \end{case}
 \end{proof}
 
