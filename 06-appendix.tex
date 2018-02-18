@@ -72,6 +72,32 @@
 \end{proof}
 
 
+\begin{theorem}\label{thm.det-out-pop-n}
+  If~$\delta\out[n]\delta_1$ and~$\delta\out[n]\delta_2$
+  then~$\delta_1=\delta_2$.
+\end{theorem}
+\begin{proof}
+  By induction on~$n$.
+  %%
+  The theorem is trivially true for~$n=0$ and follows directly from
+  Lemma~\ref{lem.det-out} for~$n=1$.  (Note that, for~$n>1$, the theorem is
+  vacuously true for~$\outpush$ transitions.  By the format of
+  rules~\R{push} and~\R{pop}, transitions~$\outpush$ cannot be applied more
+  than once in a row and cannot occur after a~$\outpop$ transition.)
+
+  Suppose
+  \[
+    \delta\out[1]\delta_1'\out[n-1]\delta_1
+    \quad\text{and}\quad
+    \delta\out[1]\delta_2'\out[n-1]\delta_2,
+  \]
+  for some~$n>1$ and~$\delta_1'$, $\delta_2'\in\Delta$.
+  %%
+  By Lemma~\ref{lem.det-out}, $\delta_1'=\delta_2'$.  By induction
+  hypothesis, $\delta_1=\delta_2$.\qedhere
+\end{proof}
+
+
 \begin{lemma}\label{lem.det-nst}
   If~$\delta\nst\delta_1$ and~$\delta\nst\delta_2$ then~$\delta_1=\delta_2$.
 \end{lemma}
@@ -321,6 +347,15 @@
       \end{subsubcase}
     \end{subcase}
   \end{case}
+\end{proof}
+
+
+\begin{theorem}\label{thm.det-nst-n}
+  If~$\delta\nst[n]\delta_1$ and~$\delta\nst[n]\delta_2$
+  then~$\delta_1=\delta_2$.
+\end{theorem}
+\begin{proof}
+  Similar to the proof of Theorem~\ref{thm.det-out-pop-n}.
 \end{proof}
 
 % LocalWords:  subcase subcases
