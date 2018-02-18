@@ -301,9 +301,9 @@ is complete.
 
 A complete reaction consists of the following series of transitions:
 \begin{align*}
-  \<p,0,e_\ext>\out[push]\<p_1,1,\nil>
+  \<p,0,e_\ext>\outpush\<p_1,1,\nil>
   \Big[\null\nst[*]\null\out\null\Big]\!\!\ast
-  \null\nst[*]\null\out[pop]\<p',0,\nil>\,.
+  \null\nst[*]\null\outpop\<p',0,\nil>\,.
 \end{align*}
 %
 %-
@@ -325,10 +325,10 @@ A complete reaction consists of the following series of transitions:
 % \end{align*}
 %-
 %
-First, a~$\out[push]$ starts a nested reaction at level~1.
+First, a~$\outpush$ starts a nested reaction at level~1.
 Then, a series of alternations between zero or more~$\nst$ transitions (nested reactions) and a
 single~$\out$ transition (stack operation) takes place.
-Finally, a last~$\out[pop]$ transition decrements the
+Finally, a last~$\outpop$ transition decrements the
 stack level to~0 and terminates the reaction.
 
 The~$\nst$ transition rules for atomic expressions are defined as follows:
