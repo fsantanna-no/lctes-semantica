@@ -20,11 +20,11 @@
   $\delta_1=\<p_1,n_1,e_1>$ and~$\delta_2=\<p_2,n_2,e_2>$.  Then, there are
   two possibilities.
   \begin{case}
-    $e\ne\nil$.  Both transitions are applications of rule~\R{push}.
+    $e\ne\nil$.  Both transitions are applications of~\R{push}.
     Hence~$p_1=p_2=\bcast(p,e)$, $n_1=n_2=n+1$, and~$e_1=e_2=\nil$.
   \end{case}
   \begin{case}
-    $e=\nil$.  Both transitions are applications of rule~\R{pop}.
+    $e=\nil$.  Both transitions are applications of~\R{pop}.
     Hence~$p_1=p_2=p$, $n_1=n_2=n-1$, and~$e_1=e_2=\nil$.\qedhere
   \end{case}
 \end{proof}
@@ -319,11 +319,11 @@
 
 \begin{definition}\label{def.Hnst}
   A description~$\delta=\<p,n,e>$ is \emph{nested-irre\-ducible}
-  iff~$p=\ceu{\Nop},\ceu{\Break}$ or~$\isblocked(p,n)$~is true.
-  Nested-irreducible descriptions serve as normal forms for~$\nst$
-  transitions: their program~$p$ and stack-level~$n$ embody the result of an
-  exhaustive number of~$\nst$ transitions.  We will write~$\delta_\Hnst$ to
-  indicate that description~$\delta$ is nested-irreducible.
+  iff~$e\ne\nil$ or~$p=\ceu{\Nop},\ceu{\Break}$ or~$\isblocked(p,n)$~is
+  true.  Nested-irreducible descriptions serve as normal forms for~$\nst$
+  transitions: they embody the result of an exhaustive number of~$\nst$
+  transitions.  We will write~$\delta_\Hnst$ to indicate that
+  description~$\delta$ is nested-irreducible.
 \end{definition}
 
 The next lemma justifies the use of qualifier ``irreducible'' in
@@ -335,7 +335,9 @@ Definition~\ref{def.Hnst}.
   no~$\delta_\Hnst''$ such that~$\delta\nst[i]\delta''_\Hnst$.
 \end{lemma}
 \begin{proof}
-  By contradiction.  Let~$\delta\nst[n]\delta'_\Hnst$, for some~$n\ge0$.
+  By contradiction on the hypothesis that there is such~$i$.
+  %%
+  Let~$\delta\nst[n]\delta'_\Hnst$, for some~$n\ge0$.
   There are two cases.
   \begin{case}\label{lem.irr-nst-n-case1}
     Suppose there are~$i>n$ and~$\delta''_\Hnst$ such
@@ -361,6 +363,229 @@ Definition~\ref{def.Hnst}.
   \end{case}
 \end{proof}
 
+The next lemma establishes some basic properties of sequences of~$\nst$
+transitions.
+
+
+\begin{lemma}\label{lem.props-nst-n}
+  If~$\<p_1,n,e>\nst[n]\<p_1',n,e'>$ then, for any~$p_2$:
+  \begin{enumerate}[(a)]
+  \item\label{lem.props-nst-n.a}
+    $\<\ceu{p_1;\,p_2},n,e>\nst[n]\<p_1';p_2,n,e'>$;
+    %%
+  \item\label{lem.props-nst-n.b}
+    $\<\ceu{p_1\AtLoop{p_2}},n,e>\nst[n]\<\ceu{p_1'\AtLoop{p_2}},n,e'>$;
+    %%
+  \item\label{lem.props-net-n.c}
+    $\<\ceu{{p_1}\AtAnd{p_2}},n,e>\nst[n]\<\ceu{{p_1'}\AtAnd{p_2}},n,e'>$;
+    %%
+  \item\label{lem.props-net-n.d}
+    $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[n]\<\ceu{{p_1}'\AtOr{p_2}},n,e'>$.
+  \end{enumerate}
+\end{lemma}
+\begin{proof}
+  By induction on~$n$.
+  %%
+  \begin{enumerate}[(a)]
+  \item The lemma is trivially true for~$n=0$, as~$p_1=p_1'$, and follows
+    directly from~\R{seq-adv} for~$n=1$.  Suppose
+    \begin{equation}
+      \label{lem.props-nst-n.a.eq1}
+      \<p_1,n,e>\nst[1]\<p_1'',n,e''>\nst[n-1]\<p_1',n,e'>,
+    \end{equation}
+    for some~$n>1$.  Then~$\<p_1'',n,e''>$ is not nested-irreducible, i.e.,
+    $e=\nil$ and~$p\ne{\ceu{\Nop},\ceu{\Break}}$ and~$\isblocked(p_1,n)$ is
+    false.  By~\eqref{lem.props-nst-n.a.eq1} and by~\R{seq-adv},
+    \begin{equation}
+      \label{lem.props-nst-n.a.eq2}
+      \<\ceu{p_1;\,p_2},n,e>\nst[1]\<\ceu{p_1'';\,p_2},n,e''>.
+    \end{equation}
+    From~\eqref{lem.props-nst-n.a.eq1}, by induction hypothesis,
+    \begin{equation}
+      \label{lem.props-nst-n.a.eq3}
+      \<\ceu{p_1'';\,p_2},n,e''>\nst[n-1]\<\ceu{p_1';\,p_2},n,e'>.
+    \end{equation}
+    From~\eqref{lem.props-nst-n.a.eq2} and~\eqref{lem.props-nst-n.a.eq3},
+    \[
+      \<\ceu{p_1;\,p_2},n,e>\nst[n]\<\ceu{p_1';\,p_2},n,e'>.
+    \]
+  \end{enumerate}
+\end{proof}
+
+
+\begin{theorem}\label{thm.term-nst-*}
+  For any~$\delta$ there is a~$\delta'_\Hnst$ such
+  that~$\delta\nst[*]\delta'_\Hnst$.
+\end{theorem}
+\begin{proof}
+  By induction on the structure of programs.
+  %%
+  Let~$\delta=\<p,n,\nil>$.  The theorem is trivially true if~$\delta$ is
+  nested-irreducible itself, as by definition~$\delta\nst[0]\delta_\Hnst$.
+  Suppose that is not the case.  Then, depending on the structure of~$p$,
+  there are~11 possibilities.  In each one of them, we show that
+  such~$\delta'_\Hnst$ indeed exists.
+  \begin{case}
+    $p=\ceu{\Mem(\Id)}$.
+    %%
+    Then, by~\R{mem},
+    \[
+      \<\ceu{\Mem(\Id)},n,\nil>\nst[1]\<\ceu{\Nop},n,\nil>_\Hnst\,.
+    \]
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{\EmitInt(e)}$.
+    %%
+    Then, by~\R{emit-int},
+    \[
+      \<\ceu{\EmitInt(e)},n,\nil>\nst[1]\<\ceu{\CanRun(n)},n,e>_\Hnst\,.
+    \]
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{\CanRun(n)}$.
+    %%
+    Then, by~\R{can-run},
+    \[
+      \<\ceu{\CanRun(n)},n,\nil>\nst[1]\<\ceu{\Nop},n,\nil>_\Hnst\,.
+    \]
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{\Ifelse{\Mem(\Id)}{p'}{p''}}$.
+    %%
+    There are two subcases.
+    \begin{subcase}
+      $\eval(\ceu{\Mem(\Id)})$~is true.
+      %%
+      Then, by~\R{if-true} and by the induction hypothesis, there is
+      a~$\delta'$ such that
+      \begin{align*}
+        \<\ceu{\Ifelse{\Mem(\Id)}{p'}{p''}},n,\nil>
+        &\nst[1]\<p',n,e>\\
+        &\nst[*]\delta'_\Hnst\,.
+      \end{align*}
+    \end{subcase}
+    \begin{subcase}
+      $\eval(\ceu{\Mem(\Id)})$~is false.
+      %%
+      Then, by~\R{if-false} and by the induction hypothesis, there is
+      a~$\delta'$ such that
+      \begin{align*}
+        \<\ceu{\Ifelse{\Mem(\Id)}{p'}{p''}},n,\nil>
+        &\nst[1]\<p'',n,e>\\
+        &\nst[*]\delta'_\Hnst\,.
+      \end{align*}
+    \end{subcase}
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{p';\,p''}$.
+    %%
+    There are three subcases.
+    \begin{subcase}
+      \label{thm.term-nst-*.seq-nop}
+      $p'=\ceu{\Nop}$.
+      %%
+      Then, by~\R{seq-nop} and by the induction hypothesis, there is
+      a~$\delta'$ such that
+      \[
+        \<\ceu{\Nop;\,p''},n,\nil>
+        \nst[1]\<p'',n,e>\nst[*]\delta'_\Hnst\,.
+      \]
+    \end{subcase}
+    \begin{subcase}
+      \label{thm.term-nst-*.seq-brk}
+      $p'=\ceu{\Break}$.
+      %%
+      Then, by~\R{seq-brk} and by the induction hypothesis, there is
+      a~$\delta'$ such that
+      \[
+        \<\ceu{\Break;\,p''},n,\nil>
+        \nst[1]\<p'',n,e>
+        \nst[*]\delta'_\Hnst\,.
+      \]
+    \end{subcase}
+    \begin{subcase}
+      $p'\ne\ceu{\Nop},\ceu{\Break}$.
+      %%
+      By induction hypothesis, there are~$p_1'$ and~$e$ such that
+      \[
+        \<p',n,\nil>\nst[*]\<p_1',n,e>_\Hnst\,.
+      \]
+      And by item~\eqref{lem.props-nst-n.a} of Lemma~\ref{lem.props-nst-n},
+      \begin{equation}
+        \label{thm.term-nst-*.seq-adv.eq1}
+        \<\ceu{p';\,p''},n,\nil>\nst[*]\<\ceu{p_1';\,p''},n,e>.
+      \end{equation}
+      It remains to be shown that~$\<\ceu{p_1';\,p''},n,e>$ is indeed
+      nested-irreducible.  There are four possibilities following from the
+      fact that the simpler~$\<p_1',n,e>$ is nested-irreducible.
+      %%
+      \begin{subsubcase}
+        $e\ne\nil$.  Then, by the definition of~$\Hnst$,
+        description~$\<\ceu{p_1';\,p''},n,e>$ is also nested-irreducible.
+      \end{subsubcase}
+      \begin{subsubcase}
+        $p_1'=\ceu{\Nop}$.
+        %%
+        From~\eqref{thm.term-nst-*.seq-adv.eq1},
+        \[
+          \<\ceu{p';\,p''},n,\nil>\nst[*]\<\ceu{\Nop;\,p''},n,e>\,.
+        \]
+        From this point on, this case is similar to
+        Case~\ref{thm.term-nst-*.seq-nop}.
+      \end{subsubcase}
+      \begin{subsubcase}
+        $p_1'=\ceu{\Break}$.
+        %%
+        From~\eqref{thm.term-nst-*.seq-adv.eq1},
+        \[
+          \<\ceu{p';\,p''},n,\nil>\nst[*]\<\ceu{\Break;\,p''},n,e>\,.
+        \]
+        From this point on, this case is similar to
+        Case~\ref{thm.term-nst-*.seq-brk}.
+      \end{subsubcase}
+      \begin{subsubcase}
+        $\isblocked(p_1',n)$ is true.
+        %%
+        Then, by definition,
+        \[
+          \isblocked(\ceu{p_1';p''},n)=\isblocked(p_1',n)=\mathit{true}\,.
+        \]
+        Thus, from~\eqref{thm.term-nst-*.seq-adv.eq1} and by the
+        definition~$\Hnst$, $\<\ceu{p_1';\,p''},n,e>$~is also
+        nested-irreducible.
+      \end{subsubcase}
+    \end{subcase}
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{\Loop{p'}}$.
+    %%
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{p'\AtLoop{p''}}$.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{{p'}\And{p''}}$.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{{p'}\AtAnd{p''}}$.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{{p'}\Or{p''}}$.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{{p'}\AtOr{p''}}$.
+  \end{case}
+\end{proof}
 
 
 % LocalWords:  subcase subcases
