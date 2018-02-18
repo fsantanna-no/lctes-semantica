@@ -2,48 +2,6 @@
 \section{Proofs}
 \label{sec.proofs}
 
-\makeatletter
-\newtheoremstyle{subcase}%
-  {\thm@preskip\topsep \divide\thm@preskip\tw@}% space above
-  {\thm@postskip\thm@preskip}% space below
-  {\addtolength{\@totalleftmargin}{\parindent}%
-    \addtolength{\linewidth}{-\parindent}%
-    \parshape 1 \parindent \linewidth
-    \normalfont}% body font
-  {\z@}% indent amount
-  {\itshape}% head font
-  {.}% punctuation after head
-  {.5em}% spacing after head
-  {}% head spec
-\newtheoremstyle{subsubcase}%
-  {\thm@preskip\topsep \divide\thm@preskip\tw@}% space above
-  {\thm@postskip\thm@preskip}% space below
-  {\addtolength{\@totalleftmargin}{\parindent}%
-    \addtolength{\linewidth}{-\parindent}%
-    \parshape 1 2\parindent \linewidth
-    \normalfont}% body font
-  {\z@}% indent amount
-  {\itshape}% head font
-  {.}% punctuation after head
-  {.5em}% spacing after head
-  {}% head spec
-\makeatletter
-
-\theoremstyle{remark}
-\newtheorem{case}{Case}
-
-\theoremstyle{subcase}
-\newtheorem{subcase}{Case}
-\numberwithin{subcase}{case}
-
-\theoremstyle{subsubcase}
-\newtheorem{subsubcase}{Case}
-\numberwithin{subsubcase}{subcase}
-
-\AtBeginEnvironment{proof}{\setcounter{case}{0}}
-\AtBeginEnvironment{case}{\setcounter{subcase}{0}}
-\AtBeginEnvironment{subcase}{\setcounter{subsubcase}{0}}
-
 % \makeatletter
 % \newcommand\case{\@startsection{paragraph}{4}{\z@}%
 %    {-.5\baselineskip \@plus -2\p@ \@minus -.2\p@}%
@@ -80,8 +38,8 @@
   By induction on~$n$.
   %%
   The theorem is trivially true for~$n=0$ and follows directly from
-  Lemma~\ref{lem.det-out} for~$n=1$.  (Note that, for~$n>1$, the theorem is
-  vacuously true for~$\outpush$ transitions.  By the format of
+  Lemma~\ref{lem.det-out} for~$n=1$.  (Note that for~$n>1$ the theorem is
+  vacuously true for~$\outpush$ transitions---by the format of
   rules~\R{push} and~\R{pop}, transitions~$\outpush$ cannot be applied more
   than once in a row and cannot occur after a~$\outpop$ transition.)
 
@@ -357,5 +315,52 @@
 \begin{proof}
   Similar to the proof of Theorem~\ref{thm.det-out-pop-n}.
 \end{proof}
+
+
+\begin{definition}\label{def.Hnst}
+  A description~$\delta=\<p,n,e>$ is \emph{nested-irre\-ducible}
+  iff~$p=\ceu{\Nop},\ceu{\Break}$ or~$\isblocked(p,n)$~is true.
+  Nested-irreducible descriptions serve as normal forms for~$\nst$
+  transitions: their program~$p$ and stack-level~$n$ embody the result of an
+  exhaustive number of~$\nst$ transitions.  We will write~$\delta_\Hnst$ to
+  indicate that description~$\delta$ is nested-irreducible.
+\end{definition}
+
+The next lemma justifies the use of qualifier ``irreducible'' in
+Definition~\ref{def.Hnst}.
+
+
+\begin{lemma}\label{lem.irr-nst-n}
+  If~$\delta\nst[n]\delta_\Hnst'$ then, for all~$i\ne{n}$, there is
+  no~$\delta_\Hnst''$ such that~$\delta\nst[i]\delta''_\Hnst$.
+\end{lemma}
+\begin{proof}
+  By contradiction.  Let~$\delta\nst[n]\delta'_\Hnst$, for some~$n\ge0$.
+  There are two cases.
+  \begin{case}\label{lem.irr-nst-n-case1}
+    Suppose there are~$i>n$ and~$\delta''_\Hnst$ such
+    that~$\delta\nst[i]\delta''$.
+    %%
+    Then, by definition of~$\nst[i]$,
+    \begin{equation}\label{lem.irr-nst-n-eq1}
+      \delta\nst[n]\delta'\nst[n+1]\delta_1'\nst[n+2]\cdots\nst[i]\delta''.
+    \end{equation}
+    Since~$\delta'=\<p',n,e'>$ is nested-irreducible,
+    $p=\ceu{\Nop},\ceu{\Break}$ or~$\isblocked(p',n)$.  In either case, by
+    the definition of~$\nst$, there is no~$\delta_1'$ such
+    that~$\delta'\nst[1]\delta_1'$, which
+    contradicts~\eqref{lem.irr-nst-n-eq1}.  Therefore, no such~$i$ can
+    exist.
+  \end{case}
+  \begin{case}
+    Suppose there are~$0\le{i}<n$ and~$\delta''_\Hnst$ such
+    that~$\delta\nst[i]\delta''$.  Then since~$n>i$, by
+    Case~\ref{lem.irr-nst-n-case1}, $\delta'$~could not exist, which is
+    absurd.  Therefore, the assumption that there is such~$i$ is
+    false.\qedhere
+  \end{case}
+\end{proof}
+
+
 
 % LocalWords:  subcase subcases

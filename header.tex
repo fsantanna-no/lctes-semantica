@@ -85,6 +85,49 @@
 }
 \makeatother
 
+% Proof by cases.
+\theoremstyle{remark}
+\newtheorem{case}{Case}
+\AtBeginEnvironment{proof}{\setcounter{case}{0}}
+%
+\makeatletter
+\newtheoremstyle{subcase}%
+  {\thm@preskip\topsep \divide\thm@preskip\tw@}% space above
+  {\thm@postskip\thm@preskip}%                   space below
+  {\addtolength{\@totalleftmargin}{\parindent}%
+    \addtolength{\linewidth}{-\parindent}%
+    \parshape 1 \parindent \linewidth
+    \normalfont}% body font
+  {\z@}%          indent amount
+  {\itshape}%     head font
+  {.}%            punctuation after head
+  {.5em}%         spacing after head
+  {}%             head spec
+\makeatother
+\theoremstyle{subcase}
+\newtheorem{subcase}{Case}
+\numberwithin{subcase}{case}
+\AtBeginEnvironment{case}{\setcounter{subcase}{0}}
+%
+\makeatletter
+\newtheoremstyle{subsubcase}%
+  {\thm@preskip\topsep \divide\thm@preskip\tw@}% space above
+  {\thm@postskip\thm@preskip}%                   space below
+  {\addtolength{\@totalleftmargin}{\parindent}%
+    \addtolength{\linewidth}{-\parindent}%
+    \parshape 1 2\parindent \linewidth
+    \normalfont}% body font
+  {\z@}%          indent amount
+  {\itshape}%     head font
+  {.}%            punctuation after head
+  {.5em}%         spacing after head
+  {}%             head spec
+\makeatletter
+\theoremstyle{subsubcase}
+\newtheorem{subsubcase}{Case}
+\numberwithin{subsubcase}{subcase}
+\AtBeginEnvironment{subcase}{\setcounter{subsubcase}{0}}
+
 % Proof trees (used to typeset proofs and rules).
 \usepackage{bussproofs}
 \def\labelSpacing{0em}
@@ -111,17 +154,27 @@
   \mathbin{%
     \mathrlap{\longrightarrow}%
     \notblank{#2}{%
-      \rlap{\raisebox{-3pt}{\makebox[\wd0][c]{\ensuremath{\scriptstyle#2}}}}%
+      \rlap{\raisebox{-3pt}%
+        {\makebox[\wd0][c]{\ensuremath{\scriptstyle#2}}}}%
     }{}%
     \notblank{#1}{%
-      \rlap{\raisebox{5pt}{\makebox[\wd0][c]{\ensuremath{\scriptstyle#1}}}}%
+      \rlap{\raisebox{5pt}%
+        {\makebox[\wd0][c]{\ensuremath{\scriptstyle#1}}}}%
     }{}%
     \phantom{\longrightarrow}%
   }%
 }
 \newcommand{\trans}[1][]{\@trans[#1]{}}
-\newcommand{\out}[1][]{\@trans[#1]{\mathit{out\,\;}}}
+\newcommand{\@out}{\mathit{out}}
+\newcommand{\@nst}{\mathit{nst}}
+\newcommand{\out}[1][]{\@trans[#1]{\@out\,\;}}
 \newcommand{\outpush}{\out[\mathit{push}]}
 \newcommand{\outpop}{\out[\mathit{pop}]}
-\newcommand{\nst}[1][]{\@trans[#1]{\mathit{nst\,\;}}}
+\newcommand{\nst}[1][]{\@trans[#1]{\@nst\,\;}}
+\makeatother
+
+% Irreducible predicate.
+\makeatletter
+\newcommand{\Hout}{{\#_{\@out}}}
+\newcommand{\Hnst}{{\#\@nst}}
 \makeatother
