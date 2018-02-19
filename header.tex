@@ -1,8 +1,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{mathtools}
 \usepackage{enumerate}
 \usepackage{etoolbox}
+\usepackage{mathtools}
 
 % Céu.
 \newcommand{\CEU}{\textsc{C\'{e}u}\xspace}
@@ -85,48 +85,51 @@
 }
 \makeatother
 
-% Proof by cases.
-\theoremstyle{remark}
-\newtheorem{case}{Case}
-\AtBeginEnvironment{proof}{\setcounter{case}{0}}
-%
+% Proof environments: assumptions and proof-by-cases.
 \makeatletter
-\newtheoremstyle{subcase}%
-  {\thm@preskip\topsep \divide\thm@preskip\tw@}% space above
-  {\thm@postskip\thm@preskip}%                   space below
-  {\addtolength{\@totalleftmargin}{\parindent}%
-    \addtolength{\linewidth}{-\parindent}%
-    \parshape 1 \parindent \linewidth
-    \normalfont}% body font
-  {\z@}%          indent amount
-  {\itshape}%     head font
-  {.}%            punctuation after head
-  {.5em}%         spacing after head
-  {}%             head spec
+\AtEndPreamble{%
+  \theoremstyle{definition}
+  \newtheorem{assumption}[theorem]{Assumption}
+  %%
+  \theoremstyle{remark}
+  \newtheorem{case}{Case}
+  \AtBeginEnvironment{proof}{\setcounter{case}{0}}
+  %%
+  \newtheoremstyle{subcase}%
+    {\thm@preskip\topsep \divide\thm@preskip\tw@}% space above
+    {\thm@postskip\thm@preskip}%                   space below
+    {\addtolength{\@totalleftmargin}{\parindent}%
+      \addtolength{\linewidth}{-\parindent}%
+      \parshape 1 \parindent \linewidth
+      \normalfont}% body font
+    {\z@}%          indent amount
+    {\itshape}%     head font
+    {.}%            punctuation after head
+    {.5em}%         spacing after head
+    {}%             head spec
+  \theoremstyle{subcase}
+  \newtheorem{subcase}{Case}
+  \numberwithin{subcase}{case}
+  \AtBeginEnvironment{case}{\setcounter{subcase}{0}}
+  %%
+  \newtheoremstyle{subsubcase}%
+    {\thm@preskip\topsep \divide\thm@preskip\tw@}% space above
+    {\thm@postskip\thm@preskip}%                   space below
+    {\addtolength{\@totalleftmargin}{\parindent}%
+      \addtolength{\linewidth}{-\parindent}%
+      \parshape 1 2\parindent \linewidth
+      \normalfont}% body font
+    {\z@}%          indent amount
+    {\itshape}%     head font
+    {.}%            punctuation after head
+    {.5em}%         spacing after head
+    {}%             head spec
+  \theoremstyle{subsubcase}
+  \newtheorem{subsubcase}{Case}
+  \numberwithin{subsubcase}{subcase}
+  \AtBeginEnvironment{subcase}{\setcounter{subsubcase}{0}}
+}
 \makeatother
-\theoremstyle{subcase}
-\newtheorem{subcase}{Case}
-\numberwithin{subcase}{case}
-\AtBeginEnvironment{case}{\setcounter{subcase}{0}}
-%
-\makeatletter
-\newtheoremstyle{subsubcase}%
-  {\thm@preskip\topsep \divide\thm@preskip\tw@}% space above
-  {\thm@postskip\thm@preskip}%                   space below
-  {\addtolength{\@totalleftmargin}{\parindent}%
-    \addtolength{\linewidth}{-\parindent}%
-    \parshape 1 2\parindent \linewidth
-    \normalfont}% body font
-  {\z@}%          indent amount
-  {\itshape}%     head font
-  {.}%            punctuation after head
-  {.5em}%         spacing after head
-  {}%             head spec
-\makeatletter
-\theoremstyle{subsubcase}
-\newtheorem{subsubcase}{Case}
-\numberwithin{subsubcase}{subcase}
-\AtBeginEnvironment{subcase}{\setcounter{subsubcase}{0}}
 
 % Proof trees (used to typeset proofs and rules).
 \usepackage{bussproofs}
@@ -134,11 +137,14 @@
 \def\ScoreOverhang{0em}
 
 % Functions bcast, clear, eval, and isblocked.
+\makeatletter
 \let\op\operatorname
 \def\bcast{\op{\mathit{bcast}}}
 \def\clear{\op{\mathit{clear}}}
 \def\eval{\op{\mathit{eval}}}
 \def\isblocked{\op{\mathit{isblocked}}}
+\def\isblockedext{\op{\mathit{isblocked}}_\@ext}
+\makeatother
 
 % Rule labels.
 \makeatletter
