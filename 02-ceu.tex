@@ -173,7 +173,7 @@ in a subsequent reaction.
 
 \begin{figure}[b]
 \centering
-\includegraphics[width=\columnwidth]{tick}
+\includegraphics[width=\columnwidth]{tick_min}
 \caption{The discrete notion of time in \CEU.}
 \label{fig.ticks}
 \end{figure}
@@ -200,11 +200,11 @@ postponed to execute at~\code{B-2}.
 Event~\code{C} also occurs during~\code{A-1} but its reaction must also wait
 for~\code{B-2} to execute and so it is postponed to execute at~\code{C-3}.
 %
-Event~\code{D} occurs during an idle period and can start immediately at
-\code{D-4}.
+Finally, event~\code{D} occurs during an idle period and can start immediately
+at \code{D-4}.
 %
-Finally, two instances of event~\code{E} occur during~\code{D-4}; they are
-handled in the subsequent reactions~\code{E-5} and~\code{E-6}.
+%Finally, two instances of event~\code{E} occur during~\code{D-4}; they are
+%handled in the subsequent reactions~\code{E-5} and~\code{E-6}.
 
 Unique input events imply mutually exclusive reactions, which execute
 atomically and never overlap.
