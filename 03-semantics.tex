@@ -210,8 +210,8 @@ level~0, and with no event emitted~($\nil$):
 \]
 
 We distinguish between two types of transition rules:
-    \emph{outermost} transitions $\out$ and
-    \emph{nested} transitions $\nst$\,.
+    \emph{outermost transitions} $\out$ and
+    \emph{nested transitions} $\nst$\,.
 
 \subsubsection*{Outermost transitions}
 
@@ -510,9 +510,9 @@ The semantic rules for~$\ceu{\And}$ and~$\ceu{\Or}$ compositions
 force transitions on their left branches~$p$ to occur before their right
 branches~$q$:
 \begin{gather*}
-  \hskip-.5em
+  \hskip-.9em
   \<\ceu{p\And{q}},n,\nil>
-  \nst\<\ceu{p\And(\CanRun(n);q)},n,\nil>
+  \nst\<\ceu{p\AtAnd(\CanRun(n);q)},n,\nil>
   \Rtag{and-expd}\\[2\jot]
   %%
   \AxiomC{$\<p,n,\nil>\nst\<p',n,e>$}
@@ -527,7 +527,7 @@ branches~$q$:
   \Rtag{and-adv2}\\[2\jot]
   %%
   \<\ceu{p\Or{q}},n,\nil>
-  \nst\<\ceu{p\Or(\CanRun(n);q)},n,\nil>
+  \nst\<\ceu{p\AtOr(\CanRun(n);q)},n,\nil>
   \Rtag{or-expd}\\[2\jot]
   %%
   \AxiomC{$\<p,n,\nil>\nst\<p',n,e>$}
@@ -578,7 +578,7 @@ branches~$q$:
 % }
 %-
 
-Rules \R{and-expd} and \R{or-expd} insert a~$\ceu{\CanRun(n)}$ at the
+Rules~\R{and-expd} and~\R{or-expd} insert a~$\ceu{\CanRun(n)}$ at the
 beginning of the right branch.
 This ensures that~any $\ceu{\EmitInt}$ on the left branch, which transits to a~$\ceu{\CanRun(n)}$, still resumes before the right branch starts.
 %
