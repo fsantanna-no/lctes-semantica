@@ -1,11 +1,11 @@
 \section{Related Work}
 
-\CEU was strongly influenced by Esterel but they differ in the most fundamental 
+\CEU was strongly influenced by Esterel but they differ in the most fundamental
 aspect of the notion of time~\cite{ceu.sensys13}.
 %
-Esterel defines time as a discrete sequence of logical unit instants or 
+Esterel defines time as a discrete sequence of logical unit instants or
 ``ticks''.
-At each tick, the program reacts to an arbitrary number of simultaneous input 
+At each tick, the program reacts to an arbitrary number of simultaneous input
 events from the environment.
 %
 The presence of multiple inputs requires careful static analysis to detect and
@@ -18,6 +18,9 @@ unique input events.
 In the formal semantics, ... \fs{como isso aparece na semantica} ...
 \CEU also rejects some syntactically correct programs to avoid infinite
 execution, but with simple restrictions in the abstract syntax tree.
+%
+\rc{Acho que a restrição do break sempre estar dentro de um loop não aparece
+nem no texto nem na gramática. Não deveria ter uma menção a isso?}
 
 Another distinction is that, in Esterel, the behavior of internal and external
 events is equivalent, while in \CEU internal events introduce stack-based micro
@@ -25,6 +28,8 @@ reactions within external reactions, providing more fine-grained control for
 intra-reaction execution.
 %
 In the formal semantics, ... \fs{como isso aparece na semantica} ...
+\rc{Isso eh diferenciado na semântica pelas regras $await_{int}$ e
+  $await_{ext}$, não?}
 %
 Some variants of the Statecharts synchronous visual language also distinguish
 internal from external events~\cite{statecharts.variants}.
@@ -53,13 +58,13 @@ reordered, change the observable behavior of the program, i.e., trails that
 actually rely on deterministic scheduling~\cite{ceu.sensys13}.
 %
 Esterel is only deterministic with respect to external behavior: \emph{``the
-same sequence of inputs always produces the same sequence of 
+same sequence of inputs always produces the same sequence of
 outputs''}~\cite{esterel.primer}.
 %
-However, the execution order for operations within a reaction is 
+However, the execution order for operations within a reaction is
 non-deterministic: \emph{``if there is no control dependency, as in
 \code{(call~f1()~||~call~f2())},
-the order is unspecified and it would be an error to rely on 
+the order is unspecified and it would be an error to rely on
 it''}~\cite{esterel.primer}.
 %
 For this reason, Esterel, does not support shared-memory concurrency:

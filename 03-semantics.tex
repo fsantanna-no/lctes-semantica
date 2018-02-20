@@ -12,13 +12,13 @@
 \section{Formal Semantics}
 \label{sec.sem}
 
-In this section, we introduce a reduced syntax for \CEU and propose an 
+In this section, we introduce a reduced syntax for \CEU and propose an
 operational semantics to formally describe the behavior of its programs.
-We describe a small synchronous kernel highlighting the peculiarities of \CEU, 
+We describe a small synchronous kernel highlighting the peculiarities of \CEU,
 in particular, the stack-based execution for internal events.
 %
-For the sake of simplicity, we focus on the control aspects of the language, 
-leaving out side-effects and system calls (which behave like in conventional 
+For the sake of simplicity, we focus on the control aspects of the language,
+leaving out side-effects and system calls (which behave like in conventional
 imperative languages).
 
 \subsection{Abstract Syntax}
@@ -120,18 +120,18 @@ sufficient to describe all semantic peculiarities of the language.
 The~$\ceu{\Mem(id)}$ primitive represents all accesses, assignments, and system calls
 that affect a memory location identified by~$id$.
 %
-According to the synchronous hypothesis of \CEU, $\ceu{\Mem}$ expressions are 
+According to the synchronous hypothesis of \CEU, $\ceu{\Mem}$ expressions are
 considered to be atomic and instantaneous.
 %
-As the challenging parts of \CEU reside on its control structures, we are not 
-concerned here with a precise semantics for side effects, but only with their 
+As the challenging parts of \CEU reside on its control structures, we are not
+concerned here with a precise semantics for side effects, but only with their
 occurrences in programs.
 %
-%The special notation $nop$ is used to represent an innocuous $mem$ expression 
-%(it can be thought as a synonym for $mem(\epsilon)$, where $\epsilon$ is an 
+%The special notation $nop$ is used to represent an innocuous $mem$ expression
+%(it can be thought as a synonym for $mem(\epsilon)$, where $\epsilon$ is an
 %unused identifier).
 
-We assume that $\ceu{\Mem}$, $\ceu{\AwaitExt}$, and~$\ceu{\AwaitInt}$ and~$\ceu{\EmitInt}$ expressions do not
+We assume that $\ceu{\Mem}$, $\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$ and~$\ceu{\EmitInt}$ expressions do not
 share identifiers: any identifier is either a variable, an external event,
 or an internal event.
 
@@ -162,12 +162,12 @@ execute (by the semantic rules to be discussed).
 
 \subsection{Operational Semantics}
 
-The core of our semantics describes how a program reacts to a single external 
-input event, i.e., starting from an input event, how the program behaves and 
+The core of our semantics describes how a program reacts to a single external
+input event, i.e., starting from an input event, how the program behaves and
 becomes idle again to proceed to a subsequent reaction.
 %
-We use a set of small-step operational rules, which are built in such a way 
-that at most one transition is possible at any time, resulting in deterministic 
+We use a set of small-step operational rules, which are built in such a way
+that at most one transition is possible at any time, resulting in deterministic
 reactions.
 %
 The transition rules map a triple with a program~$p$, a stack level~$n$, and an
@@ -175,10 +175,20 @@ emitted event~$e$ to a modified triple as follows:
 \[
   \<p,n,e>\trans\<p',n',e'>\,,
 \]
-where~$p,p'\in\P$ are abstract-language programs, $n,n'\in\N$ are
+where~
+%
+\rc{Na BNF o $p$ não deveria ser $\P$~(maiúsculo) tbm?}
+%
+$p,p'\in\P$ are abstract-language programs, $n,n'\in\N$ are
 nonnegative integers representing the current stack level,
-and~$e,e'\in\E\cup\{\nil\}$ are the events emitted before and after the
-transition (both possibly the empty event~$\nil$).
+and~
+%
+\rc{Checar: Acho que o conjunto $\E$~não foi previamente definido em
+  lugar nenhum}
+%
+$e,e'\in\E\cup\{\nil\}$
+are the events emitted before and after the
+transition (both being possibly the empty event~$\nil$).
 
 We will refer to the triples on the left-hand and right-hand sides of
 symbol~$\to$ as \emph{descriptions} (denoted~$\delta$).  The triple on the
@@ -256,7 +266,7 @@ description,
 and instantly broadcasts the event to the program, which means
     (a)~awaking active $\ceu{\AwaitExt}$ or $\ceu{\AwaitInt}$ expressions altogether (see function~$\bcast$ in
         Figure~\ref{fig.bcast}),
-    (b)~creating a nested reaction by increasing the stack level, and, at the same time, and
+    (b)~creating a nested reaction by increasing the stack level, and, at the same time,
     (c)~consuming the event ($e$ becomes~$\nil$).
 %
 Rule \R{push} is the only rule in the semantics that matches an
@@ -371,7 +381,7 @@ the stack.
 Also, with the new stack level, the resulting $\ceu{\CanRun}(n)$ itself cannot
 transit (rule~\R{can-run}), providing the desired stack-based semantics for internal events.
 
-Proceeding to compound expressions, the rules for conditionals and sequences 
+Proceeding to compound expressions, the rules for conditionals and sequences
 are straightforward:
 %
 \begin{gather*}
@@ -436,9 +446,9 @@ Given that our semantics focuses on control, rules \R{if-true} and
 %
 Function~$\eval$ evaluates a given~$\ceu{\Mem}$ expression.
 %
-%Although the value here is arbitrary, it is unique in a reaction, because a 
-%given expression can execute only once within it (remember that $loops$ must 
-%contain $awaits$ which, from rule \textbf{await}, cannot awake in the same 
+%Although the value here is arbitrary, it is unique in a reaction, because a
+%given expression can execute only once within it (remember that $loops$ must
+%contain $awaits$ which, from rule \textbf{await}, cannot awake in the same
 %reaction they are reached).
 %For all other rules, we omit these values (e.g., \textbf{seq-nop}).
 
@@ -491,19 +501,19 @@ separators to properly bind breaks to their enclosing loops:
 % }
 %-
 
-When a program encounters a $\ceu{\Loop}$, it first expands its body in sequence with 
+When a program encounters a $\ceu{\Loop}$, it first expands its body in sequence with
 itself (rule \R{loop-expd}).
-Rules \R{loop-adv} and \R{loop-nop} are similar to rules 
+Rules \R{loop-adv} and \R{loop-nop} are similar to rules
 \R{seq-adv} and \R{seq-nop}, advancing the loop until a~$\ceu{\Nop}$ is reached.
 However, what follows the loop is the loop itself (rule \R{loop-nop}).
 Note that if we used ``\code{;}'' as a separator in loops, rules
 \R{loop-brk} and \R{seq-brk} would conflict.
 %
-Rule \R{loop-brk} escapes the enclosing loop, transforming everything into 
+Rule \R{loop-brk} escapes the enclosing loop, transforming everything into
 a~$\ceu{\Nop}$.
-%Rule \textbf{loop-brk} escapes the enclosing loop, transforming everything 
+%Rule \textbf{loop-brk} escapes the enclosing loop, transforming everything
 %into a $clear(p)$.
-%We cannot simply transform the loop into a $nop$ because its body may be a 
+%We cannot simply transform the loop into a $nop$ because its body may be a
 %parallel composition containing finalization blocks.
 
 The semantic rules for~$\ceu{\And}$ and~$\ceu{\Or}$ compositions
@@ -582,7 +592,7 @@ Rules~\R{and-expd} and~\R{or-expd} insert a~$\ceu{\CanRun(n)}$ at the
 beginning of the right branch.
 This ensures that~any $\ceu{\EmitInt}$ on the left branch, which transits to a~$\ceu{\CanRun(n)}$, still resumes before the right branch starts.
 %
-The deterministic behavior of the semantics relies on the \emph{isblocked} 
+The deterministic behavior of the semantics relies on the \emph{isblocked}
 predicate (see Figure~\ref{fig.isblocked}) which appears in rules
 \R{and-adv2} and \R{or-adv2}.
 These rules require the left branch~$p$ to be blocked for the
@@ -639,10 +649,10 @@ The~$\clear$ function (see Figure~\ref{fig.clear}) concatenates all
 active~$\ceu{\Fin}$ bodies of the side being aborted, so that they execute before the
 composition rejoins.
 Note that there are no transition rules for~$\ceu{\Fin}$ expressions.
-This is because once reached, a $\ceu{\Fin}$ expression halts and will only execute 
-when it is aborted by a parallel trail and is expanded by the~$\clear$ 
+This is because once reached, a $\ceu{\Fin}$ expression halts and will only execute
+when it is aborted by a parallel trail and is expanded by the~$\clear$
 function.
-%In Section~\ref{sec.formal.fins}, we show how to map a finalization block in 
+%In Section~\ref{sec.formal.fins}, we show how to map a finalization block in
 %the concrete language to a $fin$ in the formal semantics.
 %
 Note also that there is a syntactic restriction that postulates that~$\ceu{\Fin}$ bodies cannot
@@ -707,6 +717,8 @@ cannot advance in the current reaction.
 %
 However, $\ceu{\CanRun}$ expressions can still resume in lower stack indexes and will
 eventually resume in the current reaction (see rule \R{pop}).
+%
+\rc{Não entendi essa discussão}
 
 \begin{figure}[h]
 \small
@@ -895,7 +907,7 @@ eventually resume in the current reaction (see rule \R{pop}).
 %   clear( p~@and~q )    &= clear(p)~;~clear(q)   \\
 %   clear( p~@or~q )     &= clear(p)~;~clear(q)   \\
 %   clear( \_ )          &= \bot \2 (mem,emitInt,break,if, \\
-%                                   & \5\5 loop,and,or,@nop) %\\ 
+%                                   & \5\5 loop,and,or,@nop) %\\
 % \end{align*}
 % }
 %-
@@ -913,7 +925,7 @@ This can be verified by direct inspection of rules.
 Rule \textbf{push} is the only one with $e \neq \epsilon$ as a precondition,
 and is trivially mutually exclusive with all other rules.
 
-Rule \textbf{pop} either has $p=@nop$ or $isblocked(n,p)$ as preconditions.
+Rule \textbf{pop} either has $p=@nop$ or $isblocked(p,n)$ as preconditions.
 %
 Note that rule \textbf{pop} only applies syntactically to top-level
 transitions.
@@ -925,20 +937,20 @@ to apply, to $nop$ as the whole program (i.e., a $nop$ not surrounded by other
 expressions, such as in rule \textbf{seq-nop}).
 %
 For the second case, we need to show that given $\LL p,n,\epsilon \RR$, no
-$\NST$ transitions apply with $isblocked(n,p)$ and vice versa.
+$\NST$ transitions apply with $isblocked(p,n)$ and vice versa.
 Except for $@canrun$, there are no $\NST$ transitions for the other blocking
 expressions ($awaitExt$, $awaitInt$, $every$, and $fin$).
 However, considering the precondition $\LL p,n,\epsilon \RR$,
-$isblocked(n,@canrun(n))$ is false.
+$isblocked(@canrun(n),n)$ is false.
 Hence, given the preconditions for rule \textbf{pop}, no $\NST$ transitions can
 occur.
-Conversely, if a $\NST$ transition is possible, then $isblocked(n,p)$ must be
+Conversely, if a $\NST$ transition is possible, then $isblocked(p,n)$ must be
 false.
 Again, except for $@canrun$, all other transitions do not involve blocking
-expressions, hence, for these transitions, $isblocked(n,p)$ must be false.
-For rule \textbf{canrun}, a transition can only occur if the current stack
+expressions, hence, for these transitions, $isblocked(p,n)$ must be false.
+For rule \R{can-run}, a transition can only occur if the current stack
 level matches $@canrun(n)$.
-In this case, $isblocked(n,@canrun(n))$ is false.
+In this case, $isblocked(@canrun(n),n)$ is false.
 
 Finally, we need to show that $\NST$ transitions are mutually exclusive among
 themselves.
@@ -950,8 +962,8 @@ Note that most rules have unique syntactic prefixes, e.g., $(@nop~@and~q)$
 The only exceptions are rules \textbf{and-adv1} vs. \textbf{and-adv2}, and
 \textbf{or-adv1} vs. \textbf{or-adv2}.
 In both cases, we need to show that if the left branch can advance, then it
-cannot be blocked and vice-versa, i.e., that 
-$\LL p,n,\epsilon \RR \NST \LL p',n,e \RR$ and $isblocked(n,p)$ are mutually
+cannot be blocked and vice-versa, i.e., that
+$\LL p,n,\epsilon \RR \NST \LL p',n,e \RR$ and $isblocked(p,n)$ are mutually
 exclusive, which is exactly the same reasoning for rule \textbf{pop} above.
 
 \subsubsection*{Termination}
@@ -970,4 +982,4 @@ every cannot restart itself
 - no code reentrancy
     - reexecution only due to loops
     - loop reuse nested vars
-- 
+-
