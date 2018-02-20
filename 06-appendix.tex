@@ -32,10 +32,10 @@
   By induction on~$n$.
   %%
   The theorem is trivially true for~$n=0$ and follows directly from
-  Lemma~\ref{lem.det-out} for~$n=1$.  (Note that for~$n>1$ the theorem is
-  vacuously true for~$\outpush$ transitions---by the format of
-  rules~\R{push} and~\R{pop}, transitions~$\outpush$ cannot be applied more
-  than once in a row and cannot occur after a~$\outpop$ transition.)
+  Lemma~\ref{lem.det-out} for~$n=1$.  (The theorem is vacuously true
+  for~$\outpush$ transitions if~$n>1$ since, by definition,
+  $\outpush$~transitions cannot be applied more than once in a row and
+  cannot occur after a~$\outpop$ transition.)
   %%
   Suppose~$\delta\out[1]\delta_1'\out[n-1]\delta_1$
   and~$\delta\out[1]\delta_2'\out[n-1]\delta_2$, for some~$n>1$
@@ -63,8 +63,8 @@
   i.e., the conclusion of~$\pi_1$ is~$\<p,n,e>\nst\<p_1,n_1,e_1>$ and the
   conclusion of~$\pi_2$ is~$\<p,n,e>\nst\<p_2,n_2,e_2>$.
 
-  By the definition of transition~$\nst$, we have that~$e=\nil$ and
-  $n_1=n_2=n$.  It remains to be shown that~$p_1=p_2$ and~$e_1=e_2$.
+  By definition of~$\nst$, we have that~$e=\nil$ and $n_1=n_2=n$.  It
+  remains to be shown that~$p_1=p_2$ and~$e_1=e_2$.
 
   Depending on the structure of program~$p$, the following~11 cases are
   possible.  (Note that~$p$ cannot be an~$\ceu{\AwaitExt}$,
@@ -339,19 +339,18 @@ Definition~\ref{def.Hnst}.
     \begin{equation}\label{lem.irr-nst-n-eq1}
       \delta\nst[n]\delta'\nst[n+1]\delta_1'\nst[n+2]\cdots\nst[i]\delta''.
     \end{equation}
-    Since~$\delta'=\<p',n,e'>$ is nested-irreducible,
-    $p=\ceu{\Nop},\ceu{\Break}$ or~$\isblocked(p',n)$.  In either case, by
-    the definition of~$\nst$, there is no~$\delta_1'$ such
+    Since~$\delta'=\<p',n,e'>$ is nested-irreducible, $e'=\nil$
+    or~$p=\ceu{\Nop},\ceu{\Break}$ or~$\isblocked(p',n)$.  In any of these
+    cases, by the definition of~$\nst$, there is no~$\delta_1'$ such
     that~$\delta'\nst[1]\delta_1'$, which
     contradicts~\eqref{lem.irr-nst-n-eq1}.  Therefore, no such~$i$ can
     exist.
   \end{case}
   \begin{case}
-    Suppose there are~$0\le{i}<n$ and~$\delta''_\Hnst$ such
-    that~$\delta\nst[i]\delta''$.  Then since~$n>i$, by
-    Case~\ref{lem.irr-nst-n-case1}, $\delta'$~could not exist, which is
-    absurd.  Therefore, the assumption that there is such~$i$ is
-    false.\qedhere
+    Suppose there are~$i<n$ and~$\delta''_\Hnst$ such
+    that~$\delta\nst[i]\delta''$.  Then, since~$n>i$, by
+    Case~\ref{lem.irr-nst-n-case1}, $\delta'$~cannot exist, which is absurd.
+    Therefore, the assumption that there is such~$i$ is false.\qedhere
   \end{case}
 \end{proof}
 
@@ -373,6 +372,16 @@ transitions.
     %%
   \item\label{lem.props-nst-n.d}
     $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[n]\<\ceu{{p_1}'\AtOr{p_2}},n,e'>$.
+  \end{enumerate}
+  If~$\<p_2,n,e>\nst[n]\<p_2',n,e'>$, for any~$p_1$ such
+  that~$\isblocked(p_1,n)$:
+  \begin{enumerate}[(a)]
+    \setcounter{enumi}{4}
+  \item\label{lem.props-nst-n.e}
+    $\<\ceu{{p_1}\AtAnd{p_2}},n,e>\nst[n]\<\ceu{{p_1}\AtAnd{p_2'}},n,e'>$;
+    %%
+  \item\label{lem.props-nst-n.f}
+    $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[n]\<\ceu{{p_1}\AtOr{p_2'}},n,e'>$.
   \end{enumerate}
 \end{lemma}
 \begin{proof}
@@ -483,6 +492,33 @@ transitions.
     %   \nst[n]\<\ceu{{p_1'}\AtOr{p_2}},n,e'>\,.
     % \]
     %%
+
+  \item The lemma is trivially true for~$n=0$, as~$p_2=p_2'$, and follows
+    directly from~\R{and-adv2} for~$n=1$.  Suppose
+    \begin{equation}
+      \label{lem.props-nst-n.e.eq1}
+      \<p_2,n,e>\nst[1]\<p_2'',n,e''>\nst[n-1]\<p_2',n,e'>\,,
+    \end{equation}
+    for some~$n>1$.  Then~$\<p_2'',n,e''>$ is not nested-irreducible.
+    By~\eqref{lem.props-nst-n.e.eq1} and by~\R{and-adv2},
+    \begin{equation}
+      \label{lem.props-nst-n.e.eq2}
+      \<\ceu{{p_1}\AtAnd{p_2}},n,e>
+      \nst[1]\<\ceu{{p_1}\AtAnd{p_2''}},n,e''>\,.
+    \end{equation}
+    From~\eqref{lem.props-nst-n.e.eq1}, by the induction hypothesis,
+    \begin{equation}
+      \label{lem.props-nst-n.e.eq3}
+      \<\ceu{{p_1}\AtAnd{p_2''}},n,e''>
+      \nst[n-1]\<\ceu{{p_1}\AtOr{p_2'}},n,e'>\,.
+    \end{equation}
+    From~\eqref{lem.props-nst-n.e.eq2} and~\eqref{lem.props-nst-n.e.eq3},
+    \[
+      \<\ceu{{p_1}\AtAnd{p_2}},n,e>
+      \nst[n]\<\ceu{{p_1}\AtAnd{p_2'}},n,e'>\,.
+    \]
+
+  \item Similar to Case~\eqref{lem.props-nst-n.e}.\qedhere
   \end{enumerate}
 \end{proof}
 
@@ -589,12 +625,9 @@ following assumptions.
       \label{thm.term-nst-*.seq-brk}
       $p'=\ceu{\Break}$.
       %%
-      Then, by~\R{seq-brk} and by the induction hypothesis, there is
-      a~$\delta'$ such that
+      Then, by~\R{seq-brk},
       \[
-        \<\ceu{\Break;\,p''},n,\nil>
-        \nst[1]\<p'',n,e>
-        \nst[*]\delta'_\Hnst\,.
+        \<\ceu{\Break;\,p''},n,\nil>\nst[1]\<\ceu{\Break},n,\nil>_\Hnst\,.
       \]
     \end{subcase}
     \begin{subcase}
@@ -610,7 +643,7 @@ following assumptions.
         \label{thm.term-nst-*.seq-adv.eq1}
         \<\ceu{p';\,p''},n,\nil>\nst[*]\<\ceu{p_1';\,p''},n,e>\,.
       \end{equation}
-      It remains to be shown that~$\<\ceu{p_1';\,p''},n,e>$ is indeed
+      It remains to be shown that~$\<\ceu{p_1';\,p''},n,e>$ is
       nested-irreducible.  There are four possibilities following from the
       fact that the simpler~$\<p_1',n,e>$ is nested-irreducible.
       %%
@@ -653,6 +686,7 @@ following assumptions.
   \end{case}
 
   \begin{case}
+    \label{thm.term-nst-*.loop}
     $p=\ceu{\Loop{p'}}$.
     %%
     Then, by Assumption~\ref{ass.term-nst-loop},
@@ -684,31 +718,13 @@ following assumptions.
     \begin{subcase}
       $p'=\ceu{\Nop}$.
       %%
-      Then, by~\R{loop-nop} and by Assumption~\ref{ass.term-nst-loop},
-      \begin{align}
-        \label{thm.term-nst-*.loop-adv.eq1}
+      Then, by~\R{loop-nop},
+      \[
         \<\ceu{\Nop\AtLoop{p''}},n,\nil>
-        &\nst[1]\<\ceu{\Loop{p''}},n,\nil>\notag\\
-        &\nst[*]\<p_1'',n,e>\,,
-      \end{align}
-      for some~$e$ and~$p_1''$ such that
-      either~$p_1''=\ceu{\Break\AtLoop{p''}}$ or~$\isblockedext(p_1'',n)$.
-      \begin{subsubcase}
-        $p_1''=\ceu{\Break\AtLoop{p''}}$.
-        From~\eqref{thm.term-nst-*.loop-adv.eq1}, by~\R{loop-brk},
-        \begin{align*}
-        \<\ceu{\Nop\AtLoop{p''}},n,\nil>
-        &\nst[1]\<\ceu{\Loop{p''}},n,\nil>\\
-        &\nst[*]\<\ceu{\Break\AtLoop{p''}},n,e>\\
-        &\nst[1]\<\ceu{\Nop},n,e>_\Hnst\,.
-        \end{align*}
-      \end{subsubcase}
-      \begin{subsubcase}
-        $\isblockedext(p_1'',n)$~is true.  Then, by definition,
-        $\isblockedext(p_1'',n)$ implies~$\isblocked(p_1'',n)$.  Hence,
-        from~\eqref{thm.term-nst-*.loop-adv.eq1} and by the definition
-        of~$\Hnst$, $\<p_1'',n,e>_\Hnst$.
-      \end{subsubcase}
+        \nst[1]\<\ceu{\Loop{p''}},n,\nil>\,.
+      \]
+      From this point on, this case is similar to
+      Case~\ref{thm.term-nst-*.loop}.
     \end{subcase}
     \begin{subcase}
       $p'=\ceu{\Break}$.  Then, by~\R{loop-brk},
@@ -728,7 +744,7 @@ following assumptions.
         \<\ceu{p'\AtLoop{p''}},n,\nil>
         \nst[*]\<\ceu{p_1'\AtLoop{p''}},n,e>\,.
       \]
-      It remains to be show that~$\<\ceu{p_1'\AtLoop{p''}},n,e>$ is indeed
+      It remains to be show that~$\<\ceu{p_1'\AtLoop{p''}},n,e>$ is
       nested-irreducible.  The rest of this proof is similar to that of
       Case~\ref{thm.term-nst-*.seq-adv}.
     \end{subcase}
@@ -749,9 +765,9 @@ following assumptions.
   \begin{case}\label{thm.term-nst-*.and}
     $p=\ceu{{p'}\AtAnd{p''}}$.
     %%
-    There are four subcases.
+    There are two subcases.
     \begin{subcase}
-      $\isblocked(p',n)$ is false and~$\isblocked(p'',n)$ is false.
+      $\isblocked(p',n)$ is false.
       %%
       There are three subcases.
       \begin{subsubcase}
@@ -785,6 +801,7 @@ following assumptions.
         \end{align*}
       \end{subsubcase}
       \begin{subsubcase}
+        \label{thm.term-nst-*.and.adv1}
         $p'\ne\ceu{\Nop},\ceu{\Break}$.
         %%
         Then, by the induction hypothesis, there are~$p_1'$ and~$e$ such
@@ -802,37 +819,79 @@ following assumptions.
         following from the fact that the simpler~$\<p_1',n,e>$ is
         nested-irreducible.
         \begin{enumerate}
-        \item If~$e\ne\nil$ then~$\<\ceu{{p_1'}\AtAnd{p''}},n,e>_\Hnst$.
-        \item If~$p_1'=\ceu{\Nop}$ this case becomes
+        \item If~$e\ne\nil$ then, by
+          definition,~$\<\ceu{{p_1'}\AtAnd{p''}},n,e>_\Hnst$.
+        \item If~$p_1'=\ceu{\Nop}$, this case is similar to
           Case~\ref{thm.term-nst-*.and.nop1}.
-        \item If~$p_1'=\ceu{\Break}$ this case becomes
+        \item If~$p_1'=\ceu{\Break}$, this case is similar to
           Case~\ref{thm.term-nst-*.and.brk1}.
-        \item Otherwise, $\isblocked(p_1',n)$, and as~$\isblocked(p'',n)$ is
-          false, this case becomes\dots\ TODO.
+        \item If~$\isblocked(p_1',n)$, this case is similar to
+          Case~\ref{thm.term-nst-*.and2}.
         \end{enumerate}
       \end{subsubcase}
     \end{subcase}
     \begin{subcase}
-      $\isblocked(p',n)$ is false and~$\isblocked(p'',n)$ is true.
+      \label{thm.term-nst-*.and2}
+      $\isblocked(p',n)$ is true.
       %%
-      TODO.
-    \end{subcase}
-    \begin{subcase}
-      $\isblocked(p',n)$ is true and~$\isblocked(p'',n)$ is false.
-      %%
-      TODO.
-    \end{subcase}
-    \begin{subcase}
-      $\isblocked(p',n)$ is true and~$\isblocked(p'',n)$ is true.
-      %%
-      TODO.
+      There are three subcases.
+      \begin{subsubcase}
+        \label{thm.term-nst-*.and.nop2}
+        $p''=\ceu{\Nop}$.
+        %%
+        Then, by~\R{and-nop2},
+        \[
+          \<\ceu{{p'}\AtAnd{\Nop}},n,\nil>\nst[1]\<p',n,\nil>_\Hnst\,.
+        \]
+      \end{subsubcase}
+      \begin{subsubcase}
+        \label{thm.term-nst-*.and.brk2}
+        $p''=\ceu{\Break}$.
+        %%
+        Then, by~\R{and-brk2},
+        \[
+          \<\ceu{{p'}\AtAnd{\Break}},n,\nil>
+          \nst[1]\<\ceu{\clear(p');\,\Break},n,\nil>\,.
+        \]
+        From this point on, this case is similar to
+        Case~\ref{thm.term-nst-*.and.brk1}.
+      \end{subsubcase}
+      \begin{subsubcase}
+        \label{thm.term-nst-*.and.adv2}
+        $p''\ne\ceu{\Nop},\ceu{\Break}$.
+        %%
+        Then, by the induction hypothesis, there are~$p_1''$ and~$e$ such
+        that
+        \[
+          \<p'',n,\nil>\nst[*]\<p_1'',n,e>_\Hnst\,.
+        \]
+        By item~\eqref{lem.props-nst-n.e} of Lemma~\ref{lem.props-nst-n},
+        \[
+          \<\ceu{{p'}\AtAnd{p''}},n,\nil>
+          \nst[*]\<\ceu{{p'}\AtAnd{p_1''}},n,e>\,.
+        \]
+        It remains to be show that~$\<\ceu{{p'}\AtAnd{p_1''}},n,e>$ leads to
+        an nested-irreducible description.  There are four possibilities
+        following from the fact that the simpler~$\<p_1'',n,e>$ is
+        nested-irreducible.
+        \begin{enumerate}
+        \item If~$e\ne\nil$ then, by definition,
+          $\<\ceu{{p'}\AtAnd{p_1''}},n,e>_\Hnst$.
+        \item If~$p_1''=\ceu{\Nop}$, this case is similar to
+          Case~\ref{thm.term-nst-*.and.nop2}.
+        \item If~$p_1''=\ceu{\Break}$, this case is similar to
+          Case~\ref{thm.term-nst-*.and.brk2}.
+        \item If~$\isblocked(p_1'',n)$ then, as both sides are blocked, by
+          definition, $\<\ceu{{p'}\AtAnd{p_1''}},n,e>_\Hnst$.
+        \end{enumerate}
+      \end{subsubcase}
     \end{subcase}
   \end{case}
 
   \begin{case}
     $p=\ceu{{p'}\Or{p''}}$.
     %%
-    $p=\ceu{{p'}\Or{p''}}$.  Then, by~\R{or-expd},
+    Then, by~\R{or-expd},
     \[
       \<\ceu{{p'}\Or{p''}},n,\nil>
       \nst[1]\<\ceu{{p'}\AtOr{(\CanRun(n);\,p'')}},n,\nil>\,.
@@ -841,10 +900,72 @@ following assumptions.
     Case~\ref{thm.term-nst-*.or}.
   \end{case}
 
-  \begin{case}\label{thm.term-nst-*.or}
+  \begin{case}
+    \label{thm.term-nst-*.or}
     $p=\ceu{{p'}\AtOr{p''}}$.
     %%
-    TODO.
+    There are two subcases.
+    \begin{subcase}
+      $\isblocked(p',n)$~is false.
+      %%
+      There are three subcases.
+      \begin{subsubcase}
+        \label{thm.term-nst-*.or.nop1}
+        $p'=\ceu{\Nop}$.  Then, by~\R{or-nop1},
+        \begin{equation}
+          \label{thm.term-nst-*.or.nop1.eq1}
+          \<\ceu{{\Nop}\AtOr{p''}},n,\nil>
+          \nst[1]\<\ceu{\clear(p'')},n,\nil>\,.
+        \end{equation}
+        From~\eqref{thm.term-nst-*.or.nop1.eq1}, by
+        Assumption~\ref{ass.term-nst-fin},
+        \[
+          \<\ceu{\clear(p'')},n,\nil>\nst[*]\<\ceu{\Nop},n,\nil>_\Hnst\,.
+        \]
+      \end{subsubcase}
+      \begin{subsubcase}
+        \label{thm.term-nst-*.or.brk1}
+        $p'=\ceu{\Break}$.
+        %%
+        Similar to Case~\ref{thm.term-nst-*.and.brk1}.
+      \end{subsubcase}
+      \begin{subsubcase}
+        $p'\ne\ceu{\Nop},\ceu{\Break}$.
+        %%
+        Similar to Case~\ref{thm.term-nst-*.and.adv1}.
+      \end{subsubcase}
+    \end{subcase}
+    \begin{subcase}
+      \label{thm.term-nst-*.or.adv1}
+      $\isblocked(p',n)$~is true.
+      %%
+      There are three subcases.
+      \begin{subsubcase}
+        $p''=\ceu{\Nop}$.
+        %%
+        Then, by~\R{or-nop2},
+        \begin{equation}
+          \label{thm.term-nst-*.or.nop2.eq1}
+          \<\ceu{p'\AtOr{\Nop}},n,\nil>
+          \nst[1]\<\clear(p'),n,\nil>\,.
+        \end{equation}
+        From~\eqref{thm.term-nst-*.or.nop2.eq1}, by
+        Assumption~\ref{ass.term-nst-fin},
+        \[
+          \<\ceu{\clear(p')},n,\nil>\nst[*]\<\ceu{\Nop},n,\nil>_\Hnst\,.
+        \]
+      \end{subsubcase}
+      \begin{subsubcase}
+        $p''=\ceu{\Break}$.
+        %%
+        Similar to Case~\ref{thm.term-nst-*.and.brk2}.
+      \end{subsubcase}
+      \begin{subsubcase}
+        $p''\ne\ceu{\Nop},\ceu{\Break}$.
+        %%
+        Similar to Case~\ref{thm.term-nst-*.and.adv2}.\qedhere
+      \end{subsubcase}
+    \end{subcase}
   \end{case}
 \end{proof}
 
