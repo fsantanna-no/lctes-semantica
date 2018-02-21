@@ -59,7 +59,7 @@ imperative languages).
 The grammar below defines the syntax of a subset of \CEU that is
 sufficient to describe all semantic peculiarities of the language.
 \bgroup
-\def\lbl#1{\qquad\text{\emph{#1}}}%
+\def\lbl#1{\quad\text{\emph{#1}}}%
 \newdimen\X
 \X=-1\jot
 \begin{alignat*}{2}
@@ -79,10 +79,10 @@ sufficient to describe all semantic peculiarities of the language.
   \mid&\enspace\ceu{\Break}
       &&\lbl{loop escape}\\[\X]
       %%
-  \mid&\enspace\ceu{\Ifelse{b}{p_1}{p_2}}
+  \mid&\enspace\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}}
       &&\lbl{conditional}\\[\X]
       %%
-  \mid&\enspace\ceu{p1\,;\,p2}
+  \mid&\enspace\ceu{p_1\,;\,p_2}
       &&\lbl{sequence}\\[\X]
       %%
   \mid&\enspace\ceu{\Loop p_1}
@@ -386,12 +386,12 @@ are straightforward:
 %
 \begin{gather*}
   \AxiomC{$\eval(\ceu{\Mem(\Id)})$}
-  \UnaryInfC{$\<\ceu{\Ifelse{\Mem(\Id)}{p}{q}},n,\nil>\nst\<p,n,\nil>$}
+  \UnaryInfC{$\<\ceu{\IfElse{\Mem(\Id)}{p}{q}},n,\nil>\nst\<p,n,\nil>$}
   \DisplayProof
   \Rtag{if-true}\\[2\jot]
   %%
   \AxiomC{$\lnot\eval(\ceu{\Mem(\Id)})$}
-  \UnaryInfC{$\<\ceu{\Ifelse{\Mem(\Id)}{p}{q}},n,\nil>\nst\<q,n,\nil>$}
+  \UnaryInfC{$\<\ceu{\IfElse{\Mem(\Id)}{p}{q}},n,\nil>\nst\<q,n,\nil>$}
   \DisplayProof
   \Rtag{if-false}\\[2\jot]
   %%
@@ -757,9 +757,9 @@ and will eventually resume in the current reaction (see rule \R{pop}).
       &=\ceu{{\bcast(p,e)}\AtOr{\bcast(q,e)}}\\[-1\jot]
       %%
       bcast(\_,e)
-      &=\bot\enspace
+      &=\_\enspace
         (\ceu{\Mem},\ceu{\EmitInt},\ceu{\Break},\\[-1\jot]
-      &\quad\ceu{\Ifelse{}{}},\ceu{\Loop},\ceu{\And},\ceu{\Or},\ceu{\Nop})
+      &\quad\ceu{\IfElse{}{}},\ceu{\Loop},\ceu{\And},\ceu{\Or},\ceu{\Nop})
       \\[1\jot]
       %%
       %%-
@@ -796,7 +796,7 @@ and will eventually resume in the current reaction (see rule \R{pop}).
       \isblocked(\_,n)
       &=\mathit{false}\enspace
         (\ceu{\Mem},\ceu{\EmitInt},\ceu{\Break},\\[-1\jot]
-      &\quad\ceu{\Ifelse{}{}},\ceu{\Loop},\ceu{\And},\ceu{\Or},\ceu{\Nop})
+      &\quad\ceu{\IfElse{}{}},\ceu{\Loop},\ceu{\And},\ceu{\Or},\ceu{\Nop})
         \\[1\jot]
       %%
       %%-
@@ -834,7 +834,7 @@ and will eventually resume in the current reaction (see rule \R{pop}).
       \clear(\_)
       &=\bot\enspace
         (\ceu{\Mem},\ceu{\EmitInt},\ceu{\Break},\\[-1\jot]
-      &\quad\ceu{\Ifelse{}{}},\ceu{\Loop},\ceu{\And},\ceu{\Or},\ceu{\Nop})
+      &\quad\ceu{\IfElse{}{}},\ceu{\Loop},\ceu{\And},\ceu{\Or},\ceu{\Nop})
     \end{align*}}
 \end{gather*}
 \vskip-2\belowdisplayskip

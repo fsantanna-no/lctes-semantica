@@ -69,7 +69,7 @@
   \def\AwaitInt{\@ceuop{await}\nolimits_\@int}%
   \def\EmitInt{\@ceuop{emit}\nolimits_\@int}%
   \def\Break{\@ceuop{break}}%
-  \def\Ifelse##1##2##3{\@ceuop{if}##1\@ceuop{then}{##2}\@ceuop{else}{##3}}%
+  \def\IfElse##1##2##3{\@ceuop{if}##1\@ceuop{then}{##2}\@ceuop{else}{##3}}%
   \def\Loop{\@ceuop{loop}}%
   \def\Every{\@ceuop{every}}%
   \def\And{\@ceubin{and}}%
@@ -92,6 +92,8 @@
   \newtheorem{assumption}[theorem]{Assumption}
   %%
   \theoremstyle{remark}
+  \newtheorem*{basis}{Basis}
+  \newtheorem*{induction}{Induction}
   \newtheorem{case}{Case}
   \AtBeginEnvironment{proof}{\setcounter{case}{0}}
   %%
@@ -139,11 +141,15 @@
 % Functions bcast, clear, eval, and isblocked.
 \makeatletter
 \let\op\operatorname
-\def\bcast{\op{\mathit{bcast}}}
-\def\clear{\op{\mathit{clear}}}
-\def\eval{\op{\mathit{eval}}}
-\def\isblocked{\op{\mathit{isblocked}}}
-\def\isblockedext{\op{\mathit{isblocked}}_\@ext}
+\newcommand{\opi}[1]{\op{\mathit{#1}}}
+%%
+\def\bcast{\opi{bcast}}
+\def\clear{\opi{clear}}
+\def\eval{\opi{eval}}
+\def\isblockedext{\opi{isblocked}_\@ext}
+\def\isblocked{\opi{isblocked}}
+\def\pot{\opi{pot}}
+\def\rank{\opi{rank}}
 \makeatother
 
 % Rule labels.

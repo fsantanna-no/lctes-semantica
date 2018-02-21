@@ -95,7 +95,9 @@
   \end{case}
 
   \begin{case}
-    $p=\ceu{\Ifelse{\Mem(\Id)}{p'}{p''}}$.  There are two subcases.
+    $p=\ceu{\IfElse{\Mem(\Id)}{p'}{p''}}$.
+    %%
+    There are two subcases.
     \begin{subcase}
       $\eval(\ceu{\Mem(\Id)})$~is true.
       %%
@@ -111,7 +113,9 @@
   \end{case}
 
   \begin{case}
-    $p=\ceu{p';\,p''}$.  There are three subcases.
+    $p=\ceu{p';\,p''}$.
+    %%
+    There are three subcases.
     \begin{subcase}
       $p'=\ceu{\Nop}$.
       %%
@@ -547,10 +551,10 @@ following assumptions.
   By induction on the structure of programs.
   %%
   Let~$\delta=\<p,n,\nil>$.  The theorem is trivially true if~$\delta$ is
-  nested-irreducible, as by definition~$\delta\nst[0]\delta_\Hnst$.  Suppose
-  that is not the case.  Then, depending on the structure of~$p$, there
-  are~11 possibilities.  In each one of them, we show that
-  such~$\delta'_\Hnst$ indeed exists.
+  nested-irreducible, as by definition~$\delta\nst[0]\delta$.  Suppose that
+  is not the case.  Then, depending on the structure of~$p$, there are~11
+  possibilities.  In each one of them, we show that such~$\delta'_\Hnst$
+  indeed exists.
   \begin{case}
     $p=\ceu{\Mem(\Id)}$.
     %%
@@ -579,7 +583,7 @@ following assumptions.
   \end{case}
 
   \begin{case}
-    $p=\ceu{\Ifelse{\Mem(\Id)}{p'}{p''}}$.
+    $p=\ceu{\IfElse{\Mem(\Id)}{p'}{p''}}$.
     %%
     There are two subcases.
     \begin{subcase}
@@ -588,7 +592,7 @@ following assumptions.
       Then, by~\R{if-true} and by the induction hypothesis, there is
       a~$\delta'$ such that
       \begin{align*}
-        \<\ceu{\Ifelse{\Mem(\Id)}{p'}{p''}},n,\nil>
+        \<\ceu{\IfElse{\Mem(\Id)}{p'}{p''}},n,\nil>
         &\nst[1]\<p',n,e>\\
         &\nst[*]\delta'_\Hnst\,.
       \end{align*}
@@ -599,7 +603,7 @@ following assumptions.
       Then, by~\R{if-false} and by the induction hypothesis, there is
       a~$\delta'$ such that
       \begin{align*}
-        \<\ceu{\Ifelse{\Mem(\Id)}{p'}{p''}},n,\nil>
+        \<\ceu{\IfElse{\Mem(\Id)}{p'}{p''}},n,\nil>
         &\nst[1]\<p'',n,e>\\
         &\nst[*]\delta'_\Hnst\,.
       \end{align*}
@@ -969,48 +973,251 @@ following assumptions.
   \end{case}
 \end{proof}
 
-\begin{comment}
-\clearpage
-\section*{PROBLEMA}
-A reação abaixo não está definida pois~$\bcast$ não está definido
-para~$\ceu{\And}$:
-\[
-  \<\ceu{{\AwaitExt(e)}\And{\Mem(\Id);\AwaitExt(e)}},0,e>
-  \outpush\bot
-\]
+
+\begin{definition}\label{def.pot}
+  The potency of a program~$p$ in reaction to event~$e$,
+  denoted~$\pot(p,e)$, is the maximum number of~$\ceu{\EmitInt}$ expressions
+  that can be reached during a reaction of~$p$ to~$e$.  Formally,
+  $\pot(p,e)$ is defined as follows:
+  \[
+    \pot(p,e)=\pot'(\bcast(p,e))\,,
+  \]
+  where
+  \begin{enumerate}[(a)]
+  \item$\pot'(p)=1$, if~$p=\ceu{\EmitInt(e)}$;
+    %%
+  \item$\pot'(p)=\max\{\pot'(p_1),\pot'(p_2)\}$,\\
+    if~$p=\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}}$;
+    %%
+  \item$\pot'(p)=\pot'(p_1)$, if~$p=\ceu{\Loop{p_1}}$
+    or~$p=\ceu{\Every{e}\,{p_1}}$;
+    %%
+  \item$\pot'(p)=\pot'(p_1)+\pot'(p_2)$, if~$p=p_1;\,p_2$
+    or~$p=\ceu{p_1\AtLoop{p_2}}$
+    with~$p_1\ne\ceu{\Break},\ceu{\AwaitExt(e)}$,
+    or~$p=\ceu{{p_1}\And{p_2}}$ or~$p=\ceu{{p_1}\Or{p_2}}$
+    or~$p=\ceu{{p_1}\AtAnd{p_2}}$ or~$p=\ceu{{p_1}\AtOr{p_2}}$;
+    %%
+  \item$\pot'(p)=0$, otherwise.
+  \end{enumerate}
+  Note that~$\pot'$ only considers the~$\ceu{\EmitInt}$ expressions that
+  occur before the first~$\ceu{\AwaitExt}$ in a given execution path.  This
+  is because such~$\ceu{\AwaitExt}$ act as barriers that cannot be consumed
+  in the reaction to the original event~$e$.
+\end{definition}
 
-Mesmo que~$\bcast$ estivesse definido, como é o caso do~$\ceu{\AtAnd}$, não
-funcionaria:
-\[
-  \begin{split}
-    &\<\ceu{{\AwaitExt(e)}\AtAnd{\Mem(\Id);\AwaitExt(e)}},0,e>\\
-    &\quad\outpush\<\ceu{{\Nop(e)}\AtAnd{\Mem(\Id);\AwaitExt(e)}},1,\nil>.
-  \end{split}
-\]
-Repare que só o lado esquerdo consumiu o evento.
+
+\begin{definition}\label{def.rank}
+  The \emph{rank} of a description~$\delta=\<p,n,e>$,
+  denoted~$\rank(\delta)$, is a pair of nonnegative integers~$\<i,j>$ such
+  that~$i=\pot(p,e)$, and $j=n$~if~$e=\nil$ or~$j=n+1$ otherwise.
+\end{definition}
 
-Mesmo se assumirmos que inicialmente todas as trilhas do programa vão estar
-esperando também não funcionaria.  Por exemplo,
-\begin{align*}
-  &\<\ceu{\AwaitExt{E};({\EmitInt(e)}\And{\AwaitInt(e)}}),0,E>\\
-  &\outpush\<\ceu{\Nop;({\EmitInt(e)}\And{\AwaitInt(e)}}),1,\nil>\\
-  &\nst\<\ceu{{\EmitInt(e)}\And{\AwaitInt(e)}},1,\nil>\\
-  &\nst\<\ceu{{\EmitInt(e)}\AtAnd(\CanRun(1);\AwaitInt(e))},1,\nil>\\
-  &\nst\<\ceu{{\CanRun(1)}\AtAnd(\CanRun(1);\AwaitInt(e))},1,e>\\
-  &\outpush\<\ceu{{\CanRun(1)}\AtAnd(\CanRun(1);\AwaitInt(e))},2,\nil>\\
-  &\outpop\<\ceu{{\CanRun(1)}\AtAnd(\CanRun(1);\AwaitInt(e))},1,\nil>\\
-  &\nst\<\ceu{\Nop\AtAnd(\CanRun(1);\AwaitInt(e))},1,\nil>\\
-  &\nst\<\ceu{\CanRun(1);\AwaitInt(e)},0,\nil>\\
-  &\nst\<\ceu{\AwaitInt(e)},1,\nil>\\
-  &\outpop\<\ceu{\AwaitInt(e)},0,\nil>
-\end{align*}
-(Este~$\ceu{\AwaitInt(e)}$ que sobrou deveria ter sido acordado
-pelo~$\ceu{\EmitInt(e)}$ em paralelo, certo?)
+The next two lemmas establish that a single application of an~$\out$
+or~$\nst$ transition either preserves or decreases the rank of the input
+description.  All rank comparisons assume lexicographical order.
 
-O problema é que a função~$\bcast$ só acorda as trilhas que estão esperando
-no momento do \R{push}, sem desconsiderar as instruções instantâneas que
-ocorrem antes da espera propriamente dita.  Não tem como resolver isso
-estaticamente.  Acho que a solução é voltar com a pilha de eventos emitidos.
+
+\begin{lemma}\strut
+  \begin{enumerate}[(a)]
+  \item If~$\delta\outpush\delta'$ then~$\rank(\delta)=\rank(\delta')$.
+  \item If~$\delta\outpop\delta'$ then~$\rank(\delta)>\rank(\delta')$.
+  \end{enumerate}
+\end{lemma}
+\begin{proof}\strut
+  Let~$\delta=\<p,n,e>$, $\delta'=\<p',n',e'>$,
+  $\rank(\delta)=\<i,j>$, and~$\rank(\delta')=\<i',j'>$.
+  \begin{enumerate}[(a)]
+  \item Suppose
+    \[
+      \<p,n,e>\outpush\<p',n',e'>\,.
+    \]
+    By~\R{push}, $e\ne\nil$, $p'=\bcast(p,e)$, $n'=n+1$, and~$e'=\nil$.  By
+    Definition~\ref{def.rank}, $j=n+1$, as~$e\ne\nil$, and~$j'=n+1$,
+    as~$e'=\nil$ and~$n'=n+1$; hence~$j=j'$.
 
-% LocalWords:  subcase subcases
-\end{comment}
+    It remains to be shown that~$i=i'$:
+    \begin{align*}
+      i&=\pot(p,e)
+         \tag*{by Definition~\ref{def.rank}}\\
+       &=\pot'(\bcast(p,e))
+         \tag*{by Definition~\ref{def.pot}}\\
+       &=\pot'(p')
+         \tag*{since~$p'=\bcast(p,e)$}\\
+       &=\pot'(\bcast(p',\nil))
+         \tag*{by definition of~$\bcast$}\\
+       &=\pot'(\bcast(p',e'))
+         \tag*{since~$e'=\nil$}\\
+       &=\pot(p',e')
+         \tag*{by Definition~\ref{def.pot}}\\
+       &=i'
+         \tag*{by Definition~\ref{def.rank}}
+    \end{align*}
+
+  \item Suppose
+    \[
+      \<p,n,e>\outpop\<p',n',e'>\,.
+    \]
+    By~\R{pop}, $p=p'$, $n>0$, $n'=n-1$, and~$e=e'=\nil$.
+    %%
+    By Definition~\ref{def.pot}, $\pot(\bcast(p,e))=\pot(\bcast(p',e')$;
+    hence~$i=i'$.  And by Definition~\ref{def.rank}, $j=n$, as~$e=\nil$,
+    and~$j'=n-1$, as~$e'=\nil$ and~$n'=n-1$; hence~$j>j'$.
+    Therefore,~${\<i,j>}>{\<i',j'>}$.\qedhere
+  \end{enumerate}
+\end{proof}
+
+
+\begin{lemma}\label{lem.rank-nst}
+If~$\delta\nst\delta'$ then~$\rank(\delta)\ge\rank(\delta')$.
+\end{lemma}
+\begin{proof}
+  By induction on the structure of~$\nst$ derivations.
+  Let~$\delta=\<p,n,e>$, $\delta'=\<p',n',e'>$, $\rank(\delta)=\<i,j>$,
+  and~$\rank(\delta')=\<i',j'>$.  Suppose there is a derivation~$\pi$
+  such that
+  \[
+    \pi\Vdash\<p,n,e>\nst\<p',n',e'>\,.
+  \]
+  By definition of~$\nst$, we have that~$e=\nil$ and $n=n'$.  Depending on
+  the structure of program~$p$, there are~11 possibilities.  In each one of
+  them, we show that~$\rank(\delta)\ge\rank(\delta')$.
+
+  \begin{case}
+    $p=\ceu{\Mem(id)}$.
+    %%
+    Then~$\pi$ is an instance of~\R{mem}.  Hence~$p'=\ceu{\Nop}$
+    and~$e'=\nil$.  Thus~$\rank(\delta)=\rank(\delta')=\<0,n>$.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{\EmitInt(e_1)}$.
+    %%
+    Then~$\pi$ is an instance of~\R{emit-int}.  Hence~$p'=\ceu{\Nop}$
+    and~$e'=e_1$.
+    Thus~${\rank(\delta)={\<1,n>}}>{\<0,n+1>=\rank(\delta')}$.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{\CanRun(n)}$.
+    %%
+    Then~$\pi$ is an instance of~\R{can-run}.  Hence~$p'=\ceu{\Nop}$
+    and~$e'=\nil$.  Thus~$\rank(\delta)=\rank(\delta')=\<0,n>$.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{\IfElse{p}{p_1}{p_2}}$.
+    %%
+    There are two subcases.
+    \begin{subcase}
+      \label{lem.rank-nst.if-true}
+      $\eval(\ceu{\Mem(\Id)})$~is true.
+      %%
+      Then~$\pi$ is an instance of~\R{if-true}.  Hence~$p'=\ceu{p_1}$
+      and~$e'=\nil$.  Thus~$\rank(\delta)=\<i,n>$
+      and~$\rank(\delta')=\<j,n>$, where~$i=\max\{pot'(p_1),pot'(p_2)\}$
+      and~$j=\pot'(p_1)$.  Therefore~$i>j$.
+    \end{subcase}
+    \begin{subcase}
+      $\eval(\ceu{\Mem(\Id)})$~is false.
+      %%
+      Similar to Case~\ref{lem.rank-nst.if-true}.
+    \end{subcase}
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{p_1;\,p_2}$.
+    %%
+    There are three subcases.
+    \begin{subcase}
+      $p_1=\ceu{\Nop}$.
+      %%
+      Then~$\pi$ is an instance of~\R{seq-nop}.  TODO.
+    \end{subcase}
+    \begin{subcase}
+      $p_1=\ceu{\Break}$.
+      %%
+      Then~$\pi$ is an instance of~\R{seq-brk}.  TODO.
+    \end{subcase}
+    \begin{subcase}
+      \label{lem.rank-nst.seq-adv}
+      $p_1\ne\ceu{\Nop},\ceu{\Break}$.
+      %%
+      Then~$\pi$ is an instance of~\R{seq-adv}.
+      Thus there is a derivation~$\pi'$ such that
+      \[
+        \pi'\Vdash\<p_1,n,\nil>\nst\<p_1',n,e_1'>\,,
+      \]
+      for some~$p_1'\in\P$ and~$e_1'\in\E$.  Thus~$p'=p_1';p_2$
+      and~$e'=e_1'$.  By the induction hypothesis,
+      \begin{equation}
+        \label{lem.rank-nst.seq-adv.eq1}
+        \rank(\<p_1,n,\nil>)\ge\rank(\<p_1',n,e_1'>)\,.
+      \end{equation}
+      There are two subcases.
+      \begin{subsubcase}
+        $e'=\nil$.
+        %%
+        Then
+        \begin{align*}
+          \rank(\delta)&=\<\pot'(p_1)+\pot'(p_2),n>\,,\enspace\text{and}\\
+          \rank(\delta')&=\<\pot'(p_1')+\pot'(p_2),n>\,.
+        \end{align*}
+        By~\eqref{lem.rank-nst.seq-adv.eq1} and from the fact
+        that~$e_1'=\nil$, $\pot'(p_1)\ge\pot'(p_1')$.  Therefore,
+        $\rank(\delta)\ge\rank(\delta')$.
+      \end{subsubcase}
+      \begin{subsubcase}
+        $e'\ne\nil$.
+        %%
+        Then~$\pi'$ is an instance of~\R{emit-int}, as no other rule affects
+        the third component of the output description.
+        \[
+          \rank(\delta)=\<i,n>
+          >\<i-1,n+1>
+          =\rank(\delta')\,.
+        \]
+      \end{subsubcase}
+    \end{subcase}
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{\Loop{p_1}}$.
+  \end{case}
+
+  TODO\dots
+\end{proof}
+
+\begin{theorem}[Reaction termination]
+  For any~$\delta$ there is a~$\delta'_\Hnst$ such
+  that~$\delta\trans[*]\delta'$ and~$\rank(\delta')=\<0,0>$.
+\end{theorem}
+\begin{proof}
+  By lexicographic induction on~$rank(\delta)$.
+\end{proof}
+%   \begin{basis}
+%     If~$\<i,j>=\<0,0>$ then, by~\ref{?}, $\delta$ cannot be advanced
+%     by~$\out$ transitions.  There are two possibilities\dots\ (it can or
+%     cannot be advanced by nst transitions).
+%   \end{basis}
+%   \begin{induction}
+%     Let~$\<i,j>\ne\<0,0>$ and suppose that the theorem holds for
+%     all~$\delta''$ such that~$\rank(\delta'')<\rank(\delta)$.
+%     \begin{case}
+%       $\delta$~is nested-irreducible.
+%       %%
+%       \begin{subcase}
+%         $\delta\outpush\delta_1$, for some~$\delta_1$.
+%       \end{subcase}
+%       \begin{subcase}
+%         $\delta\outpop\delta_1$, for some~$\delta_1$.
+%         %%
+%         Then, by definition of~\R{pop}, $\rank(\delta_1)=\<i,j-1>$, and by
+%         the induction hypothesis\dots
+%       \end{subcase}
+%     \end{case}
+%     \begin{case}
+%       $\delta$~is not nested-irreducible.
+%       %%
+%     \end{case}
+%   \end{induction}
