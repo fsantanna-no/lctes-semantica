@@ -709,16 +709,15 @@ function:
 % }
 %-
 
-A reaction eventually blocks in~$\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$, $\ceu{\Every}$, $\ceu{\Fin}$,
-and~$\ceu{\CanRun}$ expressions in parallel trails.
+A reaction eventually blocks in~$\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$,
+$\ceu{\Every}$, $\ceu{\Fin}$, and~$\ceu{\CanRun}$ expressions in parallel
+trails.
 %
-If no trails are blocked in~$\ceu{\CanRun}$ expressions, it means that the program
-cannot advance in the current reaction.
+Then, if none of the trails is blocked in~$\ceu{\CanRun}$ expressions, it means
+that the program cannot advance in the current reaction.
 %
-However, $\ceu{\CanRun}$ expressions can still resume in lower stack indexes and will
-eventually resume in the current reaction (see rule \R{pop}).
-%
-\rc{Não entendi essa discussão}
+However, $\ceu{\CanRun}$ expressions can still resume in lower stack indexes
+and will eventually resume in the current reaction (see rule \R{pop}).
 
 \begin{figure}[h]
 \small
