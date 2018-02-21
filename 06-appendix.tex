@@ -95,7 +95,7 @@
   \end{case}
 
   \begin{case}
-    $p=\ceu{\Ifelse{\Mem(\Id)}{p'}{p''}}$.  There are two subcases.
+    $p=\ceu{\IfElse{\Mem(\Id)}{p'}{p''}}$.  There are two subcases.
     \begin{subcase}
       $\eval(\ceu{\Mem(\Id)})$~is true.
       %%
@@ -579,7 +579,7 @@ following assumptions.
   \end{case}
 
   \begin{case}
-    $p=\ceu{\Ifelse{\Mem(\Id)}{p'}{p''}}$.
+    $p=\ceu{\IfElse{\Mem(\Id)}{p'}{p''}}$.
     %%
     There are two subcases.
     \begin{subcase}
@@ -588,7 +588,7 @@ following assumptions.
       Then, by~\R{if-true} and by the induction hypothesis, there is
       a~$\delta'$ such that
       \begin{align*}
-        \<\ceu{\Ifelse{\Mem(\Id)}{p'}{p''}},n,\nil>
+        \<\ceu{\IfElse{\Mem(\Id)}{p'}{p''}},n,\nil>
         &\nst[1]\<p',n,e>\\
         &\nst[*]\delta'_\Hnst\,.
       \end{align*}
@@ -599,7 +599,7 @@ following assumptions.
       Then, by~\R{if-false} and by the induction hypothesis, there is
       a~$\delta'$ such that
       \begin{align*}
-        \<\ceu{\Ifelse{\Mem(\Id)}{p'}{p''}},n,\nil>
+        \<\ceu{\IfElse{\Mem(\Id)}{p'}{p''}},n,\nil>
         &\nst[1]\<p'',n,e>\\
         &\nst[*]\delta'_\Hnst\,.
       \end{align*}
@@ -968,3 +968,69 @@ following assumptions.
     \end{subcase}
   \end{case}
 \end{proof}
+
+\begin{definition}
+  The \emph{potency} of a program~$p$, denoted~$\pot(p)$, is defined as
+  follows:
+  \begin{alignat*}{2}
+    \pot(p)&=1
+    &\quad &\text{if~$p=\ceu{\EmitInt(e)}$}\\
+    %%
+    \pot(p)&=\pot(p_1)+\pot(p_2)
+    &\quad &
+    \begin{aligned}[t]
+      &\text{if~$p=p_1;\,p_2$ or~$p=\ceu{p_1\AtLoop{p_2}}$}\\
+      &\quad\text{and~$p_1\ne{\ceu{\AwaitExt{e}}}$}
+    \end{aligned}\\
+    %%
+    \pot(p)&=\max\{\pot(p_1),\pot(p_2)\}
+    &\quad &
+    \begin{aligned}[t]
+      &\text{if~$p=\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}}$}\\
+      &\quad\text{or~$p=\ceu{{p_1}\And{p_2}}$
+        or~$p=\ceu{{p_1}\Or{p_2}}$}\\
+      &\quad\text{or~$p=\ceu{{p_1}\AtAnd{p_2}}$
+        or~$p=\ceu{{p_1}\AtOr{p_2}}$}
+    \end{aligned}\\
+    %%
+    \pot(p)&=0
+    &\quad &\text{otherwise}\,.
+  \end{alignat*}
+  % \item$\pot(p)=\pot(p_1)$,\\
+  %   \strut\quad if~$p=\ceu{\Loop{p_1}}$ or~$p=\ceu{\Every{e}\,{p_1}}$;
+  %   %%
+  % \item$\pot(p)=\pot(p_1)+\pot(p_2)$,\\
+  %   \strut\quad if~$p=p_1;\,p_2$ or~$p=\ceu{p_1\AtLoop{p_2}}$
+  %   and~$p_1\ne{\ceu{\AwaitExt{e}}}$;
+  %   %%
+  % \item$\pot(p)=\max\{\pot(p_1),\pot(p_2)\}$,\\
+  %   \strut\quad if~$p=\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}}$\\
+  %   \strut\qquad or~$p=\ceu{{p_1}\And{p_2}}$ or~$p=\ceu{{p_1}\Or{p_2}}$\\
+  %   \strut\qquad or~$p=\ceu{{p_1}\AtAnd{p_2}}$ or~$p=\ceu{{p_1}\AtOr{p_2}}$;
+  %   %%
+  % \item$\pot(p)=0$,\enspace otherwise.
+  % \end{enumerate}
+  % \begin{align*}
+  %   &\pot(p)=\\
+  %   &\enspace\begin{cases}
+  %     1
+  %     &\text{if~$p=\ceu{\AwaitExt(e)}$}\\[2\jot]
+  %     %%
+  %     \pot(p_1)
+  %     &\text{if~$p=\ceu{\Loop{p1}}$ or~$p=\ceu{\Every{e}{p_1}}$}\\[2\jot]
+  %     %%
+  %     \pot(p_1)+\pot(p_2)
+  %     &\parbox[t]{.6\hsize}{%
+  %       if~$p=p_1;\,p_2$ or~$p=\ceu{p_1\AtLoop{p_2}}$\\
+  %       \strut\quad and~$p_1\ne{\ceu{\EmitInt{e}}}$}\strut\\[6\jot]
+  %     %%
+  %     \max\{\pot(p_1),\pot(p_2)\}
+  %     &\parbox[t]{.6\hsize}{%
+  %       if~$p=\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}}$\\
+  %       \strut\quad or~$p=\ceu{{p_1}\And{p_2}}$\\
+  %       \strut\quad or~$p=\ceu{{p_1}\AtAnd{p_2}}$\\
+  %       \strut\quad or~$p=\ceu{{p_1}\Or{p_2}}$\\
+  %       \strut\quad or~$p=\ceu{{p_1}\AtOr{p_2}}$}
+  %   \end{cases}
+  % \end{align*}
+\end{definition}
