@@ -62,7 +62,6 @@ finalize [$\T<stmts>$] with $\T<stmts>$ end       | \C{.45}{finalization} |
 |\C{1.}{Logical parallelism}|
 par/or  do $\T<stmts>$ with $\T<stmts>$ end | \C{.45}{aborts when any side ends}      |
 par/and do $\T<stmts>$ with $\T<stmts>$ end | \C{.45}{terminates when all sides ends} |
-par     do $\T<stmts>$ with $\T<stmts>$ end | \C{.45}{never terminates}               |
 
 |\C{1.}{Assignment \& Integration with C}|
 $\T<id>$ = $\T<exp>$; | \C{.6}{assigns a value to a variable}              |
@@ -77,8 +76,8 @@ with the LED off.
 The implementation first declares the \code{BUTTON} and \code{RADIO\_RECV} as
 input events (ln.~1--2).
 Then, it uses a \code{par/or} composition to run two activities in parallel:
-a single statement that waits for a button press before terminating (ln.~4),
-and an endless loop that toggles the LED on and off on radio receives
+a single-statement trail that waits for a button press before terminating
+(ln.~4), and an endless loop that toggles the LED on and off on radio receives
 (ln.~9--14).
 The \code{finalize} clause (ln.~6--8) ensures that, no matter how its enclosing
 trail terminates, the LED will be unconditionally turned off (ln.~7).
@@ -102,7 +101,7 @@ network handlers), as we discuss in Section~\ref{sec.ceu.fin}.
   basicstyle=\ttfamily\footnotesize,
   float=h,
   caption={A program in \CEU that toggles a LED on every radio receive,
-           terminating on a button press in a consistent state.},
+           terminating on a button press always with the LED off.},
   label={lst.ceu},
 ]
 input void BUTTON;
@@ -129,17 +128,16 @@ Therefore, access to~C is straightforward and syntactically traceable.
 %
 To ensure that programs operate under the synchronous hypothesis, the compiler
 environment should only provide access to~C operations that can be assumed to
-be instantaneous, such as non-blocking~I/O and simple accesses to data
-structures.
+be instantaneous, such as non-blocking~I/O and simple data structure accessors.
 
 \subsection{External and Internal Events}
 \label{sec.ceu.evts}
 
 \CEU defines time as a discrete sequence of reactions to unique external
-input events.
+input events received from the environment.
 %
-External input events are received from the environment, and each delimits a
-new logical unit of time that triggers an associated reaction.
+Each input event delimits a new logical unit of time that triggers an
+associated reaction.
 %
 The life-cycle of a program in \CEU can be summarized as
 follows~\cite{ceu.sensys13}:
@@ -226,13 +224,12 @@ faster than the rate of incoming input events.
 Otherwise, the program would continuously accumulate delays between physical
 occurrences and actual reactions for the input events.
 %
-Considering the context soft real-time systems,
+Considering the context of soft real-time systems,
 %targeted by \CEU (e.g., sensor networks, multimedia systems, interactive games, etc.)
-such delays and postponed reactions might be tolerated as long as they are
-infrequent and the application does not take too long to catch up with real
-time.
+postponed reactions might be tolerated as long as they are infrequent and the
+application does not take too long to catch up with real time.
 %
-Note that the synchronous semantics is the norm in typical event-driven
+Note that the synchronous semantics is also the norm in typical event-driven
 systems, such as event dispatching in UI toolkits, game loops in game engines,
 and clock ticks in embedded systems.
 
@@ -296,9 +293,9 @@ We can think of the stack as a record of the nested, fine-grained internal
 reactions that happen inside the same outer reaction to a single external
 event.
 
-This form of subroutines has a significant limitation though: it cannot
-express recursion, since an \code{emit} to itself is always ignored as a
-running trail cannot be waiting on itself.
+This form of subroutines has a significant limitation that it cannot express
+recursion, since an \code{emit} to itself is always ignored as a running trail
+cannot be waiting on itself.
 %
 That being said, it is this very limitation that brings important safety
 properties to subroutines.
@@ -310,11 +307,11 @@ Second, memory for locals is also bounded, not requiring data stacks.
 At first sight, event iteration such as in ``\code{every e do <...> end}'' seems
 to be equivalent to ``\code{loop do await e; <...> end}''.
 However, the \code{loop} variation would not compile because it does not
-contain a path to an external input \code{await} (\code{e} is an internal
+contain a path to an external input \code{await} (since \code{e} is an internal
 event).
 %
-However, event iterators enforce syntactic restrictions and cannot contain
-\code{await} or \code{break} statements.
+However, event iterators enforce other syntactic restrictions and cannot
+contain \code{await} or \code{break} statements.
 The absence of \code{break} guarantees that an iterator never terminates from
 itself, essentially behaving as a safe blocking point in the program.
 %
@@ -362,7 +359,7 @@ with
 end
 
 \end{lstlisting}
-\centering\small{\bx Accesses to \code{y} are concurrent but deterministic.}
+\centering\small{\bx Accesses to \code{y} are concurrent but still deterministic.}
 \end{minipage}
 %\rule{8.4cm}{0.37pt}
 \caption{ Shared-memory concurrency in \CEU:
@@ -382,8 +379,8 @@ defining shared variables (ln. 3), and assigning to them in parallel trails
 (ln. 6, 9).
 
 In the example \ax, the two assignments to \code{x} can only execute in
-reactions to different events \code{A} and \code{B}, which cannot occur
-simultaneously by definition (Section~\ref{sec.ceu.evts}).
+reactions to different events \code{A} and \code{B} (ln. 5,8), which cannot
+occur simultaneously by definition.
 Hence, for the sequence of events \code{A->B}, \code{x} becomes \code{4}
 (\code{(1+1)*2}), while for \code{B->A}, \code{x} becomes \code{3}
 (\code{(1*2)+1}).
