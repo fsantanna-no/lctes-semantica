@@ -12,8 +12,8 @@
 \section{Formal Semantics}
 \label{sec.sem}
 
-In this section, we introduce a reduced syntax for \CEU and propose an
-operational semantics to formally describe the behavior of its programs.
+In this section, we introduce a reduced syntax of \CEU and propose an
+operational semantics to formally describe the behavior of programs.
 We describe a small synchronous kernel highlighting the peculiarities of \CEU,
 in particular, the stack-based execution for internal events.
 %
@@ -117,8 +117,8 @@ sufficient to describe all semantic peculiarities of the language.
 \end{alignat*}
 \egroup
 
-The~$\ceu{\Mem(id)}$ primitive represents all accesses, assignments, and system calls
-that affect a memory location identified by~$id$.
+The~$\ceu{\Mem(id)}$ primitive represents all accesses, assignments, and system
+calls that affect a memory location identified by~$id$.
 %
 According to the synchronous hypothesis of \CEU, $\ceu{\Mem}$ expressions are
 considered to be atomic and instantaneous.
@@ -131,23 +131,23 @@ occurrences in programs.
 %(it can be thought as a synonym for $mem(\epsilon)$, where $\epsilon$ is an
 %unused identifier).
 
-We assume that $\ceu{\Mem}$, $\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$ and~$\ceu{\EmitInt}$ expressions do not
-share identifiers: any identifier is either a variable, an external event,
-or an internal event.
+We assume that $\ceu{\Mem}$, $\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$
+and~$\ceu{\EmitInt}$ expressions do not share identifiers:
+any identifier is either a variable, an external event, or an internal event.
 
-Most expressions in the abstract language are mapped to
-their counterparts in the concrete language.  The exceptions are the
-finalization block~$\ceu{\Fin{p}}$ and the \texttt{@}-expressions, which are
-internal expressions that result from the
-expansion of awaits, emits, and loops by the transition rules to be discussed.
+Most expressions in the abstract language are mapped to their counterparts in
+the concrete language.
+The exceptions are the finalization block~$\ceu{\Fin{p}}$ and the
+\texttt{@}-expressions which result from expansions in the transition rules to
+be presented.
 
-Regarding other mismatches between the concrete and abstract languages, the concrete
+Regarding mismatches between the concrete and abstract languages, the concrete
 \code{await} and \code{emit} primitives support communication of values between
 them, e.g., an ``\code{emit a(10)}'' awakes a ``\code{v=await a}'' setting
 variable~\code{v} to~10.
 To reproduce this functionality in the formal semantics, we can use a shared
 variable to hold the value of an $\ceu{\EmitInt}$ and access it after the
-corresponding $\ceu{\AwaitInt}$.
+corresponding $\ceu{\AwaitInt}$ awakes.
 %
 Also, a ``\code{finalize $A$ with $B$ end; $C$}'' in the concrete language is
 equivalent to ``\ceu{A;\;((\Fin{B})\ \Or\ C)}'' in the abstract language.
@@ -166,7 +166,7 @@ The core of our semantics describes how a program reacts to a single external
 input event, i.e., starting from an input event, how the program behaves and
 becomes idle again to proceed to a subsequent reaction.
 %
-We use a set of small-step operational rules, which are built in such a way
+We use a set of small-step operational rules, which are designed in such a way
 that at most one transition is possible at any time, resulting in deterministic
 reactions.
 %
@@ -175,20 +175,10 @@ emitted event~$e$ to a modified triple as follows:
 \[
   \<p,n,e>\trans\<p',n',e'>\,,
 \]
-where~
-%
-\rc{Na BNF o $p$ não deveria ser $\P$~(maiúsculo) tbm?}
-%
-$p,p'\in\P$ are abstract-language programs, $n,n'\in\N$ are
-nonnegative integers representing the current stack level,
-and~
-%
-\rc{Checar: Acho que o conjunto $\E$~não foi previamente definido em
-  lugar nenhum}
-%
-$e,e'\in\E\cup\{\nil\}$
-are the events emitted before and after the
-transition (both being possibly the empty event~$\nil$).
+where~$p,p'\in\P$ are abstract-language programs, $n,n'\in\N$ are non-negative
+integers representing the current stack level, and~$e,e'\in\E\cup\{\nil\}$ are
+the events emitted before and after the transition (both being possibly the
+empty event~$\nil$).
 
 We will refer to the triples on the left-hand and right-hand sides of
 symbol~$\to$ as \emph{descriptions} (denoted~$\delta$).  The triple on the
@@ -209,7 +199,7 @@ the triple on its right-hand side is called the \emph{output description}.
 %-
 
 At the beginning of a reaction to an input event~$id$, the input description is
-initialized with stack level~0 ($n=0$) and with the emitted event
+initialized with stack level~0 ($n=0$) and with the externally emitted event
 ($e=id$).
 %, but \code{emitInt} expressions can increase the stack level.
 At the end of a reaction, after an arbitrary but finite number of transitions,
@@ -225,8 +215,9 @@ We distinguish between two types of transition rules:
 
 \subsubsection*{Outermost transitions}
 
-The~$\out$ rules \R{push} and \R{pop} are non-recursive definitions
-that only apply to the program as a whole and manipulate the stack level:
+The~$\out$ rules \R{push} and \R{pop} are non-recursive definitions which only
+apply to the program as a whole, and are the only to manipulate the stack
+level:
 \begin{align*}
   &\AxiomC{$e\ne\nil$}
   \UnaryInfC{$\<p,n,e>\out\<\bcast(p,e),n+1,\nil>$}
@@ -276,7 +267,7 @@ Rule \R{pop} only decreases the stack level, not affecting the
 program, and only applies if the program is blocked (see function~$\isblocked$ in
 Figure~\ref{fig.isblocked}).
 This condition ensures that an $\ceu{\EmitInt}$ only resumes after its internal
-reaction completes and blocks, as discussed in Section~\ref{sec.ceu.evts}.
+reaction completes and blocks in the current stack level.
 
 At the beginning of the reaction, an external event is emitted, which
 will trigger rule \R{push}, which will immediately raise the stack level
@@ -285,12 +276,10 @@ At the end of the reaction, the program will block or terminate and
 successive applications of
 rule~\R{pop} will eventually lead to a description containing this
 same program at stack level~0.
-(Rule \R{pop} is the only rule that decreases the stack level.)
 
 \subsubsection*{Nested transitions}
 
-The~$\nst$ rules are recursive definitions with the following general
-format:
+The~$\nst$ rules are recursive definitions with the following general format:
 \[
 \<p,n,\nil>\nst\<p',n,e>.
 \]
@@ -309,7 +298,7 @@ rules \R{push} and \R{pop} from matching and, consequently, from
 inadvertently modifying the current stack level before the nested reaction
 is complete.
 
-A complete reaction consists of the following series of transitions:
+A complete reaction consists of a series of transitions:
 \begin{align*}
   \<p,0,e_\ext>\outpush\<p_1,1,\nil>
   \Big[\null\nst[*]\null\out\null\Big]\!\!\ast
@@ -371,15 +360,16 @@ The~$\nst$ transition rules for atomic expressions are defined as follows:
 % }
 %-
 
-A $\ceu{\Mem}$ operation becomes a $\ceu{\Nop}$ which indicates the memory access (rule
-\R{mem}).
-An $\ceu{\EmitInt(id)}$ generates an event $\ceu{\Id}$ and transits to a $\ceu{\CanRun(n)}$ which
-can only resume at level~$n$ (rule \R{emit-int}).
-Since all~$\nst$ rules can only transit with $e=\nil$, an $\ceu{\EmitInt}$ causes
-rule \R{push} to execute at the outer level, creating a new level~$n+1$ on
-the stack.
+A $\ceu{\Mem}$ operation becomes a $\ceu{\Nop}$ which indicates the memory
+access (rule \R{mem}).
+An $\ceu{\EmitInt(id)}$ generates an event $\ceu{\Id}$ and transits to a
+$\ceu{\CanRun(n)}$ which can only resume at level~$n$ (rule \R{emit-int}).
+Since all~$\nst$ rules can only transit with $e=\nil$, an $\ceu{\EmitInt}$
+inevitably causes rule \R{push} to execute at the outer level, creating a new
+level~$n+1$ on the stack.
 Also, with the new stack level, the resulting $\ceu{\CanRun}(n)$ itself cannot
-transit (rule~\R{can-run}), providing the desired stack-based semantics for internal events.
+transit yet (rule~\R{can-run}), providing the desired stack-based semantics for
+internal events.
 
 Proceeding to compound expressions, the rules for conditionals and sequences
 are straightforward:
@@ -444,7 +434,7 @@ are straightforward:
 Given that our semantics focuses on control, rules \R{if-true} and
 \R{if-false} are the only to query~$\ceu{\Mem}$ expressions.
 %
-Function~$\eval$ evaluates a given~$\ceu{\Mem}$ expression.
+Function~$\eval$ evaluates a given~$\ceu{\Mem}$ expression to a boolean value.
 %
 %Although the value here is arbitrary, it is unique in a reaction, because a
 %given expression can execute only once within it (remember that $loops$ must
@@ -588,9 +578,10 @@ branches~$q$:
 % }
 %-
 
-Rules~\R{and-expd} and~\R{or-expd} insert a~$\ceu{\CanRun(n)}$ at the
-beginning of the right branch.
-This ensures that~any $\ceu{\EmitInt}$ on the left branch, which transits to a~$\ceu{\CanRun(n)}$, still resumes before the right branch starts.
+Rules~\R{and-expd} and~\R{or-expd} insert a~$\ceu{\CanRun(n)}$ at the beginning
+of the right branch.
+This ensures that~any $\ceu{\EmitInt}$ on the left branch, which transits to
+a~$\ceu{\CanRun(n)}$, still resumes before the right branch starts.
 %
 The deterministic behavior of the semantics relies on the \emph{isblocked}
 predicate (see Figure~\ref{fig.isblocked}) which appears in rules
@@ -661,7 +652,7 @@ $\ceu{\Every}$, or $\ceu{\Fin}$),
 i.e., the result of a~$\clear$ call is guaranteed to execute entirely within a reaction.
 
 Finally, a~$\ceu{\Break}$ in one of the sides in parallel escapes the closest
-enclosing~$\ceu{\Loop}$, properly aborting the other side by applying the~$\clear$
+enclosing~$\ceu{\Loop}$, properly aborting the other side with the~$\clear$
 function:
 \begin{gather*}
   \hskip-.5em
@@ -716,7 +707,7 @@ trails.
 Then, if none of the trails is blocked in~$\ceu{\CanRun}$ expressions, it means
 that the program cannot advance in the current reaction.
 %
-However, $\ceu{\CanRun}$ expressions can still resume in lower stack indexes
+However, $\ceu{\CanRun}$ expressions can still resume at lower stack indexes
 and will eventually resume in the current reaction (see rule \R{pop}).
 
 \begin{figure}[h]
@@ -914,6 +905,8 @@ and will eventually resume in the current reaction (see rule \R{pop}).
 \subsection{Determinism, Termination, and Memory Bounds}
 
 - informal discussion
+
+- reference the appendix A
 
 \subsubsection*{Determinism}
 

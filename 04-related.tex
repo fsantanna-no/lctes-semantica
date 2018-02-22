@@ -12,15 +12,17 @@ reject programs with \emph{causality cycles} and \emph{schizophrenia problems}%
 %
 In contrast, \CEU defines time as a discrete sequence of reactions to
 unique input events, which is a prerequisite for the concurrency checks that
-enable safe shared-memory concurrency.
+enable safe shared-memory concurrency, as discussed in
+Section~\ref{sec.ceu.shared}.
 
-Also, in most synchronous languages, the behavior of internal and external
-events is equivalent.
-In \CEU, internal events introduce stack-based micro reactions within external
-reactions, providing more fine-grained control for intra-reaction execution.
+In most synchronous languages, the behavior of external and internal events is
+equivalent.
+However, in \CEU, internal events introduce stack-based micro reactions within
+external reactions, providing more fine-grained control for intra-reaction
+execution.
 %
-This allows for memory-bounded subroutines that execute multiple times in the
-same external reaction.
+This allows for memory-bounded subroutines that can execute multiple times
+during the same external reaction.
 %
 The synchronous languages Statecharts~\cite{statecharts.variants} and
 Statemate~\cite{statecharts.statemate} also distinguish internal from external
@@ -32,7 +34,7 @@ a function''}.
 Although the descriptions suggest a stack-based semantics, we are not aware of
 formalizations for these ideas for a deeper comparison with \CEU.
 
-Like \CEU, many synchronous languages%
+Like \CEU, many other synchronous languages%
 ~\cite{rp.rc,wsn.protothreads,wsn.sol,rp.synchc,rp.pretc}
 also rely on lexical scheduling to preserve determinism.
 %
@@ -46,8 +48,10 @@ For this reason, Esterel, does not support shared-memory concurrency:
 \emph{``if a variable is written by some thread, then it can neither be read
 nor be written by concurrent threads''}~\cite{esterel.primer}.
 
-Regarding the integration with the $C$ language-based environment, \CEU
+Regarding the integration with $C$ language-based environments, \CEU
 supports a finalization mechanism for external resources.
 %
 In addition, \CEU also tracks pointers representing resources that cross $C$
 boundaries and forces the programmer to provide associated finalizers.
+%
+As far as we know, this extra safety level is unique to \CEU.
