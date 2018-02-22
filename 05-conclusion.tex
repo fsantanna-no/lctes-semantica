@@ -1,4 +1,26 @@
 \section{Conclusion}
 \label{sec.conclusion}
 
-\fs{TODO}
+The programming language \CEU aims to offer a concurrent, safe, and realistic
+alternative to C for embedded soft real-time systems, such as sensor networks
+and multimedia applications.
+%
+%Its synchronous semantics enables safe shared-memory concurrency and
+%safe abortion of lines of execution, while enforcing memory-bounded,
+%deterministic, and terminating reactions to the environment.
+%
+\CEU inherits the synchronous and imperative mindset of Esterel but adopts a
+simpler semantics with fine-grained execution control, which makes the
+language fully deterministic.
+%
+In addition, its stack-based execution for internal events provides a limited
+but memory-bounded form of subroutines.
+%
+\CEU also provides a finalization mechanism for resources when interacting with
+the external environment.
+
+We present a small-step structural operational semantics for
+\CEU and a proof that reactions are deterministic, terminate in finite time,
+and use bounded memory, i.e., that for a given arbitrary timeline of input
+events, multiple executions of the same program always react in bounded time
+and arrive at the same final finite memory state.
