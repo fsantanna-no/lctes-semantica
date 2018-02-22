@@ -161,7 +161,7 @@
     \begin{subcase}
       $p'=\ceu{\Break}$.
       %%
-      Then~$\pi_1$ and~$\pi_2$ are instances of~\R{loop-break}.
+      Then~$\pi_1$ and~$\pi_2$ are instances of~\R{loop-brk}.
       Hence~$p_1=p_2=\ceu{\Nop}$ and~$e_1=e_2=\nil$.
     \end{subcase}
     \begin{subcase}
@@ -197,7 +197,8 @@
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-nop1}.
         Hence~$p_1=p_2=p''$ and~$e_1=e_2\nil$.
       \end{subsubcase}
-      \begin{subsubcase}\label{lem.det-nst.and-brk1}
+      \begin{subsubcase}
+        \label{lem.det-nst.and-brk1}
         $p'=\ceu{\Break}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-brk1}.
@@ -974,43 +975,66 @@ following assumptions.
 \end{proof}
 
 
-\begin{definition}\label{def.pot}
+\begin{definition}
+  \label{def.pot}
+  %%
   The potency of a program~$p$ in reaction to event~$e$,
   denoted~$\pot(p,e)$, is the maximum number of~$\ceu{\EmitInt}$ expressions
-  that can be reached during a reaction of~$p$ to~$e$.  Formally,
-  $\pot(p,e)$ is defined as follows:
+  that can be reached during a reaction of~$p$ to~$e$.
+
+  More formally,
   \[
     \pot(p,e)=\pot'(\bcast(p,e))\,,
   \]
-  where
+  where~$\pot'$ is an auxiliary function that counts the number of
+  reachable~$\ceu{\EmitInt}$ in the program resulting from the broadcast of
+  event~$e$ to~$p$.
+
+  The auxiliary function~$\pot'$ is defined by the following clauses:
   \begin{enumerate}[(a)]
-  \item$\pot'(p)=1$, if~$p=\ceu{\EmitInt(e)}$;
-    %%
-  \item$\pot'(p)=\max\{\pot'(p_1),\pot'(p_2)\}$,\\
-    if~$p=\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}}$;
-    %%
-  \item$\pot'(p)=\pot'(p_1)$, if~$p=\ceu{\Loop{p_1}}$
-    or~$p=\ceu{\Every{e}\,{p_1}}$;
-    %%
-  \item$\pot'(p)=\pot'(p_1)+\pot'(p_2)$, if~$p=p_1;\,p_2$
-    or~$p=\ceu{p_1\AtLoop{p_2}}$
-    with~$p_1\ne\ceu{\Break},\ceu{\AwaitExt(e)}$,
-    or~$p=\ceu{{p_1}\And{p_2}}$ or~$p=\ceu{{p_1}\Or{p_2}}$
-    or~$p=\ceu{{p_1}\AtAnd{p_2}}$ or~$p=\ceu{{p_1}\AtOr{p_2}}$;
-    %%
-  \item$\pot'(p)=0$, otherwise.
-  \end{enumerate}
-  Note that~$\pot'$ only considers the~$\ceu{\EmitInt}$ expressions that
-  occur before the first~$\ceu{\AwaitExt}$ in a given execution path.  This
-  is because such~$\ceu{\AwaitExt}$ act as barriers that cannot be consumed
-  in the reaction to the original event~$e$.
+    \item$\pot'(\ceu{\EmitInt}(e))=1$.
+    \item$\pot'(\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}})
+      =\max\{\pot'(p_1),\pot'(p_2)\}$.
+    \item$\pot'(\ceu{\Loop{p_1}})=\pot'(p_1)$.
+    \item If~$p_1\ne\ceu{\Break},\ceu{\AwaitExt(e)}$,
+      \begin{align*}
+        \pot'(\ceu{p_1;\,p_2})&=\pot'(p_1)+\pot'(p_2)\\
+        %%
+        \pot'(\ceu{p_1\AtLoop{p_2}})&=
+        \begin{cases}
+          \pot'(p_1)              &\text{if~(\dag)}\\
+          \pot'(p_1)+\pot'(p_2)   &\text{otherwise}\\
+        \end{cases}\\
+        %%
+        \pot'(\ceu{{p_1}\And{p_2}})&=\pot'(p_1)+\pot'(p_2)\\
+        %%
+        \pot'(\ceu{{p_1}\AtAnd{p_2}})&=\pot'(p_1)+\pot'(p_2)\\
+        %%
+        \pot'(\ceu{{p_1}\Or{p_2}})&=\pot'(p_1)+\pot'(p_2)\\
+        %%
+        \pot'(\ceu{{p_1}\AtOr{p_2}})&=\pot'(p_1)+\pot'(p_2)\,,
+      \end{align*}
+      where~(\dag) stands for: ``A~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$
+      occurs in all execution paths of~$p_1$.''
+      \item Otherwise, if none of~(a)--(d) applies, $\pot(\ast)=0$.
+    \end{enumerate}
+
+  TODO: Define~$\pot'(\ceu{\Every{e}\,{p_1}})$ above.
 \end{definition}
 
 
 \begin{definition}\label{def.rank}
   The \emph{rank} of a description~$\delta=\<p,n,e>$,
   denoted~$\rank(\delta)$, is a pair of nonnegative integers~$\<i,j>$ such
-  that~$i=\pot(p,e)$, and $j=n$~if~$e=\nil$ or~$j=n+1$ otherwise.
+  that
+  \begin{alignat*}{2}
+    i&=\pot(p,e) &\quad\text{and}\quad
+    j&=
+       \begin{cases}
+         n  &\text{if~$e=\nil$}\\
+         n+1&\text{otherwise\,.}
+       \end{cases}
+  \end{alignat*}
 \end{definition}
 
 The next two lemmas establish that a single application of an~$\out$
@@ -1028,14 +1052,11 @@ description.  All rank comparisons assume lexicographical order.
   Let~$\delta=\<p,n,e>$, $\delta'=\<p',n',e'>$,
   $\rank(\delta)=\<i,j>$, and~$\rank(\delta')=\<i',j'>$.
   \begin{enumerate}[(a)]
-  \item Suppose
-    \[
-      \<p,n,e>\outpush\<p',n',e'>\,.
-    \]
-    By~\R{push}, $e\ne\nil$, $p'=\bcast(p,e)$, $n'=n+1$, and~$e'=\nil$.  By
+  \item Suppose~$\<p,n,e>\outpush\<p',n',e'>$.  Then, by~\R{push},
+    $e\ne\nil$, $p'=\bcast(p,e)$, $n'=n+1$, and~$e'=\nil$.  By
     Definition~\ref{def.rank}, $j=n+1$, as~$e\ne\nil$, and~$j'=n+1$,
     as~$e'=\nil$ and~$n'=n+1$; hence~$j=j'$.
-
+    %%
     It remains to be shown that~$i=i'$:
     \begin{align*}
       i&=\pot(p,e)
@@ -1053,14 +1074,12 @@ description.  All rank comparisons assume lexicographical order.
        &=i'
          \tag*{by Definition~\ref{def.rank}}
     \end{align*}
+    Therefore, $\<i,j>=\<i',j'>$.
 
-  \item Suppose
-    \[
-      \<p,n,e>\outpop\<p',n',e'>\,.
-    \]
-    By~\R{pop}, $p=p'$, $n>0$, $n'=n-1$, and~$e=e'=\nil$.
+  \item Suppose~$\<p,n,e>\outpop\<p',n',e'>$.  Then, by~\R{pop}, $p=p'$,
+    $n>0$, $n'=n-1$, and~$e=e'=\nil$.
     %%
-    By Definition~\ref{def.pot}, $\pot(\bcast(p,e))=\pot(\bcast(p',e')$;
+    By Definition~\ref{def.pot}, $\pot(\bcast(p,e))=\pot(\bcast(p',e'))$;
     hence~$i=i'$.  And by Definition~\ref{def.rank}, $j=n$, as~$e=\nil$,
     and~$j'=n-1$, as~$e'=\nil$ and~$n'=n-1$; hence~$j>j'$.
     Therefore,~${\<i,j>}>{\<i',j'>}$.\qedhere
@@ -1068,41 +1087,52 @@ description.  All rank comparisons assume lexicographical order.
 \end{proof}
 
 
-\begin{lemma}\label{lem.rank-nst}
-If~$\delta\nst\delta'$ then~$\rank(\delta)\ge\rank(\delta')$.
+\begin{lemma}
+  \label{lem.rank-nst}
+  %%
+  If~$\delta\nst\delta'$ then~$\rank(\delta)\ge\rank(\delta')$.
 \end{lemma}
 \begin{proof}
-  By induction on the structure of~$\nst$ derivations.
+  We proceed by induction on the structure of~$\nst$ derivations.
   Let~$\delta=\<p,n,e>$, $\delta'=\<p',n',e'>$, $\rank(\delta)=\<i,j>$,
-  and~$\rank(\delta')=\<i',j'>$.  Suppose there is a derivation~$\pi$
-  such that
+  and~$\rank(\delta')=\<i',j'>$.  By the theorem hypothesis, there is a
+  derivation~$\pi$ such that
   \[
     \pi\Vdash\<p,n,e>\nst\<p',n',e'>\,.
   \]
-  By definition of~$\nst$, we have that~$e=\nil$ and $n=n'$.  Depending on
-  the structure of program~$p$, there are~11 possibilities.  In each one of
-  them, we show that~$\rank(\delta)\ge\rank(\delta')$.
+  By definition of~$\nst$, $e=\nil$ and $n=n'$.  Depending on the structure
+  of program~$p$, there are~11 possibilities.  In each one of them, we show
+  that~$\rank(\delta)\ge\rank(\delta')$.
 
   \begin{case}
     $p=\ceu{\Mem(id)}$.
     %%
     Then~$\pi$ is an instance of~\R{mem}.  Hence~$p'=\ceu{\Nop}$
-    and~$e'=\nil$.  Thus~$\rank(\delta)=\rank(\delta')=\<0,n>$.
+    and~$e'=\nil$.  Thus
+    \[
+      \rank(\delta)=\rank(\delta')=\<0,n>\,.
+    \]
   \end{case}
 
   \begin{case}
     $p=\ceu{\EmitInt(e_1)}$.
     %%
     Then~$\pi$ is an instance of~\R{emit-int}.  Hence~$p'=\ceu{\Nop}$
-    and~$e'=e_1$.
-    Thus~${\rank(\delta)={\<1,n>}}>{\<0,n+1>=\rank(\delta')}$.
+    and~$e'=e_1\ne\nil$.
+    Thus
+    \[
+      {\rank(\delta)={\<1,n>}}>{\<0,n+1>=\rank(\delta')}\,.
+    \]
   \end{case}
 
   \begin{case}
     $p=\ceu{\CanRun(n)}$.
     %%
     Then~$\pi$ is an instance of~\R{can-run}.  Hence~$p'=\ceu{\Nop}$
-    and~$e'=\nil$.  Thus~$\rank(\delta)=\rank(\delta')=\<0,n>$.
+    and~$e'=\nil$.  Thus
+    \[
+      \rank(\delta)=\rank(\delta')=\<0,n>\,.
+    \]
   \end{case}
 
   \begin{case}
@@ -1114,9 +1144,11 @@ If~$\delta\nst\delta'$ then~$\rank(\delta)\ge\rank(\delta')$.
       $\eval(\ceu{\Mem(\Id)})$~is true.
       %%
       Then~$\pi$ is an instance of~\R{if-true}.  Hence~$p'=\ceu{p_1}$
-      and~$e'=\nil$.  Thus~$\rank(\delta)=\<i,n>$
-      and~$\rank(\delta')=\<j,n>$, where~$i=\max\{pot'(p_1),pot'(p_2)\}$
-      and~$j=\pot'(p_1)$.  Therefore~$i>j$.
+      and~$e'=\nil$.  Thus
+      \begin{align*}
+        \rank(\delta)&=\<\max\{pot'(p_1),pot'(p_2)\},n>\\
+                     &\ge\<\pot'(p_1),n>=\rank(\delta')\,.
+      \end{align*}
     \end{subcase}
     \begin{subcase}
       $\eval(\ceu{\Mem(\Id)})$~is false.
@@ -1130,26 +1162,37 @@ If~$\delta\nst\delta'$ then~$\rank(\delta)\ge\rank(\delta')$.
     %%
     There are three subcases.
     \begin{subcase}
+      \label{lem.rank-nst.seq-nop}
       $p_1=\ceu{\Nop}$.
       %%
-      Then~$\pi$ is an instance of~\R{seq-nop}.  TODO.
+      Then~$\pi$ is an instance of~\R{seq-nop}.
+      Hence~$p'=p_2$ and~$e'=\nil$.  Thus
+      \begin{align*}
+        \rank(\delta)&=\<\pot'(p_1)+\pot'(p_2),n>\\
+                     &\ge\<pot'(p_2),n>=\rank(\delta')\,.
+      \end{align*}
     \end{subcase}
     \begin{subcase}
+      \label{lem.rank-nst.seq-brk}
       $p_1=\ceu{\Break}$.
       %%
-      Then~$\pi$ is an instance of~\R{seq-brk}.  TODO.
+      Then~$\pi$ is an instance of~\R{seq-brk}.
+      Hence~$p'=p_1$ and~$e'=\nil$.  Thus
+      \[
+        \rank(\delta)=\<0,n>=\rank(\delta')\,.
+      \]
     \end{subcase}
     \begin{subcase}
       \label{lem.rank-nst.seq-adv}
       $p_1\ne\ceu{\Nop},\ceu{\Break}$.
       %%
-      Then~$\pi$ is an instance of~\R{seq-adv}.
-      Thus there is a derivation~$\pi'$ such that
+      Then~$\pi$ is an instance of~\R{seq-adv}.  Hence there is a
+      derivation~$\pi'$ such that
       \[
         \pi'\Vdash\<p_1,n,\nil>\nst\<p_1',n,e_1'>\,,
       \]
-      for some~$p_1'\in\P$ and~$e_1'\in\E$.  Thus~$p'=p_1';p_2$
-      and~$e'=e_1'$.  By the induction hypothesis,
+      for some~$p_1'$ and~$e_1'$.  Thus~$p'=p_1';p_2$ and~$e'=e_1'$.  By the
+      induction hypothesis,
       \begin{equation}
         \label{lem.rank-nst.seq-adv.eq1}
         \rank(\<p_1,n,\nil>)\ge\rank(\<p_1',n,e_1'>)\,.
@@ -1160,32 +1203,80 @@ If~$\delta\nst\delta'$ then~$\rank(\delta)\ge\rank(\delta')$.
         %%
         Then
         \begin{align*}
-          \rank(\delta)&=\<\pot'(p_1)+\pot'(p_2),n>\,,\enspace\text{and}\\
+          \rank(\delta)&=\<\pot'(p_1)+\pot'(p_2),n>\enspace\text{and}\\
           \rank(\delta')&=\<\pot'(p_1')+\pot'(p_2),n>\,.
         \end{align*}
-        By~\eqref{lem.rank-nst.seq-adv.eq1} and from the fact
-        that~$e_1'=\nil$, $\pot'(p_1)\ge\pot'(p_1')$.  Therefore,
-        $\rank(\delta)\ge\rank(\delta')$.
+        By~\eqref{lem.rank-nst.seq-adv.eq1}, $\pot'(p_1)\ge\pot'(p_1')$.
+        Thus
+        \[
+          \rank(\delta)\ge\rank(\delta')\,.
+        \]
       \end{subsubcase}
       \begin{subsubcase}
         $e'\ne\nil$.
         %%
-        Then~$\pi'$ is an instance of~\R{emit-int}, as no other rule affects
-        the third component of the output description.
-        \[
-          \rank(\delta)=\<i,n>
-          >\<i-1,n+1>
-          =\rank(\delta')\,.
-        \]
+        Then~$\pi'$ contain one application of~\R{emit-int}, which consumes
+        one~$\ceu{\EmitInt(e')}$ expression from~$p_1$ and implies
+        $\pot'(p_1)>\pot'(p_1')$.  Thus
+        \begin{align*}
+          \rank(\delta)&=\<\pot'(p_1)+\pot'(p_2),n>\\
+                       &>\<\pot'(p_1')+\pot'(p_2),n+1>=\rank(\delta')\,.
+        \end{align*}
       \end{subsubcase}
     \end{subcase}
   \end{case}
 
   \begin{case}
+    \label{lem.rank-nst.loop-expd}
     $p=\ceu{\Loop{p_1}}$.
+    %%
+    Then~$\pi$ is an instance of~\R{loop-expd}.
+    Hence~$p'=\ceu{p_1\AtLoop{p_1}}$ and~$e'=\nil$.
+    %%
+    TODO: Use condition~(\dag) in definition of~$\pot'$.
   \end{case}
 
-  TODO\dots
+  \begin{case}
+    $p=\ceu{{p_1}\AtLoop{p_2}}$.
+    %%
+    There are three cases.
+    \begin{subcase}
+      $p_1=\ceu{\Nop}$.
+      %%
+      Similar to Case~\ref{lem.rank-nst.seq-nop}.
+    \end{subcase}
+    \begin{subcase}
+      $p_1=\ceu{\Break}$.
+      %%
+      Similar to Case~\ref{lem.rank-nst.seq-brk}.
+    \end{subcase}
+    \begin{subcase}
+      \label{lem.rank-nst.loop-adv}
+      $p_1\ne\ceu{\Nop},\ceu{\Break}$.
+      %%
+      Similar to Case~\ref{lem.rank-nst.seq-adv}.
+    \end{subcase}
+  \end{case}
+
+  \begin{case}
+    \label{lem.rank-nst.and.expd}
+    $p=\ceu{{p_1}\And{p_2}}$.
+    %%
+    Then~$\pi$ is an instance of~\R{and-expd}.
+    Hence~$p'=\ceu{{p_1}\AtAnd(\CanRun(n);\,p_2)}$ and~$e'=\nil$.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{{p_1}\AtAnd{p_2}}$.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{{p_1}\Or{p_2}}$.
+  \end{case}
+
+  \begin{case}
+    $p=\ceu{{p_1}\AtOr{p_2}}$.
+  \end{case}
 \end{proof}
 
 \begin{theorem}[Reaction termination]
