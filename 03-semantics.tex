@@ -902,25 +902,26 @@ and will eventually resume in the current reaction (see rule \R{pop}).
 % }
 %-
 
-\subsection{Determinism, Termination, and Memory Bounds}
+
+\subsection{Properties}
 
+
 \subsubsection{Determinism}
 
 Transitions~$\out$ and~$\nst$ are defined in such a way that given an input
 description either no rule is applicable or exactly one of them can be
 applied.  This means that the resulting relation~$\trans$ is in fact a
-partial function and that, consequently, the same number of applications
-of~$\trans$ will always yield the same result.
+partial function.
 
 The next two lemmas establish the determinism of a single application
 of~$\out$ and~$\nst$.  Lemma~\ref{lem.x.det-out} follows from a simple
 inspection of rules~\R{push} and~\R{pop}.  The proof of
-Lemma~\ref{lem.x.det-out} proceeds by induction on the structure of the
-derivation trees produced by applications of the rules for~$\nst$.  Both
-lemmas are used in the proof of Theorem~\ref{thm.x.det}, the main result of
-this section, which establishes that any given number of applications
-of~$\trans$ starting from the same input description will always lead to the
-same output description.
+Lemma~\ref{lem.x.det-out}, however, requires an induction on the structure
+of the derivation trees produced by the rules for~$\nst$.  Both lemmas are
+used in the proof of Theorem~\ref{thm.x.det}, the main result of this
+section.  Theorem~\ref{thm.x.det} establishes that any given number of
+applications of~$\trans$ starting from the same input description will
+always lead to the same output description.
 
 \begin{lemma}
   \label{lem.x.det-out}
@@ -1002,15 +1003,128 @@ same output description.
 % $isblocked(p,n)$ are mutually exclusive, which is exactly the same
 % reasoning for rule \textbf{pop} above.
 
-\subsubsection*{Termination}
+
+\subsubsection{Termination}
 
-- there is always a possible transition until n=0
+In this section, we prove that a sufficiently long sequence of applications
+of~$\trans$, and consequently~$\out$ and~$\nst$, will eventually lead to an
+irreducible description, viz., one that cannot be modified by further
+transitions.
 
-every cannot restart itself
-    - break disallowed
-    - emit ignored
+\begin{definition}
+  \label{def.x.Hnst}
+  %%
+  A description~$\delta=\<p,n,e>$ is \emph{nested-irre\-ducible}
+  iff~$e\ne\nil$ or~$p=\ceu{\Nop},\ceu{\Break}$ or~$\isblocked(p,n)$~is
+  true.
+\end{definition}
+
+Nested-irreducible descriptions serve as normal forms for~$\nst$
+transitions: they embody the result of an exhaustive number of~$\nst$
+applications.  We will write~$\delta_\Hnst$ to indicate that
+description~$\delta$ is nested-irreducible.
+
+To characterize irreducible descriptions in general, we will need to define
+the notions of potency of a program and the rank of a description.
+
+\begin{definition}
+  \label{def.x.pot}
+  %%
+  The potency of a program~$p$ in reaction to event~$e$,
+  denoted~$\pot(p,e)$, is the maximum number of~$\ceu{\EmitInt}$ expressions
+  that can be executed during a reaction of~$p$ to~$e$.
+
+  More formally,
+  \[
+    \pot(p,e)=\pot'(\bcast(p,e))\,,
+  \]
+  where~$\pot'$ is an auxiliary function that counts the number of
+  reachable~$\ceu{\EmitInt}$ expressions in the program resulting from the
+  broadcast of event~$e$ to~$p$.
+
+  The auxiliary function~$\pot'$ is defined by the following clauses:
+  \begin{enumerate}[(a)]
+  \item\label{def.pot.first}$\pot'(\ceu{\EmitInt}(e))=1$;
+    %%
+  \item$\pot'(\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}})
+    =\max\{\pot'(p_1),\pot'(p_2)\}$;
+    %%
+  \item$\pot'(\ceu{\Loop{p_1}})=\pot'(p_1)$;
+    %%
+  \item$\pot'(\ceu{{p_1}\And{p_2}})=\pot'(p_1)+\pot'(p_2)$;
+    %%
+  \item$\pot'(\ceu{{p_1}\Or{p_2}})=\pot'(p_1)+\pot'(p_2)$;
+    %%
+  \item If~$p_1\ne\ceu{\Break},\ceu{\AwaitExt(e)}$,
+    \begin{align*}
+      \pot'(\ceu{p_1;\,p_2})&=\pot'(p_1)+\pot'(p_2)\\
+      \pot'(\ceu{p_1\AtLoop{p_2}})&=
+      \begin{cases}
+        \pot'(p_1)              &\text{if\enspace(\dag)}\\
+        \pot'(p_1)+\pot'(p_2)   &\text{otherwise}\\
+      \end{cases}
+    \end{align*}
+    where~(\dag) stands for: ``a~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$ occurs
+    in all execution paths of~$p_1$'';
+    %%
+  \item If~$p_1,p_2\ne\ceu{\Break}$,
+    \[
+      \pot'(\ceu{{p_1}\AtAnd{p_2}})=\pot'(p_1)+\pot'(p_2)\,;
+    \]
+    %%
+  \item\label{def.pot.last} If~$p_1,p_2\ne\ceu{\Break}$
+    and~$p_1,p_2\ne\ceu{\Nop}$,
+    \[
+      \pot'(\ceu{{p_1}\AtOr{p_2}})=\pot'(p_1)+\pot'(p_2)\,;
+    \]
+    %%
+  \item Otherwise, if none of~\eqref{def.pot.first}--\eqref{def.pot.last}
+    applies, $\pot(\_)=0$.
+  \end{enumerate}
+\end{definition}
+
+\begin{definition}
+  \label{def.x.rank}
+  %%
+  The \emph{rank} of a description~$\delta=\<p,n,e>$,
+  denoted~$\rank(\delta)$, is a pair of nonnegative integers~$\<i,j>$ such
+  that
+  \begin{alignat*}{2}
+    i&=\pot(p,e) &\quad\text{and}\quad
+    j&=
+       \begin{cases}
+         n  &\text{if~$e=\nil$}\\
+         n+1&\text{otherwise\,.}
+       \end{cases}
+  \end{alignat*}
+\end{definition}
+
+\begin{definition}
+  \label{def.x.H}
+  %%
+  A description~$\delta$ is \emph{irreducible} (in symbols, $\delta_\#$) iff
+  it is nested-irreducible and its~$\rank(\delta)$ is~$\<i,0>$, for
+  some~$i\ge0$.
+\end{definition}
+
+An irreducible description~$\delta_\#=\<p,n,e>$ serves as a normal form for
+transitions~$\trans$ in general.  Such descriptions cannot be advanced
+by~$\nst$, as it is nested-irreducible, and neither by~$\outpush$
+nor~$\outpop$, as the second coordinate of its rank is~0, which
+implies~$e=\nil$ and~$n=0$.
+
+TODO: Lemas e teorema da terminação.  Sketch da prova.  Mencionar que as
+restrições sintáticas são fundamentais.
+
+% - there is always a possible transition until n=0
+%
+% every cannot restart itself
+%     - break disallowed
+%     - emit ignored
 
 \subsubsection*{Memory Bounds}
+
+TODO: Acho que sai direto do~$\pot(p)$.
 
 - program is finite
 - lexical scope
