@@ -63,7 +63,7 @@ sufficient to describe all semantic peculiarities of the language.
 \newdimen\X
 \X=-1\jot
 \begin{alignat*}{2}
-  p\Coloneqq
+  P\Coloneqq
       &\enspace\ceu{\Mem(\Id)}
       &&\lbl{any memory access to~``$\ceu\Id$''}\\[\X]
       %%
@@ -79,34 +79,34 @@ sufficient to describe all semantic peculiarities of the language.
   \mid&\enspace\ceu{\Break}
       &&\lbl{loop escape}\\[\X]
       %%
-  \mid&\enspace\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}}
+  \mid&\enspace\ceu{\IfElse{\Mem(\Id)}{P_1}{P_2}}
       &&\lbl{conditional}\\[\X]
       %%
-  \mid&\enspace\ceu{p_1\,;\,p_2}
+  \mid&\enspace\ceu{P_1\,;\,P_2}
       &&\lbl{sequence}\\[\X]
       %%
-  \mid&\enspace\ceu{\Loop p_1}
+  \mid&\enspace\ceu{\Loop P_1}
       &&\lbl{repetition}\\[\X]
       %%
-  \mid&\enspace\ceu{\Every{\Id}\ p_1}
+  \mid&\enspace\ceu{\Every{\Id}\ P_1}
       &&\lbl{event iteration}\\[\X]
       %%
-  \mid&\enspace\ceu{p_1\And p_2}
+  \mid&\enspace\ceu{P_1\And P_2}
       &&\lbl{par/and}\\[\X]
       %%
-  \mid&\enspace\ceu{p_2\Or p_2}
+  \mid&\enspace\ceu{P_2\Or P_2}
       &&\lbl{par/or}\\[\X]
       %%
-  \mid&\enspace\ceu{\Fin p}
+  \mid&\enspace\ceu{\Fin P}
       &&\lbl{finalization}\\[\X]
       %%
-  \mid&\enspace\ceu{p_1\AtLoop p_2}
+  \mid&\enspace\ceu{P_1\AtLoop P_2}
       &&\lbl{unwinded loop}\\[\X]
       %%
-  \mid&\enspace\ceu{p_1\AtAnd\ p_2}
+  \mid&\enspace\ceu{P_1\AtAnd\ P_2}
       &&\lbl{unwinded par/and}\\[\X]
       %%
-  \mid&\enspace\ceu{p_1\AtOr\ p_2}
+  \mid&\enspace\ceu{P_1\AtOr\ P_2}
       &&\lbl{unwinded par/or}\\[\X]
       %%
   \mid&\enspace\ceu{\CanRun(n)}
@@ -137,7 +137,7 @@ any identifier is either a variable, an external event, or an internal event.
 
 Most expressions in the abstract language are mapped to their counterparts in
 the concrete language.
-The exceptions are the finalization block~$\ceu{\Fin{p}}$ and the
+The exceptions are the finalization block~$\ceu{\Fin{P}}$ and the
 \texttt{@}-expressions which result from expansions in the transition rules to
 be presented.
 

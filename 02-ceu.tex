@@ -1,7 +1,7 @@
 \section{\CEU}
 \label{sec.ceu}
 
-\CEU is a synchronous reactive language in which programs advance in a sequence
+\CEU is a synchronous reactive language in which programs evolve in a sequence
 of discrete reactions to external events.
 %
 It is designed for control-intensive applications, supporting concurrent lines
@@ -16,7 +16,7 @@ hypothesis~\cite{rp.hypothesis}.
 %``consumes'' time.
 %
 \CEU provides an \code{await} statement that blocks the current running trail
-allowing the program to advance its other trails; when all trails are blocked,
+allowing the program to execute its other trails; when all trails are blocked,
 the reaction terminates and control returns to the environment.
 
 In \CEU, every execution path within loops must contain at least one
