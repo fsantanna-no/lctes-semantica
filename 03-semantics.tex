@@ -956,7 +956,7 @@ always lead to the same output description.
   \]
   for some~$i>1$, $\delta_1'$ and~$\delta_2'$.
   %%
-  Then, by Lemma~\ref{lem.det-out} or~\ref{lem.det-nst}, depending on
+  Then, by Lemma~\ref{lem.x.det-out} or~\ref{lem.x.det-nst}, depending on
   whether the first transition is~$\out$ or~$\nst$ (it cannot be both),
   $\delta_1'=\delta_2'$, and by the induction hypothesis,
   $\delta_1=\delta_2$.
@@ -1045,8 +1045,8 @@ such~$k\ne{i}$.
   no~$\delta_\Hnst''$ such that~$\delta\nst[k]\delta''_\Hnst$.
 \end{proposition}
 
-The next lemma establishes that sequences of~$\nst$ transitions are
-well-behaved regarding the order of evaluation of composition members.  Its
+The next lemma establishes that sequences of~$\nst$ transitions behave
+as expected regarding the order of evaluation of composition members.  Its
 proof follows by induction on~$i$.
 
 \begin{lemma}
@@ -1113,13 +1113,13 @@ are formalized in the next assumption.
   \label{ass.x.syn-rest}
   %%
   \begin{enumerate}[(a)]
-  \item\label{ass.x.syn-rest.fin} If~$p=\ceu{\Fin{p_1}}$ then~$p_1$ contain
+  \item\label{ass.x.syn-rest.fin} If~$p=\ceu{\Fin{p_1}}$ then~$p_1$ contains
     no occurrences of~$\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$, $\ceu{\Every}$,
     or~$\ceu{\Fin}$ expressions.  Consequently, for any~$n$,
     $\<\clear(p_1),n,\nil>\nst[*]\<\ceu{\Nop},n,\nil>$.
     %%
   \item\label{ass.x.syn-rest.loop} If~$p=\ceu{\Loop{p_1}}$ then all
-    execution paths of~$p_1$ contain at a matching~$\ceu{\Break}$ or
+    execution paths of~$p_1$ contain a matching~$\ceu{\Break}$ or
     an~$\ceu{\AwaitExt}$.  Consequently, for all~$n$, there are~$p_1'$
     and~$e$ such that $\<\ceu{\Loop{p_1}},n,\nil>\nst[*]\<p_1',n,e>$, where
     $p_1'=\ceu{{\Break}\AtLoop{p_1}}$ or~$\isblocked(p_1',n)$\,.
@@ -1129,7 +1129,7 @@ are formalized in the next assumption.
 Theorem~\ref{thm.x.term-nst-*} establishes that a finite (possibly zero)
 number of~$\nst$ transitions eventually lead to a nested-irreducible
 description.  The proof is by induction on the structure of programs
-(members of set~$P$) and uses Lemma~\ref{lem.props-nst-i} and
+(members of set~$P$) and uses Lemma~\ref{lem.x.props-nst-i} and
 Assumption~\ref{ass.x.syn-rest}.
 
 \begin{theorem}
