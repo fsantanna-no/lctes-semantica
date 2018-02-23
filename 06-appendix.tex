@@ -1,3 +1,4 @@
+\clearpage
 \appendix
 \section{Proofs}
 \label{sec.proofs}
@@ -25,29 +26,31 @@
   \end{case}
 \end{proof}
 
-
-\begin{theorem}
-  \label{thm.det-out-pop-n}
-  %%
-  If~$\delta\out[n]\delta_1$ and~$\delta\out[n]\delta_2$
-  then~$\delta_1=\delta_2$.
-\end{theorem}
-\begin{proof}
-  By induction on~$n$.
-  %%
-  The theorem is trivially true for~$n=0$ and follows directly from
-  Lemma~\ref{lem.det-out} for~$n=1$.  (The theorem is vacuously true
-  for~$\outpush$ transitions if~$n>1$ since, by definition,
-  $\outpush$~transitions cannot be applied more than once in a row and
-  cannot occur after a~$\outpop$ transition.)
-  %%
-  Suppose~$\delta\out[1]\delta_1'\out[n-1]\delta_1$
-  and~$\delta\out[1]\delta_2'\out[n-1]\delta_2$, for some~$n>1$
-  and~$\delta_1'$ and~$\delta_2'$.
-  %%
-  By Lemma~\ref{lem.det-out}, $\delta_1'=\delta_2'$.  By the induction
-  hypothesis, $\delta_1=\delta_2$.\qedhere
-\end{proof}
+% \begin{theorem}
+%   \label{thm.det-out-i}
+%   %%
+%   If~$\delta\out[i]\delta_1$ and~$\delta\out[i]\delta_2$
+%   then~$\delta_1=\delta_2$.
+% \end{theorem}
+% \begin{proof}
+%   By induction on~$i$.
+%   %%
+%   The theorem is trivially true if~$i=0$ and follows directly from
+%   Lemma~\ref{lem.det-out} if~$i=1$.  (The theorem is vacuously true
+%   for~$\outpush$ transitions if~$i>1$ since they cannot be applied more
+%   than once in a row and cannot occur after a~$\outpop$ transition.)
+%   %%
+%   Suppose
+%   \[
+%     \delta\out[1]\delta_1'\out[i-1]\delta_1
+%     \quad\text{and}\quad
+%     \delta\out[1]\delta_2'\out[i-1]\delta_2\,,
+%   \]
+%   for some~$i>1$, $\delta_1'$ and~$\delta_2'$.
+%   %%
+%   By Lemma~\ref{lem.det-out}, $\delta_1'=\delta_2'$.  By the induction
+%   hypothesis, $\delta_1=\delta_2$.\qedhere
+% \end{proof}
 
 
 \begin{lemma}
@@ -325,15 +328,49 @@
   \end{case}
 \end{proof}
 
+% \begin{theorem}
+%   \label{thm.det-nst-i}
+%   %%
+%   If~$\delta\nst[i]\delta_1$ and~$\delta\nst[i]\delta_2$
+%   then~$\delta_1=\delta_2$.
+% \end{theorem}
+% \begin{proof}
+%   By induction on~$i$.  Similar to the proof of
+%   Theorem~\ref{thm.det-out-pop-i}.
+% \end{proof}
+
+The next theorem establishes that transitions are deterministic, i.e., that
+the transition relation~$\trans$ between descriptions is a function.
+
 
-\begin{theorem}
-  \label{thm.det-nst-n}
+\begin{theorem}[Determinism]\strut
+  \label{thm.det}
   %%
-  If~$\delta\nst[n]\delta_1$ and~$\delta\nst[n]\delta_2$
+  If~$\delta\trans[i]\delta_1$ and~$\delta\trans[i]\delta_2$
   then~$\delta_1=\delta_2$.
 \end{theorem}
 \begin{proof}
-  Similar to the proof of Theorem~\ref{thm.det-out-pop-n}.
+  By induction on~$i$.  The theorem is trivially true if~$i=0$ and follows
+  directly from Lemmas~\ref{lem.det-out} and~\ref{lem.det-nst} for~$i=1$.
+  %%
+  Suppose
+  \[
+    \delta\trans[1]\delta_1'\trans[i-1]\delta_1
+    \quad\text{and}\quad
+    \delta\trans[1]\delta_2'\trans[i-1]\delta_2\,,
+  \]
+  for some~$i>1$, $\delta_1'$ and~$\delta_2'$.
+  There are two possibilities.
+  \begin{case}
+    $\delta\out[1]\delta_1'$ and~$\delta\out[1]\delta_2'$.  Then, by
+    Lemma~\ref{lem.det-out}, $\delta_1'=\delta_2'$, and by the induction
+    hypothesis, $\delta_1=\delta_2$.
+  \end{case}
+  \begin{case}
+    $\delta\nst[1]\delta_1'$ and~$\delta\nst[1]\delta_2'$.  Then, by
+    Lemma~\ref{lem.det-nst}, $\delta_1'=\delta_2'$, and by the induction
+    hypothesis, $\delta_1=\delta_2$.\qedhere
+  \end{case}
 \end{proof}
 
 \subsection*{Termination}
@@ -345,53 +382,53 @@
   A description~$\delta=\<p,n,e>$ is \emph{nested-irre\-ducible}
   iff~$e\ne\nil$ or~$p=\ceu{\Nop},\ceu{\Break}$ or~$\isblocked(p,n)$~is
   true.
-
-  Nested-irreducible descriptions serve as normal forms for~$\nst$
-  transitions: they embody the result of an exhaustive number of~$\nst$
-  applications.  We will write~$\delta_\Hnst$ to indicate that
-  description~$\delta$ is nested-irreducible.
 \end{definition}
+
+Nested-irreducible descriptions serve as normal forms for~$\nst$
+transitions: they embody the result of an exhaustive number of~$\nst$
+applications.  We will write~$\delta_\Hnst$ to indicate that
+description~$\delta$ is nested-irreducible.
 
 The next lemma justifies the use of qualifier ``irreducible'' in
 Definition~\ref{def.Hnst}.
 
 
 \begin{lemma}
-  \label{lem.irr-nst-n}
+  \label{lem.irr-nst-i}
   %%
-  If~$\delta\nst[n]\delta_\Hnst'$ then, for all~$i\ne{n}$, there is
-  no~$\delta_\Hnst''$ such that~$\delta\nst[i]\delta''_\Hnst$.
+  If~$\delta\nst[i]\delta_\Hnst'$ then, for all~$k\ne{i}$, there is
+  no~$\delta_\Hnst''$ such that~$\delta\nst[k]\delta''_\Hnst$.
 \end{lemma}
 \begin{proof}
-  By contradiction on the hypothesis that there is such~$i$.
+  By contradiction on the hypothesis that there is such~$k$.
   %%
-  Let~$\delta\nst[n]\delta'_\Hnst$, for some~$n\ge0$.
+  Let~$\delta\nst[i]\delta'_\Hnst$, for some~$i\ge0$.
   %%
   There are two cases.
   \begin{case}
-    \label{lem.irr-nst-n-case1}
+    \label{lem.irr-nst-i-case1}
     %%
-    Suppose there are~$i>n$ and~$\delta''_\Hnst$ such
-    that~$\delta\nst[i]\delta''$.
+    Suppose there are~$k>i$ and~$\delta''_\Hnst$ such
+    that~$\delta\nst[k]\delta''$.
     %%
-    Then, by definition of~$\nst[i]$,
+    Then, by definition of~$\nst[k]$,
     \begin{equation}
-      \label{lem.irr-nst-n-eq1}
+      \label{lem.irr-nst-i-eq1}
       %%
-      \delta\nst[n]\delta'\nst[n+1]\delta_1'\nst[n+2]\cdots\nst[i]\delta''.
+      \delta\nst[i]\delta'\nst[i+1]\delta_1'\nst[i+2]\cdots\nst[k]\delta''.
     \end{equation}
     Since~$\delta'=\<p',n,e'>$ is nested-irreducible, $e'=\nil$
     or~$p=\ceu{\Nop},\ceu{\Break}$ or~$\isblocked(p',n)$.  In any of these
     cases, by the definition of~$\nst$, there is no~$\delta_1'$ such
     that~$\delta'\nst[1]\delta_1'$, which
-    contradicts~\eqref{lem.irr-nst-n-eq1}.  Therefore, no such~$i$ can
+    contradicts~\eqref{lem.irr-nst-i-eq1}.  Therefore, no such~$k$ can
     exist.
   \end{case}
   \begin{case}
-    Suppose there are~$i<n$ and~$\delta''_\Hnst$ such
-    that~$\delta\nst[i]\delta''$.  Then, since~$n>i$, by
-    Case~\ref{lem.irr-nst-n-case1}, $\delta'$~cannot exist, which is absurd.
-    Therefore, the assumption that there is such~$i$ is false.\qedhere
+    Suppose there are~$k<i$ and~$\delta''_\Hnst$ such
+    that~$\delta\nst[k]\delta''$.  Then, since~$i>k$, by
+    Case~\ref{lem.irr-nst-i-case1}, $\delta'$~cannot exist, which is absurd.
+    Therefore, the assumption that there is such~$k$ is false.\qedhere
   \end{case}
 \end{proof}
 
@@ -400,168 +437,168 @@ transitions.
 
 
 \begin{lemma}
-  \label{lem.props-nst-n}
+  \label{lem.props-nst-i}\strut\\
   %%
-  If~$\<p_1,n,e>\nst[n]\<p_1',n,e'>$ then, for any~$p_2$:
+  If~$\<p_1,n,e>\nst[i]\<p_1',n,e'>$ then, for any~$p_2$:
   \begin{enumerate}[(a)]
-  \item\label{lem.props-nst-n.a}
-    $\<\ceu{p_1;\,p_2},n,e>\nst[n]\<p_1';p_2,n,e'>$;
+  \item\label{lem.props-nst-i.a}
+    $\<\ceu{p_1;\,p_2},n,e>\nst[i]\<p_1';p_2,n,e'>$;
     %%
-  \item\label{lem.props-nst-n.b}
-    $\<\ceu{p_1\AtLoop{p_2}},n,e>\nst[n]\<\ceu{p_1'\AtLoop{p_2}},n,e'>$;
+  \item\label{lem.props-nst-i.b}
+    $\<\ceu{p_1\AtLoop{p_2}},n,e>\nst[i]\<\ceu{p_1'\AtLoop{p_2}},n,e'>$;
     %%
-  \item\label{lem.props-nst-n.c}
-    $\<\ceu{{p_1}\AtAnd{p_2}},n,e>\nst[n]\<\ceu{{p_1'}\AtAnd{p_2}},n,e'>$;
+  \item\label{lem.props-nst-i.c}
+    $\<\ceu{{p_1}\AtAnd{p_2}},n,e>\nst[i]\<\ceu{{p_1'}\AtAnd{p_2}},n,e'>$;
     %%
-  \item\label{lem.props-nst-n.d}
-    $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[n]\<\ceu{{p_1}'\AtOr{p_2}},n,e'>$.
+  \item\label{lem.props-nst-i.d}
+    $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[i]\<\ceu{{p_1}'\AtOr{p_2}},n,e'>$.
   \end{enumerate}
-  If~$\<p_2,n,e>\nst[n]\<p_2',n,e'>$, for any~$p_1$ such
+  If~$\<p_2,n,e>\nst[i]\<p_2',n,e'>$, for any~$p_1$ such
   that~$\isblocked(p_1,n)$:
   \begin{enumerate}[(a)]
     \setcounter{enumi}{4}
-  \item\label{lem.props-nst-n.e}
-    $\<\ceu{{p_1}\AtAnd{p_2}},n,e>\nst[n]\<\ceu{{p_1}\AtAnd{p_2'}},n,e'>$;
+  \item\label{lem.props-nst-i.e}
+    $\<\ceu{{p_1}\AtAnd{p_2}},n,e>\nst[i]\<\ceu{{p_1}\AtAnd{p_2'}},n,e'>$;
     %%
-  \item\label{lem.props-nst-n.f}
-    $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[n]\<\ceu{{p_1}\AtOr{p_2'}},n,e'>$.
+  \item\label{lem.props-nst-i.f}
+    $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[i]\<\ceu{{p_1}\AtOr{p_2'}},n,e'>$.
   \end{enumerate}
 \end{lemma}
 \begin{proof}
-  By induction on~$n$.
+  By induction on~$i$.
   %%
   \begin{enumerate}[(a)]
-  \item The lemma is trivially true for~$n=0$, as~$p_1=p_1'$, and follows
-    directly from~\R{seq-adv} for~$n=1$.  Suppose
+  \item The lemma is trivially true for~$i=0$, as~$p_1=p_1'$, and follows
+    directly from~\R{seq-adv} for~$i=1$.  Suppose
     \begin{equation}
-      \label{lem.props-nst-n.a.eq1}
-      \<p_1,n,e>\nst[1]\<p_1'',n,e''>\nst[n-1]\<p_1',n,e'>\,,
+      \label{lem.props-nst-i.a.eq1}
+      \<p_1,n,e>\nst[1]\<p_1'',n,e''>\nst[i-1]\<p_1',n,e'>\,,
     \end{equation}
-    for some~$n>1$.  Then~$\<p_1'',n,e''>$ is not nested-irreducible, i.e.,
+    for some~$i>1$.  Then~$\<p_1'',n,e''>$ is not nested-irreducible, i.e.,
     $e=\nil$ and~$p\ne{\ceu{\Nop},\ceu{\Break}}$ and~$\isblocked(p_1'',n)$
-    is false.  By~\eqref{lem.props-nst-n.a.eq1} and by~\R{seq-adv},
+    is false.  By~\eqref{lem.props-nst-i.a.eq1} and by~\R{seq-adv},
     \begin{equation}
-      \label{lem.props-nst-n.a.eq2}
+      \label{lem.props-nst-i.a.eq2}
       \<\ceu{p_1;\,p_2},n,e>\nst[1]\<\ceu{p_1'';\,p_2},n,e''>\,.
     \end{equation}
-    From~\eqref{lem.props-nst-n.a.eq1}, by the induction hypothesis,
+    From~\eqref{lem.props-nst-i.a.eq1}, by the induction hypothesis,
     \begin{equation}
-      \label{lem.props-nst-n.a.eq3}
-      \<\ceu{p_1'';\,p_2},n,e''>\nst[n-1]\<\ceu{p_1';\,p_2},n,e'>\,.
+      \label{lem.props-nst-i.a.eq3}
+      \<\ceu{p_1'';\,p_2},n,e''>\nst[i-1]\<\ceu{p_1';\,p_2},n,e'>\,.
     \end{equation}
-    From~\eqref{lem.props-nst-n.a.eq2} and~\eqref{lem.props-nst-n.a.eq3},
+    From~\eqref{lem.props-nst-i.a.eq2} and~\eqref{lem.props-nst-i.a.eq3},
     \[
-      \<\ceu{p_1;\,p_2},n,e>\nst[n]\<\ceu{p_1';\,p_2},n,e'>\,.
+      \<\ceu{p_1;\,p_2},n,e>\nst[i]\<\ceu{p_1';\,p_2},n,e'>\,.
     \]
 
-  \item Similar to Case~\eqref{lem.props-nst-n.a}.
+  \item Similar to Case~\eqref{lem.props-nst-i.a}.
     %%
     % The lemma is trivially true for~$n=0$, as~$p_1=p_1'$, and follows
     % directly from~\R{loop-adv} for~$n=1$.  Suppose
     % \begin{equation}
-    %   \label{lem.props-nst-n.b.eq1}
+    %   \label{lem.props-nst-i.b.eq1}
     %   \<p_1,n,e>\nst[1]\<p_1'',n,e''>\nst[n-1]\<p_1',n,e'>\,,
     % \end{equation}
     % for some~$n>1$.  Then~$\<p_1'',n,e''>$ is not nested-irreducible.
-    % By~\eqref{lem.props-nst-n.b.eq1} and by~\R{loop-adv},
+    % By~\eqref{lem.props-nst-i.b.eq1} and by~\R{loop-adv},
     % \begin{equation}
-    %   \label{lem.props-nst-n.b.eq2}
+    %   \label{lem.props-nst-i.b.eq2}
     %   \<\ceu{p_1\AtLoop{p_2}},n,e>\nst[1]\<\ceu{p_1''\Loop{p_2}},n,e''>\,.
     % \end{equation}
-    % From~\eqref{lem.props-nst-n.b.eq1}, by the induction hypothesis,
+    % From~\eqref{lem.props-nst-i.b.eq1}, by the induction hypothesis,
     % \begin{equation}
-    %   \label{lem.props-nst-n.b.eq3}
+    %   \label{lem.props-nst-i.b.eq3}
     %   \<\ceu{p_1''\AtLoop{p_2}},n,e''>
     %   \nst[n-1]\<\ceu{p_1'\AtLoop{p_2}},n,e'>\,.
     % \end{equation}
-    % From~\eqref{lem.props-nst-n.b.eq2} and~\eqref{lem.props-nst-n.b.eq3},
+    % From~\eqref{lem.props-nst-i.b.eq2} and~\eqref{lem.props-nst-i.b.eq3},
     % \[
     %   \<\ceu{p_1\AtLoop{p_2}},n,e>\nst[n]\<\ceu{p_1'\AtLoop{p_2}},n,e'>\,.
     % \]
     %%
 
-  \item Similar to Case~\eqref{lem.props-nst-n.a}.
+  \item Similar to Case~\eqref{lem.props-nst-i.a}.
     %%
     % The lemma is trivially true for~$n=0$, as~$p_1=p_1'$, and follows
     % directly from~\R{and-adv1} for~$n=1$.  Suppose
     % \begin{equation}
-    %   \label{lem.props-nst-n.c.eq1}
+    %   \label{lem.props-nst-i.c.eq1}
     %   \<p_1,n,e>\nst[1]\<p_1'',n,e''>\nst[n-1]\<p_1',n,e'>\,,
     % \end{equation}
     % for some~$n>1$.  Then~$\<p_1'',n,e''>$ is not nested-irreducible.
-    % By~\eqref{lem.props-nst-n.c.eq1} and by~\R{and-adv1},
+    % By~\eqref{lem.props-nst-i.c.eq1} and by~\R{and-adv1},
     % \begin{equation}
-    %   \label{lem.props-nst-n.c.eq2}
+    %   \label{lem.props-nst-i.c.eq2}
     %   \<\ceu{{p_1}\AtAnd{p_2}},n,e>
     %   \nst[1]\<\ceu{{p_1}''\AtAnd{p_2}},n,e''>\,.
     % \end{equation}
-    % From~\eqref{lem.props-nst-n.c.eq1}, by the induction hypothesis,
+    % From~\eqref{lem.props-nst-i.c.eq1}, by the induction hypothesis,
     % \begin{equation}
-    %   \label{lem.props-nst-n.a.eq3}
+    %   \label{lem.props-nst-i.a.eq3}
     %   \<\ceu{{p_1''}\AtAnd{p_2}},n,e''>
     %   \nst[n-1]\<\ceu{{p_1'}\AtAnd{p_2}},n,e'>\,.
     % \end{equation}
-    % From~\eqref{lem.props-nst-n.c.eq2} and~\eqref{lem.props-nst-n.c.eq3},
+    % From~\eqref{lem.props-nst-i.c.eq2} and~\eqref{lem.props-nst-i.c.eq3},
     % \[
     %   \<\ceu{{p_1}\AtAnd{p_2}},n,e>
     %   \nst[n]\<\ceu{{p_1'}\AtAnd{p_2}},n,e'>\,.
     % \]
     %%
 
-  \item Similar to Case~\eqref{lem.props-nst-n.a}.
+  \item Similar to Case~\eqref{lem.props-nst-i.a}.
     %%
     % The lemma is trivially true for~$n=0$, as~$p_1=p_1'$, and follows
     % directly from~\R{or-adv1} for~$n=1$.  Suppose
     % \begin{equation}
-    %   \label{lem.props-nst-n.d.eq1}
+    %   \label{lem.props-nst-i.d.eq1}
     %   \<p_1,n,e>\nst[1]\<p_1'',n,e''>\nst[n-1]\<p_1',n,e'>\,,
     % \end{equation}
     % for some~$n>1$.  Then~$\<p_1'',n,e''>$ is not nested-irreducible.
-    % By~\eqref{lem.props-nst-n.d.eq1} and by~\R{or-adv1},
+    % By~\eqref{lem.props-nst-i.d.eq1} and by~\R{or-adv1},
     % \begin{equation}
-    %   \label{lem.props-nst-n.d.eq2}
+    %   \label{lem.props-nst-i.d.eq2}
     %   \<\ceu{{p_1}\AtOr{p_2}},n,e>
     %   \nst[1]\<\ceu{{p_1}''\AtOr{p_2}},n,e''>\,.
     % \end{equation}
-    % From~\eqref{lem.props-nst-n.d.eq1}, by the induction hypothesis,
+    % From~\eqref{lem.props-nst-i.d.eq1}, by the induction hypothesis,
     % \begin{equation}
-    %   \label{lem.props-nst-n.a.eq3}
+    %   \label{lem.props-nst-i.a.eq3}
     %   \<\ceu{{p_1''}\AtOr{p_2}},n,e''>
     %   \nst[n-1]\<\ceu{{p_1'}\AtOr{p_2}},n,e'>\,.
     % \end{equation}
-    % From~\eqref{lem.props-nst-n.d.eq2} and~\eqref{lem.props-nst-n.d.eq3},
+    % From~\eqref{lem.props-nst-i.d.eq2} and~\eqref{lem.props-nst-i.d.eq3},
     % \[
     %   \<\ceu{{p_1}\AtOr{p_2}},n,e>
     %   \nst[n]\<\ceu{{p_1'}\AtOr{p_2}},n,e'>\,.
     % \]
     %%
 
-  \item The lemma is trivially true for~$n=0$, as~$p_2=p_2'$, and follows
-    directly from~\R{and-adv2} for~$n=1$.  Suppose
+  \item The lemma is trivially true for~$i=0$, as~$p_2=p_2'$, and follows
+    directly from~\R{and-adv2} for~$i=1$.  Suppose
     \begin{equation}
-      \label{lem.props-nst-n.e.eq1}
-      \<p_2,n,e>\nst[1]\<p_2'',n,e''>\nst[n-1]\<p_2',n,e'>\,,
+      \label{lem.props-nst-i.e.eq1}
+      \<p_2,n,e>\nst[1]\<p_2'',n,e''>\nst[i-1]\<p_2',n,e'>\,,
     \end{equation}
-    for some~$n>1$.  Then~$\<p_2'',n,e''>$ is not nested-irreducible.
-    By~\eqref{lem.props-nst-n.e.eq1} and by~\R{and-adv2},
+    for some~$i>1$.  Then~$\<p_2'',n,e''>$ is not nested-irreducible.
+    By~\eqref{lem.props-nst-i.e.eq1} and by~\R{and-adv2},
     \begin{equation}
-      \label{lem.props-nst-n.e.eq2}
+      \label{lem.props-nst-i.e.eq2}
       \<\ceu{{p_1}\AtAnd{p_2}},n,e>
       \nst[1]\<\ceu{{p_1}\AtAnd{p_2''}},n,e''>\,.
     \end{equation}
-    From~\eqref{lem.props-nst-n.e.eq1}, by the induction hypothesis,
+    From~\eqref{lem.props-nst-i.e.eq1}, by the induction hypothesis,
     \begin{equation}
-      \label{lem.props-nst-n.e.eq3}
+      \label{lem.props-nst-i.e.eq3}
       \<\ceu{{p_1}\AtAnd{p_2''}},n,e''>
-      \nst[n-1]\<\ceu{{p_1}\AtOr{p_2'}},n,e'>\,.
+      \nst[i-1]\<\ceu{{p_1}\AtOr{p_2'}},n,e'>\,.
     \end{equation}
-    From~\eqref{lem.props-nst-n.e.eq2} and~\eqref{lem.props-nst-n.e.eq3},
+    From~\eqref{lem.props-nst-i.e.eq2} and~\eqref{lem.props-nst-i.e.eq3},
     \[
       \<\ceu{{p_1}\AtAnd{p_2}},n,e>
-      \nst[n]\<\ceu{{p_1}\AtAnd{p_2'}},n,e'>\,.
+      \nst[i]\<\ceu{{p_1}\AtAnd{p_2'}},n,e'>\,.
     \]
 
-  \item Similar to Case~\eqref{lem.props-nst-n.e}.\qedhere
+  \item Similar to Case~\eqref{lem.props-nst-i.e}.\qedhere
   \end{enumerate}
 \end{proof}
 
@@ -588,7 +625,7 @@ next assumption.
     \[
       \<\ceu{\Loop{p_1}},n,\nil>\nst[*]\<p_1',n,e>\,,
     \]
-    where~$p_1'=\ceu{{\Break}\AtLoop{p_1}}$ or~$\isblocked(p_1',n)$.
+    where~$p_1'=\ceu{{\Break}\AtLoop{p_1}}$ or~$\isblocked(p_1',n)$\,.
   \end{enumerate}
 \end{assumption}
 
@@ -639,6 +676,7 @@ next assumption.
     %%
     There are two subcases.
     \begin{subcase}
+      \label{thm.term-nst-*.if-true}
       $\eval(\ceu{\Mem(\Id)})$~is true.
       %%
       Then, by~\R{if-true} and by the induction hypothesis, there is
@@ -652,13 +690,16 @@ next assumption.
     \begin{subcase}
       $\eval(\ceu{\Mem(\Id)})$~is false.
       %%
-      Then, by~\R{if-false} and by the induction hypothesis, there is
-      a~$\delta'$ such that
-      \begin{align*}
-        \<\ceu{\IfElse{\Mem(\Id)}{p'}{p''}},n,\nil>
-        &\nst[1]\<p'',n,e>\\
-        &\nst[*]\delta'_\Hnst\,.
-      \end{align*}
+      Similar to Case~\ref{thm.term-nst-*.if-true}.
+      %%
+      % Then, by~\R{if-false} and by the induction hypothesis, there is
+      % a~$\delta'$ such that
+      % \begin{align*}
+      %   \<\ceu{\IfElse{\Mem(\Id)}{p'}{p''}},n,\nil>
+      %   &\nst[1]\<p'',n,e>\\
+      %   &\nst[*]\delta'_\Hnst\,.
+      % \end{align*}
+      %%
     \end{subcase}
   \end{case}
 
@@ -694,7 +735,7 @@ next assumption.
       \[
         \<p',n,\nil>\nst[*]\<p_1',n,e>_\Hnst\,.
       \]
-      By item~\eqref{lem.props-nst-n.a} of Lemma~\ref{lem.props-nst-n},
+      By item~\eqref{lem.props-nst-i.a} of Lemma~\ref{lem.props-nst-i},
       \begin{equation}
         \label{thm.term-nst-*.seq-adv.eq1}
         \<\ceu{p';\,p''},n,\nil>\nst[*]\<\ceu{p_1';\,p''},n,e>\,.
@@ -716,6 +757,7 @@ next assumption.
         \]
         From this point on, this case is similar to
         Case~\ref{thm.term-nst-*.seq-nop}.
+        %%
       \end{subsubcase}
       \begin{subsubcase}
         $p_1'=\ceu{\Break}$.
@@ -797,7 +839,7 @@ next assumption.
       \[
         \<p',n,\nil>\nst[*]\<p'_1,n,e>_\Hnst\,.
       \]
-      By item~\eqref{lem.props-nst-n.b} of Lemma~\ref{lem.props-nst-n},
+      By item~\eqref{lem.props-nst-i.b} of Lemma~\ref{lem.props-nst-i},
       \[
         \<\ceu{p'\AtLoop{p''}},n,\nil>
         \nst[*]\<\ceu{p_1'\AtLoop{p''}},n,e>\,.
@@ -870,7 +912,7 @@ next assumption.
         \[
           \<p',n,\nil>\nst[*]\<p_1',n,e>_\Hnst\,.
         \]
-        By item~\eqref{lem.props-nst-n.c} of Lemma~\ref{lem.props-nst-n},
+        By item~\eqref{lem.props-nst-i.c} of Lemma~\ref{lem.props-nst-i},
         \[
           \<\ceu{{p'}\AtAnd{p''}},n,\nil>
           \nst[*]\<\ceu{{p_1'}\AtAnd{p''}},n,e>\,.
@@ -926,7 +968,7 @@ next assumption.
         \[
           \<p'',n,\nil>\nst[*]\<p_1'',n,e>_\Hnst\,.
         \]
-        By item~\eqref{lem.props-nst-n.e} of Lemma~\ref{lem.props-nst-n},
+        By item~\eqref{lem.props-nst-i.e} of Lemma~\ref{lem.props-nst-i},
         \[
           \<\ceu{{p'}\AtAnd{p''}},n,\nil>
           \nst[*]\<\ceu{{p'}\AtAnd{p_1''}},n,e>\,.
@@ -1074,20 +1116,21 @@ next assumption.
     %%
   \item If~$p_1,p_2\ne\ceu{\Break}$,
     \[
-      \pot'(\ceu{{p_1}\AtAnd{p_2}})=\pot'(p_1)+\pot'(p_2)\,.
+      \pot'(\ceu{{p_1}\AtAnd{p_2}})=\pot'(p_1)+\pot'(p_2)\,;
     \]
     %%
   \item\label{def.pot.last} If~$p_1,p_2\ne\ceu{\Break}$
     and~$p_1,p_2\ne\ceu{\Nop}$,
     \[
-      \pot'(\ceu{{p_1}\AtOr{p_2}})=\pot'(p_1)+\pot'(p_2)\,.
+      \pot'(\ceu{{p_1}\AtOr{p_2}})=\pot'(p_1)+\pot'(p_2)\,;
     \]
     %%
   \item Otherwise, if none of~\eqref{def.pot.first}--\eqref{def.pot.last}
     applies, $\pot(\_)=0$.
   \end{enumerate}
-
-  \gl{Should~$\pot'(\ceu{\protect\Every{e}\,{p_1}})\ne0$ above?}
+  %%
+  %%\gl{Should~$\pot'(\ceu{\protect\Every{e}\,{p_1}})\ne0$ above?}
+  %%
 \end{definition}
 
 
@@ -1107,9 +1150,9 @@ next assumption.
   \end{alignat*}
 \end{definition}
 
-The next two lemmas establish that a single application of an~$\out$
-or~$\nst$ transition either preserves or decreases the rank of the input
-description.  All rank comparisons assume lexicographical order.
+The next two lemmas establish that a single application of~$\out$ or~$\nst$
+either preserves or decreases the rank of the input description.  All rank
+comparisons assume lexicographical order.
 
 
 \begin{lemma}\strut
@@ -1168,8 +1211,8 @@ description.  All rank comparisons assume lexicographical order.
 \begin{proof}
   We proceed by induction on the structure of~$\nst$ derivations.
   Let~$\delta=\<p,n,e>$, $\delta'=\<p',n',e'>$, $\rank(\delta)=\<i,j>$,
-  and~$\rank(\delta')=\<i',j'>$.  By the theorem hypothesis, there is a
-  derivation~$\pi$ such that
+  and~$\rank(\delta')=\<i',j'>$.  By the hypothesis of the theorem, there is
+  a derivation~$\pi$ such that
   \[
     \pi\Vdash\<p,n,e>\nst\<p',n',e'>\,.
   \]
@@ -1181,10 +1224,7 @@ description.  All rank comparisons assume lexicographical order.
     $p=\ceu{\Mem(id)}$.
     %%
     Then~$\pi$ is an instance of~\R{mem}.  Hence~$p'=\ceu{\Nop}$
-    and~$e'=\nil$.  Thus
-    \[
-      \rank(\delta)=\rank(\delta')=\<0,n>\,.
-    \]
+    and~$e'=\nil$.  Thus $\rank(\delta)=\rank(\delta')=\<0,n>$.
   \end{case}
 
   \begin{case}
@@ -1491,12 +1531,12 @@ description.  All rank comparisons assume lexicographical order.
   If~$\delta\nst[*]\delta'$ then~$\rank(\delta)\ge\rank(\delta')$.
 \end{theorem}
 \begin{proof}
-  If~$\delta\nst[*]\delta'$ then there is an~$n$ such that
-  $\delta\nst[n]\delta'$.  We proceed by induction on~$n$.
+  If~$\delta\nst[*]\delta'$ then~$\delta\nst[n]\delta'$, for some~$i$.  We
+  proceed by induction on~$i$.
   %%
-  The theorem is trivially true for~$n=0$ and follows directly from
-  Lemma~\ref{lem.rank-nst} for~$n=1$.  Suppose
-  $\delta\nst[1]\delta_1'\nst[n-1]\delta'$, for some~$n>1$ and~$\delta_1'$.
+  The theorem is trivially true for~$i=0$ and follows directly from
+  Lemma~\ref{lem.rank-nst} for~$i=1$.  Suppose
+  $\delta\nst[1]\delta_1'\nst[i-1]\delta'$, for some~$i>1$ and~$\delta_1'$.
   Thus, by Lemma~\ref{lem.rank-nst} and by the induction hypothesis,
   \[
     \rank(\delta)\ge\rank(\delta_1')\ge\rank(\delta')\,.\qedhere
@@ -1510,16 +1550,16 @@ description.  All rank comparisons assume lexicographical order.
   A description~$\delta$ is \emph{irreducible} (in symbols, $\delta_\#$) iff
   it is nested-irreducible and its~$\rank(\delta)$ is~$\<i,0>$, for
   some~$i\ge0$.
-
-  An irreducible description~$\delta_\#=\<p,n,e>$ serves as a normal form
-  for transitions in general.  It cannot be advanced by~$\nst$, as it is
-  nested-irreducible, and neither by~$\outpush$ nor~$\outpop$, as the second
-  coordinate of its rank is~0, which implies~$e=\nil$ and~$n=0$.
 \end{definition}
 
+An irreducible description~$\delta_\#=\<p,n,e>$ serves as a normal form for
+general transitions~$\trans$.  Such descriptions cannot be advanced
+by~$\nst$, as it is nested-irreducible, and neither by~$\outpush$
+nor~$\outpop$, as the second coordinate of its rank is~0, which
+implies~$e=\nil$ and~$n=0$.
+
 
-\begin{theorem}
-  \label{thm.term}
+\begin{theorem}[Termination]\label{thm.term}\strut\\
   %%
   For any~$\delta$, there is a~$\delta'_\#$ such
   that~$\delta\trans[*]\delta'_\#$.
@@ -1529,15 +1569,14 @@ description.  All rank comparisons assume lexicographical order.
   $\rank(\delta)=\<i,j>$.
   %%
   \begin{basis}
-    If~$\<i,j>=\<0,0>$ then~$\delta$ cannot be advanced by~$\out$
-    transitions, as~$j=0$ implies~$e=\nil$ and~$n=0$.  Thus neither~\R{push}
-    nor~\R{pop} can be applied.  There are two possibilities:
-    either~$\delta$ is nested-irreducible or it is not.  In the first case,
-    the theorem is trivially true, as~$\delta\nst[0]\delta_\Hnst$.
-
-    Suppose~$\delta$ is not nested-irreducible.  Then, by
-    Theorem~\ref{thm.term-nst-*}, $\delta\nst[*]\delta'_\Hnst$ for
-    some~$\delta'_\Hnst$.  By Theorem~\ref{thm.rank-nst-*},
+    If~$\<i,j>=\<0,0>$ then~$\delta$ cannot be advanced by~$\out$, as~$j=0$
+    implies~$e=\nil$ and~$n=0$ (neither~\R{push} nor~\R{pop} can be
+    applied).  There are two possibilities:  either~$\delta$ is
+    nested-irreducible or it is not.  In the first case, the theorem is
+    trivially true, as~$\delta\nst[0]\delta_\Hnst$.  Suppose~$\delta$ is not
+    nested-irreducible.  Then, by Theorem~\ref{thm.term-nst-*},
+    $\delta\nst[*]\delta'_\Hnst$ for some~$\delta'_\Hnst$.  By
+    Theorem~\ref{thm.rank-nst-*},
     \[
       \<i,j>=\<0,0>\ge\rank(\delta')\,,
     \]
@@ -1586,7 +1625,7 @@ description.  All rank comparisons assume lexicographical order.
             \rank(\delta)>\rank(\delta')\,.
           \]
           By the induction hypothesis, $\delta'\trans[*]\delta''_\#$, for
-          some~$\delta''_\#$.  Thus~$\delta\trans[*]\delta''_\#$.
+          some~$\delta''_\#$.  Therefore, $\delta\trans[*]\delta''_\#$.
         \end{subsubcase}
         \begin{subsubcase}
           \label{thm.term.Hnst-j>0-nil}
@@ -1600,7 +1639,7 @@ description.  All rank comparisons assume lexicographical order.
           \]
           Hence, by the induction hypothesis, there is a~$\delta''_\#$ such
           that~$\delta'\trans[*]\delta''_\#$.
-          Thus~$\delta\trans[*]\delta''_\#$.
+          Therefore, $\delta\trans[*]\delta''_\#$.
         \end{subsubcase}
       \end{subcase}
     \end{case}
