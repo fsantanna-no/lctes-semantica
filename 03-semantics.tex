@@ -1,13 +1,15 @@
-\newcommand{\NST}{\1\xrightarrow[\mathit{nst}]\1}
-\newcommand{\OUT}{\1\xrightarrow[\mathit{out}]\1}
-\newcommand{\LL}{\langle}
-\newcommand{\RR}{\rangle}
-\newcommand{\DS}{\displaystyle}
+% \newcommand{\NST}{\1\xrightarrow[\mathit{nst}]\1}
+% \newcommand{\OUT}{\1\xrightarrow[\mathit{out}]\1}
+% \newcommand{\LL}{\langle}
+% \newcommand{\RR}{\rangle}
+% \newcommand{\DS}{\displaystyle}
 
-\newcommand{\1}{\;}
-\newcommand{\2}{\;\;}
-\newcommand{\3}{\;\;\;}
-\newcommand{\5}{\;\;\;\;\;}
+% \newcommand{\1}{\;}
+% \newcommand{\2}{\;\;}
+% \newcommand{\3}{\;\;\;}
+% \newcommand{\5}{\;\;\;\;\;}
+
+\def\JOT{1.5\jot}
 
 \section{Formal Semantics}
 \label{sec.sem}
@@ -223,7 +225,7 @@ level:
   &\AxiomC{$e\ne\nil$}
   \UnaryInfC{$\<p,n,e>\out\<\bcast(p,e),n+1,\nil>$}
   \DisplayProof
-  \Rtag{push}\\[2\jot]
+  \Rtag{push}\\[\JOT]
   %%
   &\AxiomC{$n>0$}
   \AxiomC{$\ceu{p=\Nop}\vee\isblocked(p,n)$}
@@ -280,7 +282,7 @@ same program at stack level~0.
 
 \subsubsection*{Nested transitions}
 
-The~$\nst$ rules are recursive definitions with the following general format:
+The~$\nst$ rules are recursive definitions of the form
 \[
 \<p,n,\nil>\nst\<p',n,e>.
 \]
@@ -299,7 +301,7 @@ rules \R{push} and \R{pop} from matching and, consequently, from
 inadvertently modifying the current stack level before the nested reaction
 is complete.
 
-A complete reaction consists of a series of transitions:
+A complete reaction consists of a series of transitions of the form
 \begin{align*}
   \<p,0,e_\ext>\outpush\<p_1,1,\nil>
   \Big[\null\nst[*]\null\out\null\Big]\!\!\ast
@@ -331,13 +333,13 @@ single~$\out$ transition (stack operation) takes place.
 Finally, a last~$\outpop$ transition decrements the
 stack level to~0 and terminates the reaction.
 
-The~$\nst$ transition rules for atomic expressions are defined as follows:
+The~$\nst$ rules for atoms are defined as follows:
 \begin{align*}
   \<\ceu{\Mem(\Id)},n,\nil>
-  &\nst\<\ceu{\Nop},n,\nil>\Rtag{mem}\\
+  &\nst\<\ceu{\Nop},n,\nil>\Rtag{mem}\\[\JOT]
   %%
   \<\ceu{\EmitInt(\Id)},n,\nil>
-  &\nst\<\ceu{\CanRun(n)},n,\ceu{\Id}>\Rtag{emit-int}\\
+  &\nst\<\ceu{\CanRun(n)},n,\ceu{\Id}>\Rtag{emit-int}\\[\JOT]
   %%
   \<\ceu{\CanRun(n)},n,\nil>
   &\nst\<\ceu{\Nop},n,\nil>\Rtag{can-run}
@@ -372,19 +374,18 @@ Also, with the new stack level, the resulting $\ceu{\CanRun}(n)$ itself cannot
 transit yet (rule~\R{can-run}), providing the desired stack-based semantics for
 internal events.
 
-Proceeding to compound expressions, the rules for conditionals and sequences
-are straightforward:
+The rules for conditionals and sequences are straightforward:
 %
 \begin{gather*}
   \AxiomC{$\eval(\ceu{\Mem(\Id)})$}
   \UnaryInfC{$\<\ceu{\IfElse{\Mem(\Id)}{p}{q}},n,\nil>\nst\<p,n,\nil>$}
   \DisplayProof
-  \Rtag{if-true}\\[2\jot]
+  \Rtag{if-true}\\[\JOT]
   %%
   \AxiomC{$\lnot\eval(\ceu{\Mem(\Id)})$}
   \UnaryInfC{$\<\ceu{\IfElse{\Mem(\Id)}{p}{q}},n,\nil>\nst\<q,n,\nil>$}
   \DisplayProof
-  \Rtag{if-false}\\[2\jot]
+  \Rtag{if-false}\\[\JOT]
   %%
   \AxiomC{$\<p,n,\nil>\nst\<p',n,e>$}
   \UnaryInfC{$\<\ceu{p\,;\,q},n,\nil>\nst\<\ceu{p';\,q},n,e>$}
@@ -393,9 +394,9 @@ are straightforward:
 \end{gather*}
 \vskip-\belowdisplayskip
 \vskip-\abovedisplayskip
-\vskip2\jot
+\vskip\JOT
 \begin{align*}
-  \<\ceu{\Nop;\,q},n,\nil>&\nst\<q,n,\nil>\Rtag{seq-nop}\\[2\jot]
+  \<\ceu{\Nop;\,q},n,\nil>&\nst\<q,n,\nil>\Rtag{seq-nop}\\[\JOT]
   %%
   \<\ceu{\Break;\,q},n,\nil>&\nst\<\ceu{\Break},n,\nil>\Rtag{seq-brk}
 \end{align*}
@@ -451,20 +452,20 @@ Function~$\eval$ evaluates a given~$\ceu{\Mem}$ expression to a boolean value.
 %However, rules \textbf{push} and \textbf{pop} can only match at the outermost
 %level.
 
-The rules for loops are analogous to sequences, but use ``\code{@}'' as
-separators to properly bind breaks to their enclosing loops:
+The rules for loops are similar to those for sequences, but use ``\code{@}''
+as separators to bind breaks to their enclosing loops:
 \begin{align*}
   \<\ceu{\Loop{p}},n,\nil>
-  &\nst\<\ceu{p\AtLoop{p}},n,\nil>\Rtag{loop-expd}\\[2\jot]
+  &\nst\<\ceu{p\AtLoop{p}},n,\nil>\Rtag{loop-expd}\\[\JOT]
   %%
   &\hskip-6.35em
   \AxiomC{$\<q,n,\nil>\nst\<q',n,e>$}
   \UnaryInfC{$\<\ceu{q\AtLoop{p}},n,\nil>\nst\<\ceu{q'\AtLoop{p}},n,e>$}
   \DisplayProof
-  \Rtag{loop-adv}\\[2\jot]
+  \Rtag{loop-adv}\\[\JOT]
   %%
   \<\ceu{\Nop\AtLoop{p}},n,\nil>
-  &\nst\<\ceu{\Loop{p}},n,\nil>\Rtag{loop-nop}\\[2\jot]
+  &\nst\<\ceu{\Loop{p}},n,\nil>\Rtag{loop-nop}\\[\JOT]
   %%
   \<\ceu{\Break\AtLoop{p}},n,\nil>
   &\nst\<\ceu{\Nop},n,\nil>\Rtag{loop-brk}
@@ -507,34 +508,36 @@ a~$\ceu{\Nop}$.
 %We cannot simply transform the loop into a $nop$ because its body may be a
 %parallel composition containing finalization blocks.
 
-The semantic rules for~$\ceu{\And}$ and~$\ceu{\Or}$ compositions
-force transitions on their left branches~$p$ to occur before their right
-branches~$q$:
+The rules for~$\ceu{\And}$ and~$\ceu{\Or}$ compositions make sure that their
+left branches always transition before their right branches:
+%%
 \begin{gather*}
   \hskip-.9em
   \<\ceu{p\And{q}},n,\nil>
   \nst\<\ceu{p\AtAnd(\CanRun(n);q)},n,\nil>
-  \Rtag{and-expd}\\[2\jot]
+  \Rtag{and-expd}\\[\JOT]
   %%
   \AxiomC{$\<p,n,\nil>\nst\<p',n,e>$}
   \UnaryInfC{$\<\ceu{p\AtAnd{q}},n,\nil>\nst\<\ceu{p'\AtAnd{q}},n,e>$}
   \DisplayProof
-  \Rtag{and-adv1}\\[2\jot]
+  \Rtag{and-adv1}\\[\JOT]
   %%
   \AxiomC{$\isblocked(p,n)$}
   \AxiomC{$\<q,n,\nil>\nst\<q',n,e>$}
   \BinaryInfC{$\<\ceu{p\AtAnd{q}},n,\nil>\nst\<\ceu{p\AtAnd{q'}},n,e>$}
   \DisplayProof
-  \Rtag{and-adv2}\\[2\jot]
-  %%
+  \Rtag{and-adv2}
+\end{gather*}
+
+\begin{gather*}
   \<\ceu{p\Or{q}},n,\nil>
   \nst\<\ceu{p\AtOr(\CanRun(n);q)},n,\nil>
-  \Rtag{or-expd}\\[2\jot]
+  \Rtag{or-expd}\\[\JOT]
   %%
   \AxiomC{$\<p,n,\nil>\nst\<p',n,e>$}
   \UnaryInfC{$\<\ceu{p\AtOr{q}},n,\nil>\nst\<\ceu{p'\AtOr{q}},n,e>$}
   \DisplayProof
-  \Rtag{or-adv1}\\[2\jot]
+  \Rtag{or-adv1}\\[\JOT]
   %%
   \AxiomC{$\isblocked(p,n)$}
   \AxiomC{$\<q,n,\nil>\nst\<q',n,e>$}
@@ -594,18 +597,19 @@ In a parallel~$\ceu{\AtAnd}$, if one of the sides terminates, the composition is
 simply substituted by the other side (rules \R{and-nop1} and
 \R{and-nop2} below).
 %
-In a parallel~$\ceu{\AtOr}$, however, if one of the sides terminates, the whole composition
+In a parallel~$\ceu{\AtOr}$, however, if one of the sides terminates, the
+whole composition
 terminates and function~$\clear$ is used to properly finalize the aborted
 side (rules \R{or-nop1} and \R{or-nop2}).
 \begin{gather*}
-  \<\ceu{{\Nop}\AtAnd{q}},n,\nil>\nst\<q,n,\nil>\Rtag{and-nop1}\\[2\jot]
+  \<\ceu{{\Nop}\AtAnd{q}},n,\nil>\nst\<q,n,\nil>\Rtag{and-nop1}\\[\JOT]
   %%
   \AxiomC{$\isblocked(p,n)$}
   \UnaryInfC{$\<\ceu{p\AtAnd{\Nop}},n,\nil>\nst\<p,n,\nil>$}
   \DisplayProof
-  \Rtag{and-nop2}\\[2\jot]
+  \Rtag{and-nop2}\\[\JOT]
   %%
-  \<\ceu{{\Nop}\AtOr{q}},n,\nil>\nst\<\clear(q),n,\nil>\Rtag{or-nop1}\\[2\jot]
+  \<\ceu{{\Nop}\AtOr{q}},n,\nil>\nst\<\clear(q),n,\nil>\Rtag{or-nop1}\\[\JOT]
   %%
   \AxiomC{$\isblocked(p,n)$}
   \UnaryInfC{$\<\ceu{p\AtOr{\Nop}},n,\nil>\nst\<\clear(p),n,\nil>$}
@@ -658,17 +662,17 @@ function:
 \begin{gather*}
   \hskip-.5em
   \<\ceu{{\Break}\AtAnd{q}},n,\nil>\nst\<\ceu{\clear(q);\Break},n,\nil>
-  \Rtag{and-brk1}\\[2\jot]
+  \Rtag{and-brk1}\\[\JOT]
   %%
   \hskip-.5em
   \AxiomC{$\isblocked(p,n)$}
   \UnaryInfC{$\<\ceu{p\AtAnd{\Break}},n,\nil>
     \nst\<\ceu{\clear(p);\Break},n,\nil>$}
   \DisplayProof
-  \Rtag{and-brk2}\\[2\jot]
+  \Rtag{and-brk2}\\[\JOT]
   %%
   \<\ceu{{\Break}\AtOr{q}},n,\nil>\nst\<\ceu{\clear(q);\Break},n,\nil>
-  \Rtag{or-brk1}\\[2\jot]
+  \Rtag{or-brk1}\\[\JOT]
   %%
   \AxiomC{$\isblocked(p,n)$}
   \UnaryInfC{$\<\ceu{p\AtOr{\Break}},n,\nil>
@@ -1007,10 +1011,11 @@ always lead to the same output description.
 
 \subsubsection{Termination}
 
-In this section, we prove that a sufficiently long sequence of applications
-of~$\trans$, and consequently~$\out$ and~$\nst$, will eventually lead to an
-irreducible description, viz., one that cannot be modified by further
-transitions.
+We proceed to prove that a sufficiently long sequence of applications
+of~$\trans$ will eventually lead to an irreducible description, i.e., one
+that cannot be modified by further transitions.  Before that, however, we
+need to introduce some definitions and basic results regarding~$\nst$
+and~$\out$.
 
 \begin{definition}
   \label{def.x.Hnst}
