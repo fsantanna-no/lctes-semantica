@@ -1195,7 +1195,7 @@ and rank of a description.
     \]
     %%
   \item\label{def.x.pot.last} Otherwise, if none
-    of~\eqref{def.pot.first}--\eqref{def.pot.before-last} applies,
+    of~\eqref{def.x.pot.first}--\eqref{def.x.pot.before-last} applies,
     $\pot(\_)=0$.
   \end{enumerate}
 \end{definition}
@@ -1216,6 +1216,8 @@ and rank of a description.
   \end{alignat*}
 \end{definition}
 
+We can now characterize irreducible descriptions in general.
+
 \begin{definition}
   \label{def.x.H}
   %%
@@ -1224,12 +1226,26 @@ and rank of a description.
   some~$i\ge0$.
 \end{definition}
 
+An irreducible description~$\delta_\#=\<p,n,e>$ serves as a normal form for
+arbitrary transitions~$\trans$.  Such descriptions cannot be advanced
+by~$\nst$, as it is nested-irreducible, and neither by~$\outpush$
+nor~$\outpop$, as the second coordinate of its rank is~0, which
+implies~$e=\nil$ and~$n=0$.
+
 The next two lemmas establish that a single application of~$\out$ or~$\nst$
 either preserves or decreases the rank of the input description.  All rank
-comparisons assume lexicographical order.
+comparisons assume lexicographical order, i.e., if~$\rank(\delta)=\<i,j>$
+and~$\rank(\delta')=\<i',j'>$ then~$\rank(\delta)>\rank(\delta')$ iff~$i>i'$
+or~$i=i$ and~$j>j'$.
+%%
+The proof of Lemma~\ref{lem.x.rank-out} follows directly from~\R{push}
+and~\R{pop} and from Definitions~\ref{def.x.pot} and~\ref{def.x.rank}.  The
+proof of Lemma~\ref{lem.x.rank-nst}, however, is by induction on the
+structure of~$\nst$ derivations.
 
 \begin{lemma}\strut
-  \label{lem.rank-out}
+  \label{lem.x.rank-out}
+  %%
   \begin{enumerate}[(a)]
   \item\label{lem.rank-out-push} If~$\delta\outpush\delta'$
     then~$\rank(\delta)=\rank(\delta')$.
@@ -1239,25 +1255,10 @@ comparisons assume lexicographical order.
 \end{lemma}
 
 \begin{lemma}
-  \label{lem.rank-nst}
+  \label{lem.x.rank-nst}
   %%
   If~$\delta\nst\delta'$ then~$\rank(\delta)\ge\rank(\delta')$.
 \end{lemma}
-
-An irreducible description~$\delta_\#=\<p,n,e>$ serves as a normal form for
-transitions~$\trans$ in general.  Such descriptions cannot be advanced
-by~$\nst$, as it is nested-irreducible, and neither by~$\outpush$
-nor~$\outpop$, as the second coordinate of its rank is~0, which
-implies~$e=\nil$ and~$n=0$.
-
-TODO: Lemas e teorema da terminação.  Sketch da prova.  Mencionar que as
-restrições sintáticas são fundamentais.
-
-% - there is always a possible transition until n=0
-%
-% every cannot restart itself
-%     - break disallowed
-%     - emit ignored
 
 \subsubsection*{Memory Bounds}
 
