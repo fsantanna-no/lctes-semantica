@@ -168,9 +168,9 @@ The core of our semantics describes how a program reacts to a single external
 input event, i.e., starting from an input event, how the program behaves and
 becomes idle again to proceed to a subsequent reaction.
 %
-We use a set of small-step operational rules, which are designed in such a way
-that at most one transition is possible at any time, resulting in deterministic
-reactions.
+We use a set of small-step operational rules~\cite{Plotkin-G-D-1981}, which
+are designed in such a way that at most one transition is possible at any
+time, resulting in deterministic reactions.
 %
 The transition rules map a triple with a program~$p$, a stack level~$n$, and an
 emitted event~$e$ to a modified triple as follows:
@@ -1055,13 +1055,13 @@ proof follows by induction on~$i$.
   If~$\<p_1,n,e>\nst[i]\<p_1',n,e'>$ then, for any~$p_2$:
   \begin{enumerate}[(a)]
   \item\label{lem.x.props-nst-i.a}
-    $\<\ceu{p_1;\,p_2},n,e>\nst[i]\<p_1';p_2,n,e'>$;
+    $\<\ceu{p_1;\,p_2},n,e>\nst[i]\<p_1';p_2,n,e'>$.
     %%
   \item\label{lem.x.props-nst-i.b}
-    $\<\ceu{p_1\AtLoop{p_2}},n,e>\nst[i]\<\ceu{p_1'\AtLoop{p_2}},n,e'>$;
+    $\<\ceu{p_1\AtLoop{p_2}},n,e>\nst[i]\<\ceu{p_1'\AtLoop{p_2}},n,e'>$.
     %%
   \item\label{lem.x.props-nst-i.c}
-    $\<\ceu{{p_1}\AtAnd{p_2}},n,e>\nst[i]\<\ceu{{p_1'}\AtAnd{p_2}},n,e'>$;
+    $\<\ceu{{p_1}\AtAnd{p_2}},n,e>\nst[i]\<\ceu{{p_1'}\AtAnd{p_2}},n,e'>$.
     %%
   \item\label{lem.x.props-nst-i.d}
     $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[i]\<\ceu{{p_1}'\AtOr{p_2}},n,e'>$.
@@ -1071,7 +1071,7 @@ proof follows by induction on~$i$.
   \begin{enumerate}[(a)]
     \setcounter{enumi}{4}
   \item\label{lem.x.props-nst-i.e}
-    $\<\ceu{{p_1}\AtAnd{p_2}},n,e>\nst[i]\<\ceu{{p_1}\AtAnd{p_2'}},n,e'>$;
+    $\<\ceu{{p_1}\AtAnd{p_2}},n,e>\nst[i]\<\ceu{{p_1}\AtAnd{p_2'}},n,e'>$.
     %%
   \item\label{lem.x.props-nst-i.f}
     $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[i]\<\ceu{{p_1}\AtOr{p_2'}},n,e'>$.
@@ -1128,8 +1128,8 @@ are formalized in the next assumption.
 
 Theorem~\ref{thm.x.term-nst-*} establishes that a finite (possibly zero)
 number of~$\nst$ transitions eventually lead to a nested-irreducible
-description.  The proof follows by induction on the structure of programs
-(set~$P$) and depends on Lemma~\ref{lem.props-nst-i} and
+description.  The proof is by induction on the structure of programs
+(members of set~$P$) and uses Lemma~\ref{lem.props-nst-i} and
 Assumption~\ref{ass.x.syn-rest}.
 
 \begin{theorem}
@@ -1139,15 +1139,15 @@ Assumption~\ref{ass.x.syn-rest}.
   that~$\delta\nst[*]\delta'_\Hnst$.
 \end{theorem}
 
-% -------------------------------------------------------------------------
-
-To characterize irreducible descriptions in general, we will need to define
-the notions of potency of a program and the rank of a description.
+The main result of this section, Theorem~\ref{?}, is similar to
+Theorem~\ref{thm.x.term-nst-*} but applies to transitions~$\trans$ in
+general.  Therefore, before stating and proving it, we need to characterize
+irreducible descriptions in general.
 
 \begin{definition}
   \label{def.x.pot}
   %%
-  The potency of a program~$p$ in reaction to event~$e$,
+  The \emph{potency} of a program~$p$ in reaction to event~$e$,
   denoted~$\pot(p,e)$, is the maximum number of~$\ceu{\EmitInt}$ expressions
   that can be executed during a reaction of~$p$ to~$e$.
 
@@ -1159,18 +1159,19 @@ the notions of potency of a program and the rank of a description.
   reachable~$\ceu{\EmitInt}$ expressions in the program resulting from the
   broadcast of event~$e$ to~$p$.
 
-  The auxiliary function~$\pot'$ is defined by the following clauses:
+  The auxiliary function~$\pot'$ is defined by
+  clauses~\eqref{def.x.pot.first}--\eqref{def.x.pot.last}:
   \begin{enumerate}[(a)]
-  \item\label{def.pot.first}$\pot'(\ceu{\EmitInt}(e))=1$;
+  \item\label{def.x.pot.first}$\pot'(\ceu{\EmitInt}(e))=1$.
     %%
   \item$\pot'(\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}})
-    =\max\{\pot'(p_1),\pot'(p_2)\}$;
+    =\max\{\pot'(p_1),\pot'(p_2)\}$.
     %%
-  \item$\pot'(\ceu{\Loop{p_1}})=\pot'(p_1)$;
+  \item$\pot'(\ceu{\Loop{p_1}})=\pot'(p_1)$.
     %%
-  \item$\pot'(\ceu{{p_1}\And{p_2}})=\pot'(p_1)+\pot'(p_2)$;
+  \item$\pot'(\ceu{{p_1}\And{p_2}})=\pot'(p_1)+\pot'(p_2)$.
     %%
-  \item$\pot'(\ceu{{p_1}\Or{p_2}})=\pot'(p_1)+\pot'(p_2)$;
+  \item$\pot'(\ceu{{p_1}\Or{p_2}})=\pot'(p_1)+\pot'(p_2)$.
     %%
   \item If~$p_1\ne\ceu{\Break},\ceu{\AwaitExt(e)}$,
     \begin{align*}
@@ -1182,21 +1183,22 @@ the notions of potency of a program and the rank of a description.
       \end{cases}
     \end{align*}
     where~(\dag) stands for: ``a~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$ occurs
-    in all execution paths of~$p_1$'';
+    in all execution paths of~$p_1$''.
     %%
-  \item If~$p_1,p_2\ne\ceu{\Break}$,
+  \item If~$p_1,p_2\ne\ceu{\Break}$.
     \[
-      \pot'(\ceu{{p_1}\AtAnd{p_2}})=\pot'(p_1)+\pot'(p_2)\,;
+      \pot'(\ceu{{p_1}\AtAnd{p_2}})=\pot'(p_1)+\pot'(p_2)\,.
     \]
     %%
-  \item\label{def.pot.last} If~$p_1,p_2\ne\ceu{\Break}$
+  \item\label{def.x.pot.before-last} If~$p_1,p_2\ne\ceu{\Break}$
     and~$p_1,p_2\ne\ceu{\Nop}$,
     \[
-      \pot'(\ceu{{p_1}\AtOr{p_2}})=\pot'(p_1)+\pot'(p_2)\,;
+      \pot'(\ceu{{p_1}\AtOr{p_2}})=\pot'(p_1)+\pot'(p_2)\,.
     \]
     %%
-  \item Otherwise, if none of~\eqref{def.pot.first}--\eqref{def.pot.last}
-    applies, $\pot(\_)=0$.
+  \item\label{def.x.pot.last} Otherwise, if none
+    of~\eqref{def.pot.first}--\eqref{def.pot.before-last} applies,
+    $\pot(\_)=0$.
   \end{enumerate}
 \end{definition}
 
