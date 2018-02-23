@@ -904,59 +904,103 @@ and will eventually resume in the current reaction (see rule \R{pop}).
 
 \subsection{Determinism, Termination, and Memory Bounds}
 
-- informal discussion
+\subsubsection{Determinism}
 
-- reference the appendix A
+Transitions~$\out$ and~$\nst$ are defined in such a way that given an input
+description either no rule is applicable or exactly one of them can be
+applied.  This means that the resulting relation~$\trans$ is in fact a
+partial function and that, consequently, the same number of applications
+of~$\trans$ will always yield the same result.
 
-\subsubsection*{Determinism}
+The next two lemmas establish the determinism of a single application
+of~$\out$ and~$\nst$.  Lemma~\ref{lem.x.det-out} follows from a simple
+inspection of rules~\R{push} and~\R{pop}.  The proof of
+Lemma~\ref{lem.x.det-out} proceeds by induction on the structure of the
+derivation trees produced by applications of the rules for~$\nst$.  Both
+lemmas are used in the proof of Theorem~\ref{thm.x.det}, the main result of
+this section, which establishes that any given number of applications
+of~$\trans$ starting from the same input description will always lead to the
+same output description.
 
-The proof for determinism relies on the fact all semantic rules are mutually
-exclusive, i.e., their preconditions are unique in the set of rules.
-This can be verified by direct inspection of rules.
+\begin{lemma}
+  \label{lem.x.det-out}
+  %%
+  If~$\delta\out\delta_1$ and~$\delta\out\delta_2$ then~$\delta_1=\delta_2$.
+\end{lemma}
 
-Rule \textbf{push} is the only one with $e \neq \epsilon$ as a precondition,
-and is trivially mutually exclusive with all other rules.
+\begin{lemma}
+  \label{lem.x.det-nst}
+  %%
+  If~$\delta\nst\delta_1$ and~$\delta\nst\delta_2$ then~$\delta_1=\delta_2$.
+\end{lemma}
 
-Rule \textbf{pop} either has $p=@nop$ or $isblocked(p,n)$ as preconditions.
-%
-Note that rule \textbf{pop} only applies syntactically to top-level
-transitions.
-For instance, it can never match $\NST$ rules for subprograms as in rule
-\textbf{seq-adv}.
-%
-Hence, for the first case, rule \textbf{pop} only applies, and is the only one
-to apply, to $nop$ as the whole program (i.e., a $nop$ not surrounded by other
-expressions, such as in rule \textbf{seq-nop}).
-%
-For the second case, we need to show that given $\LL p,n,\epsilon \RR$, no
-$\NST$ transitions apply with $isblocked(p,n)$ and vice versa.
-Except for $@canrun$, there are no $\NST$ transitions for the other blocking
-expressions ($awaitExt$, $awaitInt$, $every$, and $fin$).
-However, considering the precondition $\LL p,n,\epsilon \RR$,
-$isblocked(@canrun(n),n)$ is false.
-Hence, given the preconditions for rule \textbf{pop}, no $\NST$ transitions can
-occur.
-Conversely, if a $\NST$ transition is possible, then $isblocked(p,n)$ must be
-false.
-Again, except for $@canrun$, all other transitions do not involve blocking
-expressions, hence, for these transitions, $isblocked(p,n)$ must be false.
-For rule \R{can-run}, a transition can only occur if the current stack
-level matches $@canrun(n)$.
-In this case, $isblocked(@canrun(n),n)$ is false.
+\begin{theorem}[Determinism]
+  \label{thm.x.det}\strut\\
+  %%
+  If~$\delta\trans[i]\delta_1$ and~$\delta\trans[i]\delta_2$
+  then~$\delta_1=\delta_2$.
+\end{theorem}
+\begin{proof}
+  By induction on~$i$.  The theorem is trivially true if~$i=0$ and follows
+  directly from the lemmas if~$i=1$.  Suppose
+  \[
+    \delta\trans[1]\delta_1'\trans[i-1]\delta_1
+    \quad\text{and}\quad
+    \delta\trans[1]\delta_2'\trans[i-1]\delta_2\,,
+  \]
+  for some~$i>1$, $\delta_1'$ and~$\delta_2'$.
+  %%
+  Then, by Lemma~\ref{lem.det-out} or~\ref{lem.det-nst}, depending on
+  whether the first transition is~$\out$ or~$\nst$ (it cannot be both),
+  $\delta_1'=\delta_2'$, and by the induction hypothesis,
+  $\delta_1=\delta_2$.
+\end{proof}
 
-Finally, we need to show that $\NST$ transitions are mutually exclusive among
-themselves.
-%
-Note that most rules have unique syntactic prefixes, e.g., $(@nop~@and~q)$
-(rule \textbf{and-nop1}) is trivially mutually exclusive with $(@nop~@loop~p)$
-(rule \textbf{or-nop1}).
-%
-The only exceptions are rules \textbf{and-adv1} vs. \textbf{and-adv2}, and
-\textbf{or-adv1} vs. \textbf{or-adv2}.
-In both cases, we need to show that if the left branch can advance, then it
-cannot be blocked and vice-versa, i.e., that
-$\LL p,n,\epsilon \RR \NST \LL p',n,e \RR$ and $isblocked(p,n)$ are mutually
-exclusive, which is exactly the same reasoning for rule \textbf{pop} above.
+% The proof for determinism relies on the fact all semantic rules are
+% mutually exclusive, i.e., their preconditions are unique in the set of
+% rules.  This can be verified by direct inspection of rules.
+
+% Rule \textbf{push} is the only one with $e \neq \epsilon$ as a
+% precondition, and is trivially mutually exclusive with all other rules.
+
+% Rule \textbf{pop} either has $p=@nop$ or $isblocked(p,n)$ as
+% preconditions.
+% %
+% Note that rule \textbf{pop} only applies syntactically to top-level
+% transitions.  For instance, it can never match $\NST$ rules for
+% subprograms as in rule \textbf{seq-adv}.
+% %
+% Hence, for the first case, rule \textbf{pop} only applies, and is the only
+% one to apply, to $nop$ as the whole program (i.e., a $nop$ not surrounded
+% by other expressions, such as in rule \textbf{seq-nop}).
+% %
+% For the second case, we need to show that given $\LL p,n,\epsilon \RR$, no
+% $\NST$ transitions apply with $isblocked(p,n)$ and vice versa.  Except for
+% $@canrun$, there are no $\NST$ transitions for the other blocking
+% expressions ($awaitExt$, $awaitInt$, $every$, and $fin$).  However,
+% considering the precondition $\LL p,n,\epsilon \RR$,
+% $isblocked(@canrun(n),n)$ is false.  Hence, given the preconditions for
+% rule \textbf{pop}, no $\NST$ transitions can occur.  Conversely, if a
+% $\NST$ transition is possible, then $isblocked(p,n)$ must be false.
+% Again, except for $@canrun$, all other transitions do not involve blocking
+% expressions, hence, for these transitions, $isblocked(p,n)$ must be false.
+% For rule \R{can-run}, a transition can only occur if the current stack
+% level matches $@canrun(n)$.  In this case, $isblocked(@canrun(n),n)$ is
+% false.
+
+% Finally, we need to show that $\NST$ transitions are mutually exclusive
+% among themselves.
+% %
+% Note that most rules have unique syntactic prefixes, e.g., $(@nop~@and~q)$
+% (rule \textbf{and-nop1}) is trivially mutually exclusive with
+% $(@nop~@loop~p)$ (rule \textbf{or-nop1}).
+% %
+% The only exceptions are rules \textbf{and-adv1} vs. \textbf{and-adv2}, and
+% \textbf{or-adv1} vs. \textbf{or-adv2}.  In both cases, we need to show
+% that if the left branch can advance, then it cannot be blocked and
+% vice-versa, i.e., that $\LL p,n,\epsilon \RR \NST \LL p',n,e \RR$ and
+% $isblocked(p,n)$ are mutually exclusive, which is exactly the same
+% reasoning for rule \textbf{pop} above.
 
 \subsubsection*{Termination}
 
