@@ -5,7 +5,9 @@
 \subsection*{Determinism}
 
 
-\begin{lemma}\label{lem.det-out}
+\begin{lemma}
+  \label{lem.det-out}
+  %%
   If~$\delta\out\delta_1$ and~$\delta\out\delta_2$ then~$\delta_1=\delta_2$.
 \end{lemma}
 \begin{proof}
@@ -24,7 +26,9 @@
 \end{proof}
 
 
-\begin{theorem}\label{thm.det-out-pop-n}
+\begin{theorem}
+  \label{thm.det-out-pop-n}
+  %%
   If~$\delta\out[n]\delta_1$ and~$\delta\out[n]\delta_2$
   then~$\delta_1=\delta_2$.
 \end{theorem}
@@ -39,14 +43,16 @@
   %%
   Suppose~$\delta\out[1]\delta_1'\out[n-1]\delta_1$
   and~$\delta\out[1]\delta_2'\out[n-1]\delta_2$, for some~$n>1$
-  and~$\delta_1'$, $\delta_2'\in\Delta$.
+  and~$\delta_1'$ and~$\delta_2'$.
   %%
   By Lemma~\ref{lem.det-out}, $\delta_1'=\delta_2'$.  By the induction
   hypothesis, $\delta_1=\delta_2$.\qedhere
 \end{proof}
 
 
-\begin{lemma}\label{lem.det-nst}
+\begin{lemma}
+  \label{lem.det-nst}
+  %%
   If~$\delta\nst\delta_1$ and~$\delta\nst\delta_2$ then~$\delta_1=\delta_2$.
 \end{lemma}
 \begin{proof}
@@ -137,7 +143,7 @@
         \pi_1'&\Vdash\<p',n,\nil>\nst\<p_1',n,e_1'>\\
         \pi_2'&\Vdash\<p',n,\nil>\nst\<p_2',n,e_2'>
       \end{align*}
-      for some~$p_1',p_2'\in\P$ and~$e_1',e_2'\in\E$.  By the induction
+      for some~$p_1'$, $p_2'$, $e_1'$, and~$e_2'$.  By the induction
       hypothesis, $p_1'=p_2'$ and~$e_1'=e_2'$.
       Hence~$p_1=\ceu{p_1';p''}=\ceu{p_2';p''}=p_2$ and~$e_1=e_1'=e_2'=e_2$.
     \end{subcase}
@@ -151,7 +157,9 @@
   \end{case}
 
   \begin{case}
-    $p=\ceu{p'\AtLoop{p''}}$.  There are three subcases.
+    $p=\ceu{p'\AtLoop{p''}}$.
+    %%
+    There are three subcases.
     \begin{subcase}
       $p'=\ceu{\Nop}$.
       %%
@@ -173,7 +181,7 @@
         \pi_1'&\Vdash\<p',n,\nil>\nst\<p_1',n,e_1'>\\
         \pi_2'&\Vdash\<p',n,\nil>\nst\<p_2',n,e_2'>
       \end{align*}
-      for some~$p_1',p_2'\in\P$ and~$e_1',e_2'\in\E$.  By the induction
+      for some~$p_1'$, $p_2'$, $e_1'$, and~$e_2'$.  By the induction
       hypothesis, $p_1'=p_2'$ and~$e_1'=e_2'$.
       Hence~$p_1=\ceu{p_1'\AtLoop{p''}}=\ceu{p_2'\AtLoop{p''}}=p_2$
       and~$e_1=e_1'=e_2'=e_2$.
@@ -188,23 +196,28 @@
   \end{case}
 
   \begin{case}
-    $p=\ceu{p'\AtAnd{p''}}$.  There are two subcases.
+    $p=\ceu{p'\AtAnd{p''}}$.
+    %%
+    There are two subcases.
     \begin{subcase}
-      $\isblocked(p',n)$~is false.  There are three subcases.
+      $\isblocked(p',n)$~is false.
+      %%
+      There are three subcases.
       \begin{subsubcase}
         $p'=\ceu{\Nop}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-nop1}.
-        Hence~$p_1=p_2=p''$ and~$e_1=e_2\nil$.
+        Hence~$p_1=p_2=p''$ and~$e_1=e_2=\nil$.
       \end{subsubcase}
       \begin{subsubcase}
         \label{lem.det-nst.and-brk1}
         $p'=\ceu{\Break}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-brk1}.
-        Hence~$p_1=p_2=\ceu{\clear(p'');\Break}$ and~$e_1=e_2\nil$.
+        Hence~$p_1=p_2=\ceu{\clear(p'');\Break}$ and~$e_1=e_2=\nil$.
       \end{subsubcase}
-      \begin{subsubcase}\label{lem.det-nst.and-adv1}
+      \begin{subsubcase}
+        \label{lem.det-nst.and-adv1}
         $p'\ne\ceu{\Nop},\ceu{\Break}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-adv1}.
@@ -213,27 +226,31 @@
           \pi_1'&\Vdash\<p',n,\nil>\nst\<p_1',n,e_1'>\\
           \pi_2'&\Vdash\<p',n,\nil>\nst\<p_2',n,e_2'>
         \end{align*}
-        for some~$p_1',p_2'\in\P$ and~$e_1',e_2'\in\E$.  By the induction
+        for some~$p_1'$, $p_2'$, $e_1'$, $e_2'$.  By the induction
         hypothesis, $p_1'=p_2'$ and~$e_1'=e_2'$.
         Hence~$p_1=\ceu{{p_1'}\And{p''}}=\ceu{{p_2'}\And{p''}}=p_2$
         and~$e_1=e_1'=e_2'=e_2$.
       \end{subsubcase}
     \end{subcase}
     \begin{subcase}
-      $\isblocked(p',n)$~is true.  There are three subcases.
+      $\isblocked(p',n)$~is true.
+      %%
+      There are three subcases.
       \begin{subsubcase}
         $p''=\ceu{\Nop}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-nop2}.
-        Hence~$p_1=p_2=p'$ and~$e_1=e_2\nil$.
+        Hence~$p_1=p_2=p'$ and~$e_1=e_2=\nil$.
       \end{subsubcase}
-      \begin{subsubcase}\label{lem.det-nst.and-brk2}
+      \begin{subsubcase}
+        \label{lem.det-nst.and-brk2}
         $p''=\ceu{\Break}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-brk2}.
         Hence~$p_1=p_2=\ceu{\clear(p');\Break}$ and~$e_1=e_2=\nil$.
       \end{subsubcase}
-      \begin{subsubcase}\label{lem.det-nst.and-adv2}
+      \begin{subsubcase}
+        \label{lem.det-nst.and-adv2}
         $p''\ne\ceu{\Nop},\ceu{\Break}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-adv2}.  Thus there
@@ -242,8 +259,8 @@
           \pi_1''&\Vdash\<p'',n,\nil>\nst\<p_1'',n,e_1''>\\
           \pi_2''&\Vdash\<p'',n,\nil>\nst\<p_2'',n,e_2''>
         \end{align*}
-        for some~$p_1'',p_2''\in\P$ and~$e_1'',e_2''\in\E$.  By the
-        induction hypothesis, $p_1''=p_2''$ and~$e_1''=e_2''$.
+        for some~$p_1''$, $p_2''$, $e_1''$, and~$e_2''$.  By the induction
+        hypothesis, $p_1''=p_2''$ and~$e_1''=e_2''$.
         Hence~$p_1=\ceu{{p'}\And{p_1''}}=\ceu{{p'}\And{p_2''}}=p_2$
         and~$e_1=e_1''=e_2''=e_2$.
       \end{subsubcase}
@@ -258,9 +275,13 @@
   \end{case}
 
   \begin{case}
-    $p=\ceu{p'\AtOr{p''}}$.  There are two subcases.
+    $p=\ceu{p'\AtOr{p''}}$.
+    %%
+    There are two subcases.
     \begin{subcase}
-      $\isblocked(p',n)$~is false.  There are three subcases.
+      $\isblocked(p',n)$~is false.
+      %%
+      There are three subcases.
       \begin{subsubcase}
         $p'=\ceu{\Nop}$.
         %%
@@ -279,7 +300,9 @@
       \end{subsubcase}
     \end{subcase}
     \begin{subcase}
-      $\isblocked(p',n)$~is true.  There are three subcases.
+      $\isblocked(p',n)$~is true.
+      %%
+      There are three subcases.
       \begin{subsubcase}
         $p''=\ceu{\Nop}$.
         %%
@@ -303,7 +326,9 @@
 \end{proof}
 
 
-\begin{theorem}\label{thm.det-nst-n}
+\begin{theorem}
+  \label{thm.det-nst-n}
+  %%
   If~$\delta\nst[n]\delta_1$ and~$\delta\nst[n]\delta_2$
   then~$\delta_1=\delta_2$.
 \end{theorem}
@@ -314,7 +339,9 @@
 \subsection*{Termination}
 
 
-\begin{definition}\label{def.Hnst}
+\begin{definition}
+  \label{def.Hnst}
+  %%
   A description~$\delta=\<p,n,e>$ is \emph{nested-irre\-ducible}
   iff~$e\ne\nil$ or~$p=\ceu{\Nop},\ceu{\Break}$ or~$\isblocked(p,n)$~is
   true.  Nested-irreducible descriptions serve as normal forms for~$\nst$
@@ -327,7 +354,9 @@ The next lemma justifies the use of qualifier ``irreducible'' in
 Definition~\ref{def.Hnst}.
 
 
-\begin{lemma}\label{lem.irr-nst-n}
+\begin{lemma}
+  \label{lem.irr-nst-n}
+  %%
   If~$\delta\nst[n]\delta_\Hnst'$ then, for all~$i\ne{n}$, there is
   no~$\delta_\Hnst''$ such that~$\delta\nst[i]\delta''_\Hnst$.
 \end{lemma}
@@ -335,13 +364,18 @@ Definition~\ref{def.Hnst}.
   By contradiction on the hypothesis that there is such~$i$.
   %%
   Let~$\delta\nst[n]\delta'_\Hnst$, for some~$n\ge0$.
+  %%
   There are two cases.
-  \begin{case}\label{lem.irr-nst-n-case1}
+  \begin{case}
+    \label{lem.irr-nst-n-case1}
+    %%
     Suppose there are~$i>n$ and~$\delta''_\Hnst$ such
     that~$\delta\nst[i]\delta''$.
     %%
     Then, by definition of~$\nst[i]$,
-    \begin{equation}\label{lem.irr-nst-n-eq1}
+    \begin{equation}
+      \label{lem.irr-nst-n-eq1}
+      %%
       \delta\nst[n]\delta'\nst[n+1]\delta_1'\nst[n+2]\cdots\nst[i]\delta''.
     \end{equation}
     Since~$\delta'=\<p',n,e'>$ is nested-irreducible, $e'=\nil$
@@ -363,7 +397,9 @@ The next lemma establishes some basic properties of sequences of~$\nst$
 transitions.
 
 
-\begin{lemma}\label{lem.props-nst-n}
+\begin{lemma}
+  \label{lem.props-nst-n}
+  %%
   If~$\<p_1,n,e>\nst[n]\<p_1',n,e'>$ then, for any~$p_2$:
   \begin{enumerate}[(a)]
   \item\label{lem.props-nst-n.a}
@@ -527,24 +563,36 @@ transitions.
   \end{enumerate}
 \end{proof}
 
-The syntactic restrictions discussed in Section~\ref{?}, regarding the body
-of~$\ceu{\Fin}$ and~$\ceu{\Loop}$ expressions, are formalized by the
-following assumptions.
+The syntactic restrictions discussed in Section~\ref{sec.sem}, regarding the
+body of~$\ceu{\Fin}$ and~$\ceu{\Loop}$ expressions, are formalized by the
+next assumption.
 
-\begin{assumption}\label{ass.term-nst-fin}
-  If~$\delta=\<\ceu{\clear(p)},n,\nil>$ then there is a
-  description~$\delta'=\<\ceu{\Nop},n,\nil>$ such
-  that~$\delta\nst[*]\delta'$.
-\end{assumption}
-
-\begin{assumption}\label{ass.term-nst-loop}
-  If~$\delta=\<\ceu{\Loop{p}},n,\nil>$ then there is a
-  description~$\delta'=\<p',n,e>$ such that~$\delta\nst[*]\delta'$ where
-  either~$p'=\ceu{{\Break}\AtLoop{p}}$ or~$\isblockedext(p',n)$.
+\begin{assumption}[Syntactical restrictions]\strut
+  \label{ass.syn-rest}
+  %%
+  \begin{enumerate}[(a)]
+  \item\label{ass.syn-rest.fin} If~$p=\ceu{\Fin{p_1}}$ then~$p_1$ contain no
+    occurrences of~$\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$, $\ceu{\Every}$,
+    or~$\ceu{\Fin}$ expressions.  Consequently, for any~$n$,
+    \[
+      \<\clear(p_1),n,\nil>\nst[*]\<\ceu{\Nop},n,\nil>\,.
+    \]
+    %%
+  \item\label{ass.syn-rest.loop} If~$p=\ceu{\Loop{p_1}}$ then all execution
+    paths of~$p_1$ contain at least one occurrence of a
+    matching~$\ceu{\Break}$ or an~$\ceu{\AwaitExt}$ expression.
+    Consequently, for all~$n$, there are~$p_1'$ and~$e$ such that
+    \[
+      \<\ceu{\Loop{p_1}},n,\nil>\nst[*]\<p_1',n,e>\,,
+    \]
+    where~$p_1'=\ceu{{\Break}\AtLoop{p_1}}$ or~$\isblocked(p_1',n)$.
+  \end{enumerate}
 \end{assumption}
 
 
-\begin{theorem}\label{thm.term-nst-*}
+\begin{theorem}
+  \label{thm.term-nst-*}
+  %%
   For any~$\delta$ there is a~$\delta'_\Hnst$ such
   that~$\delta\nst[*]\delta'_\Hnst$.
 \end{theorem}
@@ -694,12 +742,13 @@ following assumptions.
     \label{thm.term-nst-*.loop}
     $p=\ceu{\Loop{p'}}$.
     %%
-    Then, by Assumption~\ref{ass.term-nst-loop},
+    Then, by item~\eqref{ass.syn-rest.loop} of
+    Assumption~\ref{ass.syn-rest},
     \begin{equation}\label{thm.term-nst-*.loop-expd.eq1}
       \<\ceu{\Loop{p'}},n,\nil>\nst[*]\<p_1',n,e>\,,
     \end{equation}
     for some~$e$ and~$p_1'$ such that either~$p_1'=\ceu{\Break\AtLoop{p'}}$
-    or~$\isblockedext(p_1',n)$.
+    or~$\isblocked(p_1',n)$.
     \begin{subcase}
       $p_1'=\ceu{\Break\AtLoop{p'}}$.
       %%
@@ -711,15 +760,16 @@ following assumptions.
       \end{align*}
     \end{subcase}
     \begin{subcase}
-      $\isblockedext(p_1',n)$ is true.  Then, by definition,
-      $\isblockedext(p_1',n)$ implies~$\isblocked(p_1',n)$.  Hence,
+      $\isblocked(p_1',n)$ is true.  Hence,
       from~\eqref{thm.term-nst-*.loop-expd.eq1} and by the definition
       of~$\Hnst$, $\<p_1',n,e>_\Hnst$.
     \end{subcase}
   \end{case}
 
   \begin{case}
-    $p=\ceu{p'\AtLoop{p''}}$.  There are three subcases.
+    $p=\ceu{p'\AtLoop{p''}}$.
+    %%
+    There are three subcases.
     \begin{subcase}
       $p'=\ceu{\Nop}$.
       %%
@@ -767,7 +817,9 @@ following assumptions.
     Case~\ref{thm.term-nst-*.and}.
   \end{case}
 
-  \begin{case}\label{thm.term-nst-*.and}
+  \begin{case}
+    \label{thm.term-nst-*.and}
+    %%
     $p=\ceu{{p'}\AtAnd{p''}}$.
     %%
     There are two subcases.
@@ -776,7 +828,7 @@ following assumptions.
       %%
       There are three subcases.
       \begin{subsubcase}
-        \label{thm.term-nst-*.and.nop1}
+        \label{thm.term-nst-*.and-nop1}
         $p'=\ceu{\Nop}$.
         %%
         Then, by~\R{and-nop1} and by the induction hypothesis, there
@@ -788,17 +840,18 @@ following assumptions.
         \]
       \end{subsubcase}
       \begin{subsubcase}
-        \label{thm.term-nst-*.and.brk1}
+        \label{thm.term-nst-*.and-brk1}
         $p'=\ceu{\Break}$.
         %%
         Then, by~\R{and-brk1},
-        \begin{equation}
-          \label{thm.term-nst-*.and.brk1.eq1}
-          \<\ceu{{\Break}\AtAnd{p''}},n,\nil>
-          \nst[1]\<\ceu{\clear(p'');\,\Break},n,\nil>\,.
-        \end{equation}
-        From~\eqref{thm.term-nst-*.and.brk1.eq1}, by
-        Assumption~\ref{ass.term-nst-fin} and~\R{seq-nop},
+        \begin{align}
+          \label{thm.term-nst-*.and-brk1.eq1}
+          &\<\ceu{{\Break}\AtAnd{p''}},n,\nil>\\
+          &\qquad\nst[1]\<\ceu{\clear(p'');\,\Break},n,\nil>\,.\notag
+        \end{align}
+        From~\eqref{thm.term-nst-*.and-brk1.eq1}, by
+        item~\eqref{ass.syn-rest.fin} of Assumption~\ref{ass.syn-rest} and
+        by~\R{seq-nop},
         \begin{align*}
           \<\ceu{\clear(p'');\,\Break},n,\nil>
           &\nst[*]\<\ceu{\Nop;\,\Break},n,\nil>\\
@@ -806,7 +859,7 @@ following assumptions.
         \end{align*}
       \end{subsubcase}
       \begin{subsubcase}
-        \label{thm.term-nst-*.and.adv1}
+        \label{thm.term-nst-*.and-adv1}
         $p'\ne\ceu{\Nop},\ceu{\Break}$.
         %%
         Then, by the induction hypothesis, there are~$p_1'$ and~$e$ such
@@ -827,9 +880,9 @@ following assumptions.
         \item If~$e\ne\nil$ then, by
           definition,~$\<\ceu{{p_1'}\AtAnd{p''}},n,e>_\Hnst$.
         \item If~$p_1'=\ceu{\Nop}$, this case is similar to
-          Case~\ref{thm.term-nst-*.and.nop1}.
+          Case~\ref{thm.term-nst-*.and-nop1}.
         \item If~$p_1'=\ceu{\Break}$, this case is similar to
-          Case~\ref{thm.term-nst-*.and.brk1}.
+          Case~\ref{thm.term-nst-*.and-brk1}.
         \item If~$\isblocked(p_1',n)$, this case is similar to
           Case~\ref{thm.term-nst-*.and2}.
         \end{enumerate}
@@ -841,7 +894,7 @@ following assumptions.
       %%
       There are three subcases.
       \begin{subsubcase}
-        \label{thm.term-nst-*.and.nop2}
+        \label{thm.term-nst-*.and-nop2}
         $p''=\ceu{\Nop}$.
         %%
         Then, by~\R{and-nop2},
@@ -850,7 +903,7 @@ following assumptions.
         \]
       \end{subsubcase}
       \begin{subsubcase}
-        \label{thm.term-nst-*.and.brk2}
+        \label{thm.term-nst-*.and-brk2}
         $p''=\ceu{\Break}$.
         %%
         Then, by~\R{and-brk2},
@@ -859,10 +912,10 @@ following assumptions.
           \nst[1]\<\ceu{\clear(p');\,\Break},n,\nil>\,.
         \]
         From this point on, this case is similar to
-        Case~\ref{thm.term-nst-*.and.brk1}.
+        Case~\ref{thm.term-nst-*.and-brk1}.
       \end{subsubcase}
       \begin{subsubcase}
-        \label{thm.term-nst-*.and.adv2}
+        \label{thm.term-nst-*.and-adv2}
         $p''\ne\ceu{\Nop},\ceu{\Break}$.
         %%
         Then, by the induction hypothesis, there are~$p_1''$ and~$e$ such
@@ -883,9 +936,9 @@ following assumptions.
         \item If~$e\ne\nil$ then, by definition,
           $\<\ceu{{p'}\AtAnd{p_1''}},n,e>_\Hnst$.
         \item If~$p_1''=\ceu{\Nop}$, this case is similar to
-          Case~\ref{thm.term-nst-*.and.nop2}.
+          Case~\ref{thm.term-nst-*.and-nop2}.
         \item If~$p_1''=\ceu{\Break}$, this case is similar to
-          Case~\ref{thm.term-nst-*.and.brk2}.
+          Case~\ref{thm.term-nst-*.and-brk2}.
         \item If~$\isblocked(p_1'',n)$ then, as both sides are blocked, by
           definition, $\<\ceu{{p'}\AtAnd{p_1''}},n,e>_\Hnst$.
         \end{enumerate}
@@ -915,33 +968,33 @@ following assumptions.
       %%
       There are three subcases.
       \begin{subsubcase}
-        \label{thm.term-nst-*.or.nop1}
+        \label{thm.term-nst-*.or-nop1}
         $p'=\ceu{\Nop}$.  Then, by~\R{or-nop1},
         \begin{equation}
-          \label{thm.term-nst-*.or.nop1.eq1}
+          \label{thm.term-nst-*.or-nop1.eq1}
           \<\ceu{{\Nop}\AtOr{p''}},n,\nil>
           \nst[1]\<\ceu{\clear(p'')},n,\nil>\,.
         \end{equation}
-        From~\eqref{thm.term-nst-*.or.nop1.eq1}, by
-        Assumption~\ref{ass.term-nst-fin},
+        From~\eqref{thm.term-nst-*.or-nop1.eq1}, by
+        item~\eqref{ass.syn-rest.fin} Assumption~\ref{ass.syn-rest},
         \[
           \<\ceu{\clear(p'')},n,\nil>\nst[*]\<\ceu{\Nop},n,\nil>_\Hnst\,.
         \]
       \end{subsubcase}
       \begin{subsubcase}
-        \label{thm.term-nst-*.or.brk1}
+        \label{thm.term-nst-*.or-brk1}
         $p'=\ceu{\Break}$.
         %%
-        Similar to Case~\ref{thm.term-nst-*.and.brk1}.
+        Similar to Case~\ref{thm.term-nst-*.and-brk1}.
       \end{subsubcase}
       \begin{subsubcase}
         $p'\ne\ceu{\Nop},\ceu{\Break}$.
         %%
-        Similar to Case~\ref{thm.term-nst-*.and.adv1}.
+        Similar to Case~\ref{thm.term-nst-*.and-adv1}.
       \end{subsubcase}
     \end{subcase}
     \begin{subcase}
-      \label{thm.term-nst-*.or.adv1}
+      \label{thm.term-nst-*.or-adv1}
       $\isblocked(p',n)$~is true.
       %%
       There are three subcases.
@@ -950,12 +1003,13 @@ following assumptions.
         %%
         Then, by~\R{or-nop2},
         \begin{equation}
-          \label{thm.term-nst-*.or.nop2.eq1}
+          \label{thm.term-nst-*.or-nop2.eq1}
           \<\ceu{p'\AtOr{\Nop}},n,\nil>
           \nst[1]\<\clear(p'),n,\nil>\,.
         \end{equation}
-        From~\eqref{thm.term-nst-*.or.nop2.eq1}, by
-        Assumption~\ref{ass.term-nst-fin},
+        From~\eqref{thm.term-nst-*.or-nop2.eq1}, by
+        item~\eqref{ass.syn-rest.fin} of Assumption~\ref{ass.syn-rest} and
+        by definition of~$\clear$,
         \[
           \<\ceu{\clear(p')},n,\nil>\nst[*]\<\ceu{\Nop},n,\nil>_\Hnst\,.
         \]
@@ -963,12 +1017,12 @@ following assumptions.
       \begin{subsubcase}
         $p''=\ceu{\Break}$.
         %%
-        Similar to Case~\ref{thm.term-nst-*.and.brk2}.
+        Similar to Case~\ref{thm.term-nst-*.and-brk2}.
       \end{subsubcase}
       \begin{subsubcase}
         $p''\ne\ceu{\Nop},\ceu{\Break}$.
         %%
-        Similar to Case~\ref{thm.term-nst-*.and.adv2}.\qedhere
+        Similar to Case~\ref{thm.term-nst-*.and-adv2}.\qedhere
       \end{subsubcase}
     \end{subcase}
   \end{case}
@@ -987,43 +1041,56 @@ following assumptions.
     \pot(p,e)=\pot'(\bcast(p,e))\,,
   \]
   where~$\pot'$ is an auxiliary function that counts the number of
-  reachable~$\ceu{\EmitInt}$ in the program resulting from the broadcast of
-  event~$e$ to~$p$.
+  reachable~$\ceu{\EmitInt}$ expressions in the program resulting from the
+  broadcast of event~$e$ to~$p$.
 
   The auxiliary function~$\pot'$ is defined by the following clauses:
   \begin{enumerate}[(a)]
-    \item$\pot'(\ceu{\EmitInt}(e))=1$;
-    \item$\pot'(\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}})
-      =\max\{\pot'(p_1),\pot'(p_2)\}$;
-    \item$\pot'(\ceu{\Loop{p_1}})=\pot'(p_1)$;
-    \item If~$p_1\ne\ceu{\Break},\ceu{\AwaitExt(e)}$,
-      \begin{align*}
-        \pot'(\ceu{p_1;\,p_2})&=\pot'(p_1)+\pot'(p_2)\\
-        %%
-        \pot'(\ceu{p_1\AtLoop{p_2}})&=
-        \begin{cases}
-          \pot'(p_1)              &\text{if~(\dag)}\\
-          \pot'(p_1)+\pot'(p_2)   &\text{otherwise}\\
-        \end{cases}\\
-        %%
-        \pot'(\ceu{{p_1}\And{p_2}})&=\pot'(p_1)+\pot'(p_2)\\
-        %%
-        \pot'(\ceu{{p_1}\AtAnd{p_2}})&=\pot'(p_1)+\pot'(p_2)\\
-        %%
-        \pot'(\ceu{{p_1}\Or{p_2}})&=\pot'(p_1)+\pot'(p_2)\\
-        %%
-        \pot'(\ceu{{p_1}\AtOr{p_2}})&=\pot'(p_1)+\pot'(p_2)\,,
-      \end{align*}
-      where~(\dag) stands for: ``a~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$
-      occurs in all execution paths of~$p_1$'';
-      \item Otherwise, if none of~(a)--(d) applies, $\pot(\ast)=0$.
-    \end{enumerate}
+  \item\label{def.pot.first}$\pot'(\ceu{\EmitInt}(e))=1$;
+    %%
+  \item$\pot'(\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}})
+    =\max\{\pot'(p_1),\pot'(p_2)\}$;
+    %%
+  \item$\pot'(\ceu{\Loop{p_1}})=\pot'(p_1)$;
+    %%
+  \item$\pot'(\ceu{{p_1}\And{p_2}})=\pot'(p_1)+\pot'(p_2)$;
+    %%
+  \item$\pot'(\ceu{{p_1}\Or{p_2}})=\pot'(p_1)+\pot'(p_2)$;
+    %%
+  \item If~$p_1\ne\ceu{\Break},\ceu{\AwaitExt(e)}$,
+    \begin{align*}
+      \pot'(\ceu{p_1;\,p_2})&=\pot'(p_1)+\pot'(p_2)\\
+      \pot'(\ceu{p_1\AtLoop{p_2}})&=
+      \begin{cases}
+        \pot'(p_1)              &\text{if\enspace(\dag)}\\
+        \pot'(p_1)+\pot'(p_2)   &\text{otherwise}\\
+      \end{cases}
+    \end{align*}
+    where~(\dag) stands for: ``a~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$ occurs
+    in all execution paths of~$p_1$'';
+    %%
+  \item If~$p_1,p_2\ne\ceu{\Break}$,
+    \[
+      \pot'(\ceu{{p_1}\AtAnd{p_2}})=\pot'(p_1)+\pot'(p_2)\,.
+    \]
+    %%
+  \item\label{def.pot.last} If~$p_1,p_2\ne\ceu{\Break}$
+    and~$p_1,p_2\ne\ceu{\Nop}$,
+    \[
+      \pot'(\ceu{{p_1}\AtOr{p_2}})=\pot'(p_1)+\pot'(p_2)\,.
+    \]
+    %%
+  \item Otherwise, if none of~\eqref{def.pot.first}--\eqref{def.pot.last}
+    applies, $\pot(\_)=0$.
+  \end{enumerate}
 
-  TODO: Define~$\pot'(\ceu{\Every{e}\,{p_1}})$ above.
+  \gl{Should~$\pot'(\ceu{\protect\Every{e}\,{p_1}})\ne0$ above?}
 \end{definition}
 
 
-\begin{definition}\label{def.rank}
+\begin{definition}
+  \label{def.rank}
+  %%
   The \emph{rank} of a description~$\delta=\<p,n,e>$,
   denoted~$\rank(\delta)$, is a pair of nonnegative integers~$\<i,j>$ such
   that
@@ -1179,7 +1246,7 @@ description.  All rank comparisons assume lexicographical order.
       Then~$\pi$ is an instance of~\R{seq-brk}.
       Hence~$p'=p_1$ and~$e'=\nil$.  Thus
       \[
-        \rank(\delta)=\<0,n>=\rank(\delta')\,.
+        \rank(\delta)=\rank(\delta')=\<0,n>\,.
       \]
     \end{subcase}
     \begin{subcase}
@@ -1233,7 +1300,13 @@ description.  All rank comparisons assume lexicographical order.
     Then~$\pi$ is an instance of~\R{loop-expd}.
     Hence~$p'=\ceu{p_1\AtLoop{p_1}}$ and~$e'=\nil$.
     %%
-    TODO: Use condition~(\dag) in definition of~$\pot'$.
+    By item~\eqref{ass.syn-rest.loop} of Assumption~\ref{ass.syn-rest}, all
+    execution paths of~$p_1$ contain at least one occurrence
+    of~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$.  Thus, by condition~(\dag) in
+    Definition~\ref{def.pot},
+    \[
+      \rank(\delta)=\rank(\delta')=\<\pot'(p_1),n>\,.
+    \]
   \end{case}
 
   \begin{case}
@@ -1254,38 +1327,164 @@ description.  All rank comparisons assume lexicographical order.
       \label{lem.rank-nst.loop-adv}
       $p_1\ne\ceu{\Nop},\ceu{\Break}$.
       %%
-      Similar to Case~\ref{lem.rank-nst.seq-adv}.
+      Then~$\pi$ is an instance of~\R{loop-adv}.  Hence there is a
+      derivation~$\pi'$ such that
+      \[
+        \pi'\Vdash\<p_1,n,\nil>\nst\<p_1',n,e_1'>\,,
+      \]
+      for some~$p_1'$ and~$e_1'$.  Thus~$p'=p_1';\,p_2$ and~$e'=e_1'$.
+      %%
+      % By the induction hypothesis,
+      % \begin{equation}
+      %   \label{lem.rank-nst.loop-adv-eq1}
+      %   \rank(\<p_1,n,\nil>)\ge\rank(\<p_1',n,e_1'>)\,.
+      % \end{equation}
+      %%
+      There are two subcases.
+      \begin{subsubcase}
+        $\pot'(p)=\pot'(p_1)$.
+        %%
+        Then all execution paths of~$p_1$ contain a~$\ceu{\Break}$
+        or~$\ceu{\AwaitExt}$ expression.  A single~$\out$ cannot terminate
+        the loop, since~$p_1\ne\ceu{\Break}$, nor can it consume
+        an~$\ceu{\AwaitExt}$, which means that all execution paths in~$p_1'$
+        still contain a~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$.
+        Hence~$\pot'(p')=\pot'(p_1')$.  The rest of this proof is similar to
+        that of Case~\ref{lem.rank-nst.seq-adv}.
+      \end{subsubcase}
+      \begin{subsubcase}
+        $\pot'(p)=\pot'(p_1)+\pot'(p_2)$.
+        %%
+        Then some execution path in~$p_1$ does not contain a~$\ceu{\Break}$
+        or~$\ceu{\AwaitExt}$ expression.  Since~$p_1\ne\ceu{\Nop}$, a
+        single~$\out$ cannot restart the loop, which means that~$p_1'$ still
+        contain some execution path in which a~$\ceu{\Break}$
+        or~$\ceu{\AwaitExt}$ does not occur.
+        Hence~$\pot'(p')=\pot'(p_1')+\pot'(p_2)$.  The rest of this proof is
+        similar to that of Case~\ref{lem.rank-nst.seq-adv}.
+      \end{subsubcase}
     \end{subcase}
   \end{case}
 
   \begin{case}
-    \label{lem.rank-nst.and.expd}
+    \label{lem.rank-nst.and-expd}
     $p=\ceu{{p_1}\And{p_2}}$.
     %%
     Then~$\pi$ is an instance of~\R{and-expd}.
     Hence~$p'=\ceu{{p_1}\AtAnd(\CanRun(n);\,p_2)}$ and~$e'=\nil$.
+    Thus
+    \[
+      \rank(\delta)=\rank(\delta')=\<\pot'(p_1)+\pot'(p_2),n>\,.
+    \]
   \end{case}
 
   \begin{case}
+    \label{lem.rank-nst.and}
     $p=\ceu{{p_1}\AtAnd{p_2}}$.
+    %%
+    There are two subcases.
+    \begin{subcase}
+      \label{lem.rank-nst.and1}
+      $\isblocked(p_1,n)$~is false.
+      %%
+      There are three subcases.
+      \begin{subsubcase}
+        \label{lem.rank-nst.and-nop1}
+        $p_1=\ceu{\Nop}$.
+        %%
+        Then~$\pi$ is an instance of~\R{and-nop1}.  Hence~$p'=p_2$
+        and~$e'=\nil$.  Thus
+        \[
+          \rank(\delta)=\rank(\delta')=\<0+\pot'(p_2),n>\,.
+        \]
+      \end{subsubcase}
+      \begin{subsubcase}
+        \label{lem.rank-nst.and-brk1}
+        $p_1=\ceu{\Break}$.
+        %%
+        Then~$\pi$ is an instance of~\R{and-brk1}.
+        Hence~$p'=\ceu{\clear(p_2);\,\Break}$ and~$e'=\nil$.  By item
+        \eqref{ass.syn-rest.fin} of Assumption~\ref{ass.syn-rest} and by the
+        definition of~$\clear$, $\clear(p_2)$ does not
+        contain~$\ceu{\EmitInt}$ expressions.  Thus
+        \[
+          \rank(\delta)=\rank(\delta')=\<0,n>\,.
+        \]
+      \end{subsubcase}
+      \begin{subsubcase}
+        \label{lem.rank-nst.and-adv1}
+        $p_1\ne\ceu{\Nop},\ceu{\Break}$.
+        %%
+        Then~$\pi$ is an instance of~\R{and-adv1}.  As~$p_1\ne\ceu{\Break}$
+        and~$p_2\ne\ceu{\Break}$ (otherwise~\R{and-brk2} would have taken
+        precedence), the rest of this proof is similar to that of
+        Case~\ref{lem.rank-nst.seq-adv}.
+      \end{subsubcase}
+    \end{subcase}
+    \begin{subcase}
+      $\isblocked(p_1,n)$~is true.
+      %%
+      Similar to Case~\ref{lem.rank-nst.and1}
+    \end{subcase}
   \end{case}
 
   \begin{case}
     $p=\ceu{{p_1}\Or{p_2}}$.
+    %%
+    Then~$\pi$ is an instance of~\R{or-expd}.
+    Hence~$p'=\ceu{{p_1}\AtOr(\CanRun(n);\,p_2)}$ and~$e'=\nil$.
+    Thus
+    \[
+      \rank(\delta)=\rank(\delta')=\<\pot'(p_1)+\pot'(p_2),n>\,.
+    \]
   \end{case}
 
   \begin{case}
     $p=\ceu{{p_1}\AtOr{p_2}}$.
+    %%
+    There are two subcases.
+    \begin{subcase}
+      \label{lem.rank-nst.or1}
+      $\isblocked(p_1,n)$ is false.
+      %%
+      There are three subcases.
+      \begin{subsubcase}
+        $p_1=\ceu{\Nop}$.
+        %%
+        Then~$\pi$ is an instance of~\R{or-nop1}.  Hence~$p'=\clear(p_2)$
+        and~$e'=\nil$.  By item \eqref{ass.syn-rest.fin} of
+        Assumption~\ref{ass.syn-rest} and by the definition of~$\clear$,
+        $p'$ does not contain~$\ceu{\EmitInt}$ expressions.  Thus
+        \[
+          \rank(\delta)=\rank(\delta')=\<0,n>\,.
+        \]
+      \end{subsubcase}
+      \begin{subsubcase}
+        $p_1=\ceu{\Break}$.
+        %%
+        Similar to Case~\ref{lem.rank-nst.and-brk1}.
+      \end{subsubcase}
+      \begin{subsubcase}
+        $p_1\ne\ceu{\Nop},\ceu{\Break}$.
+        %%
+        Similar to Case~\ref{lem.rank-nst.and-adv1}.
+      \end{subsubcase}
+    \end{subcase}
+    \begin{subcase}
+      $\isblocked(p_1,n)$ is true.
+      %%
+      Similar to Case~\ref{lem.rank-nst.or1}.\qedhere
+    \end{subcase}
   \end{case}
 \end{proof}
 
-\begin{theorem}[Reaction termination]
-  For any~$\delta$ there is a~$\delta'_\Hnst$ such
-  that~$\delta\trans[*]\delta'$ and~$\rank(\delta')=\<0,0>$.
-\end{theorem}
-\begin{proof}
-  By lexicographic induction on~$rank(\delta)$.
-\end{proof}
+% \begin{theorem}[Reaction termination]
+%   For any~$\delta$ there is a~$\delta'_\Hnst$ such
+%   that~$\delta\trans[*]\delta'$ and~$\rank(\delta')=\<0,0>$.
+% \end{theorem}
+% \begin{proof}
+%   By lexicographic induction on~$rank(\delta)$.
+% \end{proof}
 %   \begin{basis}
 %     If~$\<i,j>=\<0,0>$ then, by~\ref{?}, $\delta$ cannot be advanced
 %     by~$\out$ transitions.  There are two possibilities\dots\ (it can or
