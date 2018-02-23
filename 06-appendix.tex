@@ -992,10 +992,10 @@ following assumptions.
 
   The auxiliary function~$\pot'$ is defined by the following clauses:
   \begin{enumerate}[(a)]
-    \item$\pot'(\ceu{\EmitInt}(e))=1$.
+    \item$\pot'(\ceu{\EmitInt}(e))=1$;
     \item$\pot'(\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}})
-      =\max\{\pot'(p_1),\pot'(p_2)\}$.
-    \item$\pot'(\ceu{\Loop{p_1}})=\pot'(p_1)$.
+      =\max\{\pot'(p_1),\pot'(p_2)\}$;
+    \item$\pot'(\ceu{\Loop{p_1}})=\pot'(p_1)$;
     \item If~$p_1\ne\ceu{\Break},\ceu{\AwaitExt(e)}$,
       \begin{align*}
         \pot'(\ceu{p_1;\,p_2})&=\pot'(p_1)+\pot'(p_2)\\
@@ -1014,8 +1014,8 @@ following assumptions.
         %%
         \pot'(\ceu{{p_1}\AtOr{p_2}})&=\pot'(p_1)+\pot'(p_2)\,,
       \end{align*}
-      where~(\dag) stands for: ``A~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$
-      occurs in all execution paths of~$p_1$.''
+      where~(\dag) stands for: ``a~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$
+      occurs in all execution paths of~$p_1$'';
       \item Otherwise, if none of~(a)--(d) applies, $\pot(\ast)=0$.
     \end{enumerate}
 
