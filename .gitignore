@@ -5,3 +5,10 @@ index.log
 index.out
 *.swp
 acmart-master/
+
+index.fdb_latexmk
+index.fls
+index.tex.latexmain
+index.xcp
+missfont.log
+
