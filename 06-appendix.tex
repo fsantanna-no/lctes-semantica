@@ -344,7 +344,9 @@
   %%
   A description~$\delta=\<p,n,e>$ is \emph{nested-irre\-ducible}
   iff~$e\ne\nil$ or~$p=\ceu{\Nop},\ceu{\Break}$ or~$\isblocked(p,n)$~is
-  true.  Nested-irreducible descriptions serve as normal forms for~$\nst$
+  true.
+
+  Nested-irreducible descriptions serve as normal forms for~$\nst$
   transitions: they embody the result of an exhaustive number of~$\nst$
   applications.  We will write~$\delta_\Hnst$ to indicate that
   description~$\delta$ is nested-irreducible.
@@ -567,6 +569,7 @@ The syntactic restrictions discussed in Section~\ref{sec.sem}, regarding the
 body of~$\ceu{\Fin}$ and~$\ceu{\Loop}$ expressions, are formalized by the
 next assumption.
 
+
 \begin{assumption}[Syntactical restrictions]\strut
   \label{ass.syn-rest}
   %%
@@ -1110,9 +1113,12 @@ description.  All rank comparisons assume lexicographical order.
 
 
 \begin{lemma}\strut
+  \label{lem.rank-out}
   \begin{enumerate}[(a)]
-  \item If~$\delta\outpush\delta'$ then~$\rank(\delta)=\rank(\delta')$.
-  \item If~$\delta\outpop\delta'$ then~$\rank(\delta)>\rank(\delta')$.
+  \item\label{lem.rank-out-push} If~$\delta\outpush\delta'$
+    then~$\rank(\delta)=\rank(\delta')$.
+  \item\label{lem.rank-out-pop} If~$\delta\outpop\delta'$
+    then~$\rank(\delta)>\rank(\delta')$.
   \end{enumerate}
 \end{lemma}
 \begin{proof}\strut
@@ -1478,36 +1484,140 @@ description.  All rank comparisons assume lexicographical order.
   \end{case}
 \end{proof}
 
-% \begin{theorem}[Reaction termination]
-%   For any~$\delta$ there is a~$\delta'_\Hnst$ such
-%   that~$\delta\trans[*]\delta'$ and~$\rank(\delta')=\<0,0>$.
-% \end{theorem}
-% \begin{proof}
-%   By lexicographic induction on~$rank(\delta)$.
-% \end{proof}
-%   \begin{basis}
-%     If~$\<i,j>=\<0,0>$ then, by~\ref{?}, $\delta$ cannot be advanced
-%     by~$\out$ transitions.  There are two possibilities\dots\ (it can or
-%     cannot be advanced by nst transitions).
-%   \end{basis}
-%   \begin{induction}
-%     Let~$\<i,j>\ne\<0,0>$ and suppose that the theorem holds for
-%     all~$\delta''$ such that~$\rank(\delta'')<\rank(\delta)$.
-%     \begin{case}
-%       $\delta$~is nested-irreducible.
-%       %%
-%       \begin{subcase}
-%         $\delta\outpush\delta_1$, for some~$\delta_1$.
-%       \end{subcase}
-%       \begin{subcase}
-%         $\delta\outpop\delta_1$, for some~$\delta_1$.
-%         %%
-%         Then, by definition of~\R{pop}, $\rank(\delta_1)=\<i,j-1>$, and by
-%         the induction hypothesis\dots
-%       \end{subcase}
-%     \end{case}
-%     \begin{case}
-%       $\delta$~is not nested-irreducible.
-%       %%
-%     \end{case}
-%   \end{induction}
+
+\begin{theorem}
+  \label{thm.rank-nst-*}
+  %%
+  If~$\delta\nst[*]\delta'$ then~$\rank(\delta)\ge\rank(\delta')$.
+\end{theorem}
+\begin{proof}
+  If~$\delta\nst[*]\delta'$ then there is an~$n$ such that
+  $\delta\nst[n]\delta'$.  We proceed by induction on~$n$.
+  %%
+  The theorem is trivially true for~$n=0$ and follows directly from
+  Lemma~\ref{lem.rank-nst} for~$n=1$.  Suppose
+  $\delta\nst[1]\delta_1'\nst[n-1]\delta'$, for some~$n>1$ and~$\delta_1'$.
+  Thus, by Lemma~\ref{lem.rank-nst} and by the induction hypothesis,
+  \[
+    \rank(\delta)\ge\rank(\delta_1')\ge\rank(\delta')\,.\qedhere
+  \]
+\end{proof}
+
+
+\begin{definition}
+  \label{def.H}
+  %%
+  A description~$\delta$ is \emph{irreducible} (in symbols, $\delta_\#$) iff
+  it is nested-irreducible and its~$\rank(\delta)$ is~$\<i,0>$, for
+  some~$i\ge0$.
+
+  An irreducible description~$\delta_\#=\<p,n,e>$ serves as a normal form
+  for transitions in general.  It cannot be advanced by~$\nst$, as it is
+  nested-irreducible, and neither by~$\outpush$ nor~$\outpop$, as the second
+  coordinate of its rank is~0, which implies~$e=\nil$ and~$n=0$.
+\end{definition}
+
+
+\begin{theorem}
+  \label{thm.term}
+  %%
+  For any~$\delta$, there is a~$\delta'_\#$ such
+  that~$\delta\trans[*]\delta'_\#$.
+\end{theorem}
+\begin{proof}
+  By lexicographic induction on~$rank(\delta)$.  Let~$\delta=\<p,n,e>$ and
+  $\rank(\delta)=\<i,j>$.
+  %%
+  \begin{basis}
+    If~$\<i,j>=\<0,0>$ then~$\delta$ cannot be advanced by~$\out$
+    transitions, as~$j=0$ implies~$e=\nil$ and~$n=0$.  Thus neither~\R{push}
+    nor~\R{pop} can be applied.  There are two possibilities:
+    either~$\delta$ is nested-irreducible or it is not.  In the first case,
+    the theorem is trivially true, as~$\delta\nst[0]\delta_\Hnst$.
+
+    Suppose~$\delta$ is not nested-irreducible.  Then, by
+    Theorem~\ref{thm.term-nst-*}, $\delta\nst[*]\delta'_\Hnst$ for
+    some~$\delta'_\Hnst$.  By Theorem~\ref{thm.rank-nst-*},
+    \[
+      \<i,j>=\<0,0>\ge\rank(\delta')\,,
+    \]
+    which implies~$\rank(\delta')=\<0,0>$.
+  \end{basis}
+  \begin{induction}
+    Let~$\<i,j>\ne\<0,0>$.
+    %%
+    There are two subcases.
+    \begin{case}
+      \label{thm.term.Hnst}
+      $\delta$~is nested-irreducible.
+      %%
+      There are two cases.
+      \begin{subcase}
+        \label{thm.term.Hnst-j0}
+        $j=0$.  By Definition~\ref{def.H}, $\delta_\#$.
+        Thus~$\delta\trans[0]\delta_\#$.
+      \end{subcase}
+      \begin{subcase}
+        \label{thm.term.Hnst-j>0}
+        $j>0$.
+        %%
+        There are two subcases.
+        \begin{subsubcase}
+          \label{thm.term.Hnst-j>0-nonnil}
+          $e\ne\nil$.
+          %%
+          Then, by~\R{out} and by Theorem~\ref{thm.term-nst-*}, there
+          are~$\delta_1'$ and~$\delta'_\Hnst=\<p',n+1,e'>$ such that
+          \[
+            \delta\outpush\delta_1'\nst[*]\delta'_\Hnst\,.
+          \]
+          Thus, by Lemma by item~\eqref{lem.rank-out-push} of
+          Lemma~\ref{lem.rank-out} and by Theorem~\ref{thm.rank-nst-*},
+          \begin{align*}
+            \rank(\delta)=\rank(\delta_1')&=\<i,j>\\
+                                          &\ge\rank(\delta')=\<i',j'>\,.
+          \end{align*}
+          If~$e'=\nil$, then $i=i'$ and~$j=j'$, and the rest of this proof
+          is similar to that of Case~\ref{thm.term.Hnst-j>0-nil}.
+          Otherwise, if~$e'\ne\nil$ then $i>i'$, since
+          an~$\ceu{\EmitInt(e')}$ was consumed by the nested transitions.
+          Thus,
+          \[
+            \rank(\delta)>\rank(\delta')\,.
+          \]
+          By the induction hypothesis, $\delta'\trans[*]\delta''_\#$, for
+          some~$\delta''_\#$.  Thus~$\delta\trans[*]\delta''_\#$.
+        \end{subsubcase}
+        \begin{subsubcase}
+          \label{thm.term.Hnst-j>0-nil}
+          $e=\nil$.
+          %%
+          Then, since~$j>0$, $\delta\outpop\delta'$, for
+          some~$\delta''$.  By item~\eqref{lem.rank-out-pop} of
+          Lemma~\ref{lem.rank-out},
+          \[
+            \rank(\delta)>\rank(\delta')\,.
+          \]
+          Hence, by the induction hypothesis, there is a~$\delta''_\#$ such
+          that~$\delta'\trans[*]\delta''_\#$.
+          Thus~$\delta\trans[*]\delta''_\#$.
+        \end{subsubcase}
+      \end{subcase}
+    \end{case}
+    \begin{case}
+      $\delta$~is not nested-irreducible.
+      %%
+      There are two subcases.
+      \begin{subcase}
+        $e\ne\nil$.  Similar to Case~\ref{thm.term.Hnst-j>0-nonnil}.
+      \end{subcase}
+      \begin{subcase}
+        $e=\nil$.  Then, by Theorems~\ref{thm.rank-nst-*}
+        and~\ref{thm.rank-nst-*} there is a~$\delta'_\Hnst$ such
+        that~$\delta\nst[*]\delta'_\Hnst$
+        with~$\rank(\delta)\ge\rank(\delta'_\Hnst)$.  The rest of this proof
+        is similar to that of Case~\ref{thm.term.Hnst}.\qedhere
+      \end{subcase}
+    \end{case}
+  \end{induction}
+\end{proof}
