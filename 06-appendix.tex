@@ -339,9 +339,6 @@
 %   Theorem~\ref{thm.det-out-pop-i}.
 % \end{proof}
 
-The next theorem establishes that transitions are deterministic, i.e., that
-the transition relation~$\trans$ between descriptions is a function.
-
 
 \begin{theorem}[Determinism]\strut
   \label{thm.det}
@@ -384,21 +381,13 @@ the transition relation~$\trans$ between descriptions is a function.
   true.
 \end{definition}
 
-Nested-irreducible descriptions serve as normal forms for~$\nst$
-transitions: they embody the result of an exhaustive number of~$\nst$
-applications.  We will write~$\delta_\Hnst$ to indicate that
-description~$\delta$ is nested-irreducible.
-
-The next lemma justifies the use of qualifier ``irreducible'' in
-Definition~\ref{def.Hnst}.
-
 
-\begin{lemma}
-  \label{lem.irr-nst-i}
+\begin{proposition}
+  \label{prop.irr-nst-i}
   %%
   If~$\delta\nst[i]\delta_\Hnst'$ then, for all~$k\ne{i}$, there is
   no~$\delta_\Hnst''$ such that~$\delta\nst[k]\delta''_\Hnst$.
-\end{lemma}
+\end{proposition}
 \begin{proof}
   By contradiction on the hypothesis that there is such~$k$.
   %%
@@ -406,14 +395,14 @@ Definition~\ref{def.Hnst}.
   %%
   There are two cases.
   \begin{case}
-    \label{lem.irr-nst-i-case1}
+    \label{prop.irr-nst-i-case1}
     %%
     Suppose there are~$k>i$ and~$\delta''_\Hnst$ such
     that~$\delta\nst[k]\delta''$.
     %%
     Then, by definition of~$\nst[k]$,
     \begin{equation}
-      \label{lem.irr-nst-i-eq1}
+      \label{prop.irr-nst-i-eq1}
       %%
       \delta\nst[i]\delta'\nst[i+1]\delta_1'\nst[i+2]\cdots\nst[k]\delta''.
     \end{equation}
@@ -421,19 +410,17 @@ Definition~\ref{def.Hnst}.
     or~$p=\ceu{\Nop},\ceu{\Break}$ or~$\isblocked(p',n)$.  In any of these
     cases, by the definition of~$\nst$, there is no~$\delta_1'$ such
     that~$\delta'\nst[1]\delta_1'$, which
-    contradicts~\eqref{lem.irr-nst-i-eq1}.  Therefore, no such~$k$ can
+    contradicts~\eqref{prop.irr-nst-i-eq1}.  Therefore, no such~$k$ can
     exist.
   \end{case}
   \begin{case}
     Suppose there are~$k<i$ and~$\delta''_\Hnst$ such
     that~$\delta\nst[k]\delta''$.  Then, since~$i>k$, by
-    Case~\ref{lem.irr-nst-i-case1}, $\delta'$~cannot exist, which is absurd.
-    Therefore, the assumption that there is such~$k$ is false.\qedhere
+    Case~\ref{prop.irr-nst-i-case1}, $\delta'$~cannot exist, which is
+    absurd.  Therefore, the assumption that there is such~$k$ is
+    false.\qedhere
   \end{case}
 \end{proof}
-
-The next lemma establishes some basic properties of sequences of~$\nst$
-transitions.
 
 
 \begin{lemma}
@@ -601,10 +588,6 @@ transitions.
   \item Similar to Case~\eqref{lem.props-nst-i.e}.\qedhere
   \end{enumerate}
 \end{proof}
-
-The syntactic restrictions discussed in Section~\ref{sec.sem}, regarding the
-body of~$\ceu{\Fin}$ and~$\ceu{\Loop}$ expressions, are formalized by the
-next assumption.
 
 
 \begin{assumption}[Syntactical restrictions]\strut

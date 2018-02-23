@@ -1013,9 +1013,9 @@ always lead to the same output description.
 
 We proceed to prove that a sufficiently long sequence of applications
 of~$\trans$ will eventually lead to an irreducible description, i.e., one
-that cannot be modified by further transitions.  Before that, however, we
-need to introduce some definitions and basic results regarding~$\nst$
-and~$\out$.
+that cannot be modified by further transitions.  Before doing that, however,
+we need to introduce some notation and establish some basic properties
+of~$\nst$ and~$\out$.
 
 \begin{definition}
   \label{def.x.Hnst}
@@ -1029,6 +1029,117 @@ Nested-irreducible descriptions serve as normal forms for~$\nst$
 transitions: they embody the result of an exhaustive number of~$\nst$
 applications.  We will write~$\delta_\Hnst$ to indicate that
 description~$\delta$ is nested-irreducible.
+
+The use of qualifier ``irreducible'' in Definition~\ref{def.x.Hnst} is
+justified by Proposition~\ref{prop.x.irr-nst-i}.  The proposition
+establishes that if a finite number of applications of~$\nst$ results in an
+irreducible description, then that can only occur exactly once, at some
+specific number~$i$.  The proof of the lemma follows directly from the
+definition of~$\nst$ by contradiction on the hypothesis that there is
+such~$k\ne{i}$.
+
+\begin{proposition}
+  \label{prop.x.irr-nst-i}
+  %%
+  If~$\delta\nst[i]\delta_\Hnst'$ then, for all~$k\ne{i}$, there is
+  no~$\delta_\Hnst''$ such that~$\delta\nst[k]\delta''_\Hnst$.
+\end{proposition}
+
+The next lemma establishes that sequences of~$\nst$ transitions are
+well-behaved regarding the order of evaluation of composition members.  Its
+proof follows by induction on~$i$.
+
+\begin{lemma}
+  \label{lem.x.props-nst-i}\strut\\
+  %%
+  If~$\<p_1,n,e>\nst[i]\<p_1',n,e'>$ then, for any~$p_2$:
+  \begin{enumerate}[(a)]
+  \item\label{lem.x.props-nst-i.a}
+    $\<\ceu{p_1;\,p_2},n,e>\nst[i]\<p_1';p_2,n,e'>$;
+    %%
+  \item\label{lem.x.props-nst-i.b}
+    $\<\ceu{p_1\AtLoop{p_2}},n,e>\nst[i]\<\ceu{p_1'\AtLoop{p_2}},n,e'>$;
+    %%
+  \item\label{lem.x.props-nst-i.c}
+    $\<\ceu{{p_1}\AtAnd{p_2}},n,e>\nst[i]\<\ceu{{p_1'}\AtAnd{p_2}},n,e'>$;
+    %%
+  \item\label{lem.x.props-nst-i.d}
+    $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[i]\<\ceu{{p_1}'\AtOr{p_2}},n,e'>$.
+  \end{enumerate}
+  If~$\<p_2,n,e>\nst[i]\<p_2',n,e'>$, for any~$p_1$ such
+  that~$\isblocked(p_1,n)$:
+  \begin{enumerate}[(a)]
+    \setcounter{enumi}{4}
+  \item\label{lem.x.props-nst-i.e}
+    $\<\ceu{{p_1}\AtAnd{p_2}},n,e>\nst[i]\<\ceu{{p_1}\AtAnd{p_2'}},n,e'>$;
+    %%
+  \item\label{lem.x.props-nst-i.f}
+    $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[i]\<\ceu{{p_1}\AtOr{p_2'}},n,e'>$.
+  \end{enumerate}
+\end{lemma}
+%%
+% \begin{proof}[Proof of~(a)]
+%   By induction on~$i$.  The lemma is trivially true for~$i=0$,
+%   as~$p_1=p_1'$, and follows directly from~\R{seq-adv} for~$i=1$.  Suppose
+%   \begin{equation}
+%     \label{lem.x.props-nst-i.a.eq1}
+%     \<p_1,n,e>\nst[1]\<p_1'',n,e''>\nst[i-1]\<p_1',n,e'>\,,
+%   \end{equation}
+%   for some~$i>1$.  Then~$\<p_1'',n,e''>$ is not nested-irreducible, i.e.,
+%   $e=\nil$ and~$p\ne{\ceu{\Nop},\ceu{\Break}}$ and~$\isblocked(p_1'',n)$
+%   is false.  By~\eqref{lem.x.props-nst-i.a.eq1} and by~\R{seq-adv},
+%   \begin{equation}
+%     \label{lem.x.props-nst-i.a.eq2}
+%     \<\ceu{p_1;\,p_2},n,e>\nst[1]\<\ceu{p_1'';\,p_2},n,e''>\,.
+%   \end{equation}
+%   From~\eqref{lem.x.props-nst-i.a.eq1}, by the induction hypothesis,
+%   \begin{equation}
+%     \label{lem.x.props-nst-i.a.eq3}
+%     \<\ceu{p_1'';\,p_2},n,e''>\nst[i-1]\<\ceu{p_1';\,p_2},n,e'>\,.
+%   \end{equation}
+%   From~\eqref{lem.x.props-nst-i.a.eq2} and~\eqref{lem.x.props-nst-i.a.eq3},
+%   \[
+%     \<\ceu{p_1;\,p_2},n,e>\nst[i]\<\ceu{p_1';\,p_2},n,e'>\,.
+%   \]
+%   The proofs of the other cases are similar.
+% \end{proof}
+%%
+
+The syntactic restrictions discussed in Section~\ref{sec.sem}, regarding the
+body of~$\ceu{\Fin}$ and~$\ceu{\Loop}$ expressions, and their consequences,
+are formalized in the next assumption.
+
+\begin{assumption}[Syntactic restrictions]\strut
+  \label{ass.x.syn-rest}
+  %%
+  \begin{enumerate}[(a)]
+  \item\label{ass.x.syn-rest.fin} If~$p=\ceu{\Fin{p_1}}$ then~$p_1$ contain
+    no occurrences of~$\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$, $\ceu{\Every}$,
+    or~$\ceu{\Fin}$ expressions.  Consequently, for any~$n$,
+    $\<\clear(p_1),n,\nil>\nst[*]\<\ceu{\Nop},n,\nil>$.
+    %%
+  \item\label{ass.x.syn-rest.loop} If~$p=\ceu{\Loop{p_1}}$ then all
+    execution paths of~$p_1$ contain at a matching~$\ceu{\Break}$ or
+    an~$\ceu{\AwaitExt}$.  Consequently, for all~$n$, there are~$p_1'$
+    and~$e$ such that $\<\ceu{\Loop{p_1}},n,\nil>\nst[*]\<p_1',n,e>$, where
+    $p_1'=\ceu{{\Break}\AtLoop{p_1}}$ or~$\isblocked(p_1',n)$\,.
+  \end{enumerate}
+\end{assumption}
+
+Theorem~\ref{thm.x.term-nst-*} establishes that a finite (possibly zero)
+number of~$\nst$ transitions eventually lead to a nested-irreducible
+description.  The proof follows by induction on the structure of programs
+(set~$P$) and depends on Lemma~\ref{lem.props-nst-i} and
+Assumption~\ref{ass.x.syn-rest}.
+
+\begin{theorem}
+  \label{thm.x.term-nst-*}
+  %%
+  For any~$\delta$ there is a~$\delta'_\Hnst$ such
+  that~$\delta\nst[*]\delta'_\Hnst$.
+\end{theorem}
+
+% -------------------------------------------------------------------------
 
 To characterize irreducible descriptions in general, we will need to define
 the notions of potency of a program and the rank of a description.
