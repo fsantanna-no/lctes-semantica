@@ -828,7 +828,7 @@ and will eventually resume in the current reaction (see rule \R{pop}).
       &=\ceu{\clear(p);\,\clear(q)}\\[-1\jot]
       %%
       \clear(\_)
-      &=\bot\enspace
+      &=\xi\enspace
         (\ceu{\Mem},\ceu{\EmitInt},\ceu{\Break},\\[-1\jot]
       &\quad\ceu{\IfElse{}{}},\ceu{\Loop},\ceu{\And},\ceu{\Or},\ceu{\Nop})
     \end{align*}}
@@ -837,15 +837,19 @@ and will eventually resume in the current reaction (see rule \R{pop}).
 \caption{%
   (i)~Function~$\bcast$ awakes awaiting trails matching the event by
   converting~$\ceu{\protect\AwaitExt}$ and~$\ceu{\protect\AwaitInt}$
-  to~$\ceu{\protect\Nop}$ expressions, and by unwinding $\ceu{\protect\Every}$
+  to~$\ceu{\protect\Nop}$, and by unwinding $\ceu{\protect\Every}$
   expressions.
   %%
-  \enspace(ii)~Predicate~$\isblocked$ is true only if all branches in parallel
-  are blocked waiting for events, for finalization clauses, or for certain
+  \space(ii)~Predicate~$\isblocked$ is true only if all branches in parallel
+  are blocked waiting for events, finalization clauses, or certain
   stack levels.
   %%
-  \enspace(iii)~Function~$\clear$ extracts~$\ceu{\protect\Fin}$ expressions in
+  \space(iii)~Function~$\clear$ extracts~$\ceu{\protect\Fin}$ expressions in
   parallel and put their bodies in sequence.
+  %%
+  In~(i), (ii), and~(iii),~``$\_$'' denotes the omitted cases and~``$\xi$''
+  denotes the empty string.
+  %%
 }
 \label{fig.bcast}
 \label{fig.isblocked}
