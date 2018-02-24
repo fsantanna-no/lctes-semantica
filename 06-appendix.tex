@@ -1200,7 +1200,7 @@
 \begin{proof}
   We proceed by induction on the structure of~$\nst$ derivations.
   Let~$\delta=\<p,n,e>$, $\delta'=\<p',n',e'>$, $\rank(\delta)=\<i,j>$,
-  and~$\rank(\delta')=\<i',j'>$.  By the hypothesis of the theorem, there is
+  and~$\rank(\delta')=\<i',j'>$.  By the hypothesis of the lemma, there is
   a derivation~$\pi$ such that
   \[
     \pi\Vdash\<p,n,e>\nst\<p',n',e'>\,.
@@ -1317,7 +1317,7 @@
       \begin{subsubcase}
         $e'\ne\nil$.
         %%
-        Then~$\pi'$ contain one application of~\R{emit-int}, which consumes
+        Then~$\pi'$ contains one application of~\R{emit-int}, which consumes
         one~$\ceu{\EmitInt(e')}$ expression from~$p_1$ and implies
         $\pot'(p_1)>\pot'(p_1')$.  Thus
         \begin{align*}
@@ -1367,7 +1367,8 @@
       \[
         \pi'\Vdash\<p_1,n,\nil>\nst\<p_1',n,e_1'>\,,
       \]
-      for some~$p_1'$ and~$e_1'$.  Thus~$p'=p_1';\,p_2$ and~$e'=e_1'$.
+      for some~$p_1'$ and~$e_1'$.  Thus~$p'=\ceu{p_1'\AtLoop{\,p_2}}$
+      and~$e'=e_1'$.
       %%
       % By the induction hypothesis,
       % \begin{equation}
@@ -1379,8 +1380,8 @@
       \begin{subsubcase}
         $\pot'(p)=\pot'(p_1)$.
         %%
-        Then all execution paths of~$p_1$ contain a~$\ceu{\Break}$
-        or~$\ceu{\AwaitExt}$ expression.  A single~$\out$ cannot terminate
+        Then every execution path of~$p_1$ contains a~$\ceu{\Break}$
+        or~$\ceu{\AwaitExt}$ expression.  A single~$\nst$ cannot terminate
         the loop, since~$p_1\ne\ceu{\Break}$, nor can it consume
         an~$\ceu{\AwaitExt}$, which means that all execution paths in~$p_1'$
         still contain a~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$.
@@ -1392,7 +1393,7 @@
         %%
         Then some execution path in~$p_1$ does not contain a~$\ceu{\Break}$
         or~$\ceu{\AwaitExt}$ expression.  Since~$p_1\ne\ceu{\Nop}$, a
-        single~$\out$ cannot restart the loop, which means that~$p_1'$ still
+        single~$\nst$ cannot restart the loop, which means that~$p_1'$ still
         contain some execution path in which a~$\ceu{\Break}$
         or~$\ceu{\AwaitExt}$ does not occur.
         Hence~$\pot'(p')=\pot'(p_1')+\pot'(p_2)$.  The rest of this proof is

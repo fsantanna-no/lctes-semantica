@@ -1011,8 +1011,8 @@ always lead to the same output description.
 
 \subsubsection{Termination}
 
-We proceed to prove that a sufficiently long sequence of applications
-of~$\trans$ will eventually lead to an irreducible description, i.e., one
+In this section, we prove that any sufficiently long sequence of
+applications of~$\trans$ will lead to an irreducible description, i.e., one
 that cannot be modified by further transitions.  Before doing that, however,
 we need to introduce some notation and establish some basic properties
 of~$\nst$ and~$\out$.
@@ -1052,7 +1052,7 @@ proof follows by induction on~$i$.
 \begin{lemma}
   \label{lem.x.props-nst-i}\strut\\
   %%
-  If~$\<p_1,n,e>\nst[i]\<p_1',n,e'>$ then, for any~$p_2$:
+  If~$\<p_1,n,e>\nst[i]\<p_1',n,e'>$, for any~$p_2$:
   \begin{enumerate}[(a)]
   \item\label{lem.x.props-nst-i.a}
     $\<\ceu{p_1;\,p_2},n,e>\nst[i]\<p_1';p_2,n,e'>$.
@@ -1066,6 +1066,7 @@ proof follows by induction on~$i$.
   \item\label{lem.x.props-nst-i.d}
     $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[i]\<\ceu{{p_1}'\AtOr{p_2}},n,e'>$.
   \end{enumerate}
+  \medskip
   If~$\<p_2,n,e>\nst[i]\<p_2',n,e'>$, for any~$p_1$ such
   that~$\isblocked(p_1,n)$:
   \begin{enumerate}[(a)]
@@ -1116,13 +1117,18 @@ are formalized in the next assumption.
   \item\label{ass.x.syn-rest.fin} If~$p=\ceu{\Fin{p_1}}$ then~$p_1$ contains
     no occurrences of~$\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$, $\ceu{\Every}$,
     or~$\ceu{\Fin}$ expressions.  Consequently, for any~$n$,
-    $\<\clear(p_1),n,\nil>\nst[*]\<\ceu{\Nop},n,\nil>$.
+    \[
+      \<\clear(p_1),n,\nil>\nst[*]\<\ceu{\Nop},n,\nil>\,.
+    \]
     %%
   \item\label{ass.x.syn-rest.loop} If~$p=\ceu{\Loop{p_1}}$ then all
     execution paths of~$p_1$ contain a matching~$\ceu{\Break}$ or
     an~$\ceu{\AwaitExt}$.  Consequently, for all~$n$, there are~$p_1'$
-    and~$e$ such that $\<\ceu{\Loop{p_1}},n,\nil>\nst[*]\<p_1',n,e>$, where
-    $p_1'=\ceu{{\Break}\AtLoop{p_1}}$ or~$\isblocked(p_1',n)$\,.
+    and~$e$ such that
+    \[
+      \<\ceu{\Loop{p_1}},n,\nil>\nst[*]\<p_1',n,e>\,,
+    \]
+    where $p_1'=\ceu{{\Break}\AtLoop{p_1}}$ or~$\isblocked(p_1',n)$\,.
   \end{enumerate}
 \end{assumption}
 
@@ -1177,7 +1183,7 @@ and rank of a description.
       \pot'(\ceu{p_1\AtLoop{p_2}})&=
       \begin{cases}
         \pot'(p_1)              &\text{if\enspace(\dag)}\\
-        \pot'(p_1)+\pot'(p_2)   &\text{otherwise}\\
+        \pot'(p_1)+\pot'(p_2)   &\text{otherwise,}\\
       \end{cases}
     \end{align*}
     where~(\dag) stands for: ``a~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$ occurs
@@ -1216,8 +1222,6 @@ and rank of a description.
   \end{alignat*}
 \end{definition}
 
-We can now characterize irreducible descriptions in general.
-
 \begin{definition}
   \label{def.x.H}
   %%
@@ -1227,7 +1231,7 @@ We can now characterize irreducible descriptions in general.
 \end{definition}
 
 An irreducible description~$\delta_\#=\<p,n,e>$ serves as a normal form for
-arbitrary transitions~$\trans$.  Such descriptions cannot be advanced
+transitions~$\trans$ in general.  Such descriptions cannot be advanced
 by~$\nst$, as it is nested-irreducible, and neither by~$\outpush$
 nor~$\outpop$, as the second coordinate of its rank is~0, which
 implies~$e=\nil$ and~$n=0$.
@@ -1241,7 +1245,9 @@ or~$i=i$ and~$j>j'$.
 The proof of Lemma~\ref{lem.x.rank-out} follows directly from~\R{push}
 and~\R{pop} and from Definitions~\ref{def.x.pot} and~\ref{def.x.rank}.  The
 proof of Lemma~\ref{lem.x.rank-nst}, however, is by induction on the
-structure of~$\nst$ derivations.
+structure of~$\nst$ derivations.  Since Lemma~\ref{lem.x.rank-nst} is of
+fundamental importance for the termination result, we detail the proof of
+one of its cases.
 
 \begin{lemma}\strut
   \label{lem.x.rank-out}
@@ -1259,6 +1265,103 @@ structure of~$\nst$ derivations.
   %%
   If~$\delta\nst\delta'$ then~$\rank(\delta)\ge\rank(\delta')$.
 \end{lemma}
+\begin{proof}
+  By induction on the structure of~$\nst$ derivations.  Let
+  \[
+    \delta=\<p,n,e>
+    \quad\text{and}\quad
+    \delta'=\<p',n',e'>
+  \]
+  be descriptions with~$\rank(\delta)=\<i,j>$ and~$\rank(\delta')=\<i',j'>$
+  such that~$\delta\nst\delta'$.  Then there is a derivation~$\pi$ whose
+  conclusion is~$\delta\nst\delta'$, i.e.,
+  \[
+    \pi\Vdash\<p,n,e>\nst\<p',n',e'>\,.
+  \]
+  By definition of~$\nst$, $e=\nil$ and~$n=n'$.  Depending on the structure
+  of program~$p$, there are~11 distinct cases to be considered.  In each one
+  of them, we need to show that~$\rank(\delta)\ge\rank(\delta')$.
+
+  We proceed to prove the case where~$p=\ceu{{p_1}\AtLoop{p_2}}$, which
+  itself consists of three subcases.
+  \begin{case}
+    $p_1=\ceu{\Nop}$.
+    %%
+    Then~$\pi$ is an instance of~\R{loop-nop}.  i.e., its conclusion is
+    obtained by an application of this rule.  Hence~$p'=p_2$ and~$e'=\nil$.
+    Thus
+    \begin{align*}
+        \rank(\delta)&=\<\pot'(p_1)+\pot'(p_2),n>\\
+                     &\ge\<pot'(p_2),n>=\rank(\delta')\,.
+    \end{align*}
+  \end{case}
+  \begin{case}
+    $p_1=\ceu{\Break}$.
+    %%
+    Then~$\pi$ is an instance of~\R{loop-brk}.
+    Hence~$p'=p_1$ and~$e'=\nil$.  Thus
+    \[
+      \rank(\delta)=\rank(\delta')=\<0,n>\,.
+    \]
+  \end{case}
+  \begin{case}
+    $p_1\ne\ceu{\Nop},\ceu{\Break}$.
+    %%
+    Then~$\pi$ is an instance of~\R{loop-adv}.  Hence there is a
+    derivation~$\pi'$ such that
+    \begin{equation}
+      \label{lem.x.rank-nst-eq1}
+      \pi'\Vdash\<p_1,n,\nil>\nst\<p_1',n,e_1'>\,,
+    \end{equation}
+    for some~$p_1'$ and~$e_1'$.  Thus~$p'=\ceu{p_1'\AtLoop{\,p_2}}$
+    and~$e'=e_1'$.  There are two subcases.
+    \begin{subcase}
+      \label{lem.x.rank-nst-case1}
+      $\pot'(p)=\pot'(p_1)$.
+      %%
+      Then, by Definition~\ref{def.pot}, every execution path of~$p_1$
+      contains a (matching)~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$ expression.
+      A single~$\nst$ cannot terminate the loop, since~$p_1\ne\ceu{\Break}$,
+      nor can it consume an~$\ceu{\AwaitExt}$, which means that all
+      execution paths in~$p_1'$ still contain a~$\ceu{\Break}$
+      or~$\ceu{\AwaitExt}$.  Hence~$\pot'(p')=\pot'(p_1')$.
+
+      There are two further subcases depending on event~$e'$.
+      \begin{subsubcase}
+        $e'=\nil$.
+        %%
+        Then $\rank(\delta)=\<pot'(p_1),n>$ and
+        $\rank(\delta')=\<pot'(p_1'),n>$.  From~\eqref{lem.x.rank-nst-eq1},
+        by the induction hypothesis, $\pot'(p_1)\ge\pot(p_1')$.  Thus
+        \[
+          \rank(\delta)\ge\rank(\delta')\,.
+        \]
+      \end{subsubcase}
+      \begin{subsubcase}
+        $e'\ne\nil$.
+        %%
+        Then~$\pi'$ contains one application of~\R{emit-int} which consumes
+        one~$\ceu{\EmitInt(e')}$ expression from~$p_1$ and which implies
+        $\pot'(p_1)>\pot'(p_1')$.  Thus
+        \begin{align*}
+          \rank(\delta)&=\<\pot'(p_1),n>\\
+                       &>\<\pot'(p_1'),n+1>=\rank(\delta')\,.
+        \end{align*}
+      \end{subsubcase}
+    \end{subcase}
+    \begin{subsubcase}
+      $\pot'(p)=\pot'(p_1)+\pot'(p_2)$.
+      %%
+      Then some execution path in~$p_1$ does not contain a
+      (matching)~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$ expression.
+      Since~$p_1\ne\ceu{\Nop}$, a single~$\nst$ cannot restart the loop,
+      which means that~$p_1'$ still contain some execution path in which
+      a~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$ does not occur.
+      Hence~$\pot'(p')=\pot'(p_1')+\pot'(p_2)$.  The rest of this proof is
+      similar to that of Case~\ref{lem.x.rank-nst-case1}.\qedhere
+    \end{subsubcase}
+  \end{case}
+\end{proof}
 
 \subsubsection*{Memory Bounds}
 
