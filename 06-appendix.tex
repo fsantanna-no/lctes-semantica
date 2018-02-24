@@ -340,8 +340,7 @@
 % \end{proof}
 
 
-\begin{theorem}[Determinism]\strut
-  \label{thm.det}
+\begin{theorem}[Determinism]\label{thm.det}\strut\\
   %%
   If~$\delta\trans[i]\delta_1$ and~$\delta\trans[i]\delta_2$
   then~$\delta_1=\delta_2$.
@@ -426,7 +425,7 @@
 \begin{lemma}
   \label{lem.props-nst-i}\strut\\
   %%
-  If~$\<p_1,n,e>\nst[i]\<p_1',n,e'>$ then, for any~$p_2$:
+  If~$\<p_1,n,e>\nst[i]\<p_1',n,e'>$, for any~$p_2$:
   \begin{enumerate}[(a)]
   \item\label{lem.props-nst-i.a}
     $\<\ceu{p_1;\,p_2},n,e>\nst[i]\<p_1';p_2,n,e'>$.
@@ -440,6 +439,7 @@
   \item\label{lem.props-nst-i.d}
     $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[i]\<\ceu{{p_1}'\AtOr{p_2}},n,e'>$.
   \end{enumerate}
+  \smallskip
   If~$\<p_2,n,e>\nst[i]\<p_2',n,e'>$, for any~$p_1$ such
   that~$\isblocked(p_1,n)$:
   \begin{enumerate}[(a)]
@@ -590,7 +590,7 @@
 \end{proof}
 
 
-\begin{assumption}[Syntactical restrictions]\strut
+\begin{assumption}[Syntactic restrictions]\strut
   \label{ass.syn-rest}
   %%
   \begin{enumerate}[(a)]
@@ -1072,7 +1072,8 @@
   reachable~$\ceu{\EmitInt}$ expressions in the program resulting from the
   broadcast of event~$e$ to~$p$.
 
-  The auxiliary function~$\pot'$ is defined by the following clauses:
+  The auxiliary function~$\pot'$ is defined by
+  clauses~\label{def.pot.first}--\label{def.pot.last}:
   \begin{enumerate}[(a)]
   \item\label{def.pot.first}$\pot'(\ceu{\EmitInt}(e))=1$;
     %%
@@ -1091,13 +1092,13 @@
       \pot'(\ceu{p_1\AtLoop{p_2}})&=
       \begin{cases}
         \pot'(p_1)              &\text{if\enspace(\dag)}\\
-        \pot'(p_1)+\pot'(p_2)   &\text{otherwise}\\
+        \pot'(p_1)+\pot'(p_2)   &\text{otherwise,}\\
       \end{cases}
     \end{align*}
     where~(\dag) stands for: ``a~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$ occurs
     in all execution paths of~$p_1$'';
     %%
-  \item If~$p_1,p_2\ne\ceu{\Break}$,
+  \item\label{def.pot.before-last} If~$p_1,p_2\ne\ceu{\Break}$,
     \[
       \pot'(\ceu{{p_1}\AtAnd{p_2}})=\pot'(p_1)+\pot'(p_2)\,;
     \]
@@ -1108,8 +1109,9 @@
       \pot'(\ceu{{p_1}\AtOr{p_2}})=\pot'(p_1)+\pot'(p_2)\,;
     \]
     %%
-  \item Otherwise, if none of~\eqref{def.pot.first}--\eqref{def.pot.last}
-    applies, $\pot(\_)=0$.
+  \item Otherwise, if none
+    of~\eqref{def.pot.first}--\eqref{def.pot.before-last} applies,
+    $\pot(\_)=0$.
   \end{enumerate}
   %%
   %%\gl{Should~$\pot'(\ceu{\protect\Every{e}\,{p_1}})\ne0$ above?}
