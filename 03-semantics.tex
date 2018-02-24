@@ -14,8 +14,8 @@
 \section{Formal Semantics}
 \label{sec.sem}
 
-In this section, we introduce a reduced syntax of \CEU and propose an
-operational semantics to formally describe the behavior of programs.
+In this section, we introduce a reduced syntax for \CEU and propose an
+operational semantics to formally describe the behavior of its programs.
 We describe a small synchronous kernel highlighting the peculiarities of \CEU,
 in particular, the stack-based execution for internal events.
 %
@@ -168,7 +168,7 @@ The core of our semantics describes how a program reacts to a single external
 input event, i.e., starting from an input event, how the program behaves and
 becomes idle again to proceed to a subsequent reaction.
 %
-We use a set of small-step operational rules~\cite{Plotkin-G-D-1981}, which
+We use a set of small-step operational rules~\cite{Plotkin-G-D-1981} which
 are designed in such a way that at most one transition is possible at any
 time, resulting in deterministic reactions.
 %
@@ -177,15 +177,15 @@ emitted event~$e$ to a modified triple as follows:
 \[
   \<p,n,e>\trans\<p',n',e'>\,,
 \]
-where~$p,p'\in\P$ are abstract-language programs, $n,n'\in\N$ are non-negative
+where~$p,p'\in\P$ are abstract-language programs, $n,n'\in\N$ are nonnegative
 integers representing the current stack level, and~$e,e'\in\E\cup\{\nil\}$ are
-the events emitted before and after the transition (both being possibly the
+the events emitted before and after the transition (both possibly being the
 empty event~$\nil$).
 $\E$ is a set of primitive events.
 
 We will refer to the triples on the left-hand and right-hand sides of
-symbol~$\to$ as \emph{descriptions} (denoted~$\delta$).  The triple on the
-left-hand side of symbol~$\to$ is called the \emph{input description}, and
+symbol~$\trans$ as \emph{descriptions} (denoted~$\delta$).  The triple on the
+left-hand side of symbol~$\trans$ is called the \emph{input description}, and
 the triple on its right-hand side is called the \emph{output description}.
 
 %-
@@ -218,9 +218,9 @@ We distinguish between two types of transition rules:
 
 \subsubsection*{Outermost transitions}
 
-The~$\out$ rules \R{push} and \R{pop} are non-recursive definitions which only
-apply to the program as a whole, and are the only to manipulate the stack
-level:
+The~$\out$ rules \R{push} and \R{pop} are non-recursive definitions that
+apply to the program as a whole.  These are the only rules that manipulate
+the stack level.
 \begin{align*}
   &\AxiomC{$e\ne\nil$}
   \UnaryInfC{$\<p,n,e>\out\<\bcast(p,e),n+1,\nil>$}
@@ -508,8 +508,9 @@ a~$\ceu{\Nop}$.
 %We cannot simply transform the loop into a $nop$ because its body may be a
 %parallel composition containing finalization blocks.
 
-The rules for~$\ceu{\And}$ and~$\ceu{\Or}$ compositions make sure that their
-left branches always transition before their right branches:
+The rules for~$\ceu{\And}$ and~$\ceu{\Or}$ compositions ensure that the
+left-hand side of compositions always transition before their right-hand
+side:
 %%
 \begin{gather*}
   \hskip-.9em
@@ -1167,7 +1168,7 @@ potency and rank.
   denoted~$\pot(p,e)$, is the maximum number of~$\ceu{\EmitInt}$ expressions
   that can be executed during a reaction of~$p$ to~$e$.
 
-  More formally, $\pot(p,e)=\pot'(\bcast(p,e))$, where~$\pot'$ is an
+  More formally, $\pot(p,e)=\pot'(\bcast(p,e))$ where~$\pot'$ is an
   auxiliary function that counts the number of reachable~$\ceu{\EmitInt}$
   expressions in the program resulting from the broadcast of event~$e$
   to~$p$.
@@ -1240,14 +1241,14 @@ potency and rank.
 \end{definition}
 
 An irreducible description~$\delta_\#=\<p,n,e>$ serves as a normal form for
-transitions~$\trans$ in general.  Such descriptions cannot be advanced
+transitions~$\trans$ in general.  Such description cannot be advanced
 by~$\nst$, as it is nested-irreducible, and neither by~$\outpush$
 nor~$\outpop$, as the second coordinate of its rank is~0, which
 implies~$e=\nil$ and~$n=0$.
 
 The next two lemmas establish that a single application of~$\out$ or~$\nst$
 either preserves or decreases the rank of the input description.  All rank
-comparisons assume lexicographical order, i.e., if~$\rank(\delta)=\<i,j>$
+comparisons assume lexicographic order, i.e., if~$\rank(\delta)=\<i,j>$
 and~$\rank(\delta')=\<i',j'>$ then~$\rank(\delta)>\rank(\delta')$ iff~$i>i'$
 or~$i=i$ and~$j>j'$.
 %%
@@ -1329,7 +1330,9 @@ one of its cases.
       \pi'\Vdash\<p_1,n,\nil>\nst\<p_1',n,e_1'>\,,
     \end{equation}
     for some~$p_1'$ and~$e_1'$.  Thus~$p'=\ceu{p_1'\AtLoop{\,p_2}}$
-    and~$e'=e_1'$.  There are two subcases.
+    and~$e'=e_1'$.
+
+    There are two subcases.
     \begin{subcase}
       \label{lem.x.rank-nst-case1}
       $\pot'(p)=\pot'(p_1)$.
@@ -1337,11 +1340,11 @@ one of its cases.
       Then, by Definition~\ref{def.pot}, every execution path of~$p_1$
       contains a (matching)~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$ expression.
       A single~$\nst$ cannot terminate the loop, since~$p_1\ne\ceu{\Break}$,
-      nor can it consume an~$\ceu{\AwaitExt}$, which means that all
+      nor it can consume an~$\ceu{\AwaitExt}$, which means that all
       execution paths in~$p_1'$ still contain a~$\ceu{\Break}$
       or~$\ceu{\AwaitExt}$.  Hence~$\pot'(p')=\pot'(p_1')$.
 
-      There are two further subcases depending on event~$e'$.
+      There are two subcases.
       \begin{subsubcase}
         $e'=\nil$.
         %%
@@ -1464,7 +1467,7 @@ the reaction.
         \label{thm.x.term.Hnst-j>0-nil}
         $e=\nil$.
         %%
-        Then, since~$j>0$, $\delta\outpop\delta'$, for some~$\delta''$.  By
+        Then, since~$j>0$, $\delta\outpop\delta'$, for some~$\delta'$.  By
         item~\eqref{lem.rank-out-pop} of Lemma~\ref{lem.rank-out},
         $\rank(\delta)>\rank(\delta')$.  Hence, by the induction hypothesis,
         there is a~$\delta''_\#$ such that~$\delta'\trans[*]\delta''_\#$.
@@ -1493,7 +1496,7 @@ uses, and the size of the event stack that it requires to run.  The code
 length and the number of variables used are easily determined by code
 inspection.  The maximum size of the event stack during a reaction of
 program~$p$ to external event~$e$ corresponds to~$\pot(p,e)$, i.e., to the
-maximum number of internal events that~$p$ may emit in a reaction to~$e$.
+maximum number of internal events that~$p$ may emit in reaction to~$e$.
 If~$p$ may react to external events~$e_1$, \dots,~$e_n$ then, in the worst
 case, its event stack will need to
 store~$\max\{\pot(p,e_1),\dots,\pot(p,e_n)\}$ events.
