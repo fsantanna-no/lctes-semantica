@@ -1585,7 +1585,7 @@
           \[
             \delta\outpush\delta_1'\nst[*]\delta'_\Hnst\,.
           \]
-          Thus, by Lemma by item~\eqref{lem.rank-out-push} of
+          Thus, by item~\eqref{lem.rank-out-push} of
           Lemma~\ref{lem.rank-out} and by Theorem~\ref{thm.rank-nst-*},
           \begin{align*}
             \rank(\delta)=\rank(\delta_1')&=\<i,j>\\
@@ -1621,17 +1621,11 @@
     \begin{case}
       $\delta$~is not nested-irreducible.
       %%
-      There are two subcases.
-      \begin{subcase}
-        $e\ne\nil$.  Similar to Case~\ref{thm.term.Hnst-j>0-nonnil}.
-      \end{subcase}
-      \begin{subcase}
-        $e=\nil$.  Then, by Theorems~\ref{thm.rank-nst-*}
-        and~\ref{thm.rank-nst-*} there is a~$\delta'_\Hnst$ such
-        that~$\delta\nst[*]\delta'_\Hnst$
-        with~$\rank(\delta)\ge\rank(\delta'_\Hnst)$.  The rest of this proof
-        is similar to that of Case~\ref{thm.term.Hnst}.\qedhere
-      \end{subcase}
+      Then~$e=\nil$ and, by Theorems~\ref{thm.rank-nst-*}
+      and~\ref{thm.rank-nst-*}, there is a~$\delta'_\Hnst$ such
+      that~$\delta\nst[*]\delta'_\Hnst$
+      with~$\rank(\delta)\ge\rank(\delta'_\Hnst)$.  The rest of this proof
+      is similar to that of Case~\ref{thm.term.Hnst}.\qedhere
     \end{case}
   \end{induction}
 \end{proof}

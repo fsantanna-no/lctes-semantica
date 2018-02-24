@@ -1066,7 +1066,7 @@ proof follows by induction on~$i$.
   \item\label{lem.x.props-nst-i.d}
     $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[i]\<\ceu{{p_1}'\AtOr{p_2}},n,e'>$.
   \end{enumerate}
-  \medskip
+  \smallskip
   If~$\<p_2,n,e>\nst[i]\<p_2',n,e'>$, for any~$p_1$ such
   that~$\isblocked(p_1,n)$:
   \begin{enumerate}[(a)]
@@ -1117,17 +1117,22 @@ are formalized in the next assumption.
   \item\label{ass.x.syn-rest.fin} If~$p=\ceu{\Fin{p_1}}$ then~$p_1$ contains
     no occurrences of~$\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$, $\ceu{\Every}$,
     or~$\ceu{\Fin}$ expressions.  Consequently, for any~$n$,
-    \[
-      \<\clear(p_1),n,\nil>\nst[*]\<\ceu{\Nop},n,\nil>\,.
-    \]
+    $\<\clear(p_1),n,\nil>\nst[*]\<\ceu{\Nop},n,\nil>$.
+    %%
+    % \[
+    %   \<\clear(p_1),n,\nil>\nst[*]\<\ceu{\Nop},n,\nil>\,.
+    % \]
     %%
   \item\label{ass.x.syn-rest.loop} If~$p=\ceu{\Loop{p_1}}$ then all
     execution paths of~$p_1$ contain a matching~$\ceu{\Break}$ or
     an~$\ceu{\AwaitExt}$.  Consequently, for all~$n$, there are~$p_1'$
     and~$e$ such that
-    \[
-      \<\ceu{\Loop{p_1}},n,\nil>\nst[*]\<p_1',n,e>\,,
-    \]
+    $\<\ceu{\Loop{p_1}},n,\nil>\nst[*]\<p_1',n,e>$,
+    %%
+    % \[
+    %   \<\ceu{\Loop{p_1}},n,\nil>\nst[*]\<p_1',n,e>\,,
+    % \]
+    %%
     where $p_1'=\ceu{{\Break}\AtLoop{p_1}}$ or~$\isblocked(p_1',n)$\,.
   \end{enumerate}
 \end{assumption}
@@ -1145,11 +1150,11 @@ Assumption~\ref{ass.x.syn-rest}.
   that~$\delta\nst[*]\delta'_\Hnst$.
 \end{theorem}
 
-The main result of this section, Theorem~\ref{?}, is similar to
+The main result of this section, Theorem~\ref{thm.x.term}, is similar to
 Theorem~\ref{thm.x.term-nst-*} but applies to transitions~$\trans$ in
 general.  Before stating and proving it, we need to characterize irreducible
-descriptions in general, which depend on the notions of potency of a program
-and rank of a description.
+descriptions in general.  This characterization depends on the notions of
+potency and rank.
 
 \begin{definition}
   \label{def.x.pot}
@@ -1275,9 +1280,12 @@ one of its cases.
   be descriptions with~$\rank(\delta)=\<i,j>$ and~$\rank(\delta')=\<i',j'>$
   such that~$\delta\nst\delta'$.  Then there is a derivation~$\pi$ whose
   conclusion is~$\delta\nst\delta'$, i.e.,
-  \[
-    \pi\Vdash\<p,n,e>\nst\<p',n',e'>\,.
-  \]
+  $\pi\Vdash\<p,n,e>\nst\<p',n',e'>$.
+  %%
+  % \[
+  %   \pi\Vdash\<p,n,e>\nst\<p',n',e'>\,.
+  % \]
+  %%
   By definition of~$\nst$, $e=\nil$ and~$n=n'$.  Depending on the structure
   of program~$p$, there are~11 distinct cases to be considered.  In each one
   of them, we need to show that~$\rank(\delta)\ge\rank(\delta')$.
@@ -1291,8 +1299,8 @@ one of its cases.
     obtained by an application of this rule.  Hence~$p'=p_2$ and~$e'=\nil$.
     Thus
     \begin{align*}
-        \rank(\delta)&=\<\pot'(p_1)+\pot'(p_2),n>\\
-                     &\ge\<pot'(p_2),n>=\rank(\delta')\,.
+        \rank(\delta)=\<\pot'(p_1)+\pot'(p_2),n>
+                     \ge\<pot'(p_2),n>=\rank(\delta')\,.
     \end{align*}
   \end{case}
   \begin{case}
@@ -1300,9 +1308,12 @@ one of its cases.
     %%
     Then~$\pi$ is an instance of~\R{loop-brk}.
     Hence~$p'=p_1$ and~$e'=\nil$.  Thus
-    \[
-      \rank(\delta)=\rank(\delta')=\<0,n>\,.
-    \]
+    $\rank(\delta)=\rank(\delta')=\<0,n>$.
+    %%
+    % \[
+    %   \rank(\delta)=\rank(\delta')=\<0,n>\,.
+    % \]
+    %%
   \end{case}
   \begin{case}
     $p_1\ne\ceu{\Nop},\ceu{\Break}$.
@@ -1333,9 +1344,12 @@ one of its cases.
         Then $\rank(\delta)=\<pot'(p_1),n>$ and
         $\rank(\delta')=\<pot'(p_1'),n>$.  From~\eqref{lem.x.rank-nst-eq1},
         by the induction hypothesis, $\pot'(p_1)\ge\pot(p_1')$.  Thus
-        \[
-          \rank(\delta)\ge\rank(\delta')\,.
-        \]
+        $\rank(\delta)\ge\rank(\delta')$.
+        %%
+        % \[
+        %   \rank(\delta)\ge\rank(\delta')\,.
+        % \]
+        %%
       \end{subsubcase}
       \begin{subsubcase}
         $e'\ne\nil$.
@@ -1343,10 +1357,16 @@ one of its cases.
         Then~$\pi'$ contains one application of~\R{emit-int} which consumes
         one~$\ceu{\EmitInt(e')}$ expression from~$p_1$ and which implies
         $\pot'(p_1)>\pot'(p_1')$.  Thus
-        \begin{align*}
-          \rank(\delta)&=\<\pot'(p_1),n>\\
-                       &>\<\pot'(p_1'),n+1>=\rank(\delta')\,.
-        \end{align*}
+        \[
+          \hskip1em\rank(\delta)\!=\!\<\pot'(p_1),n>
+          >\<\pot'(p_1'),n+1>\!=\!\rank(\delta')\,.
+        \]
+        %%
+        % \begin{align*}
+        %   \rank(\delta)&=\<\pot'(p_1),n>\\
+        %                &>\<\pot'(p_1'),n+1>=\rank(\delta')\,.
+        % \end{align*}
+        %%
       \end{subsubcase}
     \end{subcase}
     \begin{subsubcase}
@@ -1363,7 +1383,101 @@ one of its cases.
   \end{case}
 \end{proof}
 
-\subsubsection*{Memory Bounds}
+The next theorem is a generalization of Lemma~\ref{lem.x.rank-nst}
+for~$\nst[*]$ transitions.  Its proof is by induction on~$i$.
+
+\begin{theorem}
+  \label{thm.x.rank-nst-*}
+  %%
+  If~$\delta\nst[*]\delta'$ then~$\rank(\delta)\ge\rank(\delta')$.
+\end{theorem}
+
+We now state and prove the main result of this section,
+Theorem~\ref{thm.x.term}, viz., the termination theorem for~$\trans[*]$.
+The idea of the proof is that a series of~$\nst$ or~$\out$ transitions
+eventually decrease the rank of the current description until an irreducible
+description is reached.  This irreducible description is the final result of
+the reaction.
+%%
+\begin{theorem}[Termination]\label{thm.x.term}\strut\\
+  %%
+  For any~$\delta$, there is a~$\delta'_\#$ such
+  that~$\delta\trans[*]\delta'_\#$.
+\end{theorem}
+\begin{proof}
+  By lexicographic induction on~$\rank(\delta)$.  Let~$\delta=\<p,n,e>$ and
+  $\rank(\delta)=\<i,j>$.
+  \begin{basis}
+    If~$\<i,j>=\<0,0>$ then~$\delta$ cannot be advanced by~$\out$, as~$j=0$
+    implies~$e=\nil$ and~$n=0$ (neither~\R{push} nor~\R{pop} can be
+    applied).  There are two possibilities:  either~$\delta$ is
+    nested-irreducible or it is not.  In the first case, the theorem is
+    trivially true, as~$\delta\nst[0]\delta_\Hnst$.  Suppose~$\delta$ is not
+    nested-irreducible.  Then, by Theorem~\ref{thm.x.term-nst-*},
+    $\delta\nst[*]\delta'_\Hnst$ for some~$\delta'_\Hnst$.  By
+    Theorem~\ref{thm.x.rank-nst-*},
+    \[
+      \<i,j>=\<0,0>\ge\rank(\delta')\,,
+    \]
+    which implies~$\rank(\delta')=\<0,0>$.
+  \end{basis}
+  \begin{induction}
+    Let~$\<i,j>\ne\<0,0>$.
+    %%
+    There are two subcases depending on whether or not $\delta$~is
+    nested-irreducible.
+    \begin{case}
+      \label{thm.x.term.Hnst}
+      $\delta$~is nested-irreducible.
+      %%
+      If~$j=0$ then, by Definition~\ref{def.x.H}, $\delta_\#$, and
+      thus~$\delta\trans[0]\delta_\#$.  Suppose that is not the case, i.e.,
+      that $j>0$.  Then there are two subcases.
+      \begin{subcase}
+        \label{thm.x.term.Hnst-j>0-nonnil}
+        $e\ne\nil$.
+        %%
+        Then, by~\R{out} and by Theorem~\ref{thm.x.term-nst-*}, there
+        are~$\delta_1'$ and~$\delta'_\Hnst=\<p',n+1,e'>$ such that
+        $\delta\outpush\delta_1'\nst[*]\delta'_\Hnst$.  Thus, by
+        Lemma~\ref{lem.x.rank-out} and by Theorem~\ref{thm.x.rank-nst-*},
+        \begin{align*}
+          \rank(\delta)=\rank(\delta_1')=\<i,j>
+                                        \ge\rank(\delta')=\<i',j'>\,.
+        \end{align*}
+        If~$e'=\nil$, then $i=i'$ and~$j=j'$, and the rest of this proof is
+        similar to that of Case~\ref{thm.x.term.Hnst-j>0-nil} below.
+        Otherwise, if~$e'\ne\nil$ then $i>i'$, since an~$\ceu{\EmitInt(e')}$
+        was consumed by the nested transitions.  Thus,
+        $\rank(\delta)>\rank(\delta')$.  By the induction hypothesis,
+        $\delta'\trans[*]\delta''_\#$, for some~$\delta''_\#$.  Therefore,
+        $\delta\trans[*]\delta''_\#$.
+      \end{subcase}
+      \begin{subcase}
+        \label{thm.x.term.Hnst-j>0-nil}
+        $e=\nil$.
+        %%
+        Then, since~$j>0$, $\delta\outpop\delta'$, for some~$\delta''$.  By
+        item~\eqref{lem.rank-out-pop} of Lemma~\ref{lem.rank-out},
+        $\rank(\delta)>\rank(\delta')$.  Hence, by the induction hypothesis,
+        there is a~$\delta''_\#$ such that~$\delta'\trans[*]\delta''_\#$.
+        Therefore, $\delta\trans[*]\delta''_\#$.
+      \end{subcase}
+    \end{case}
+    \begin{case}
+      $\delta$~is not nested-irreducible.
+      %%
+      Then~$e=\nil$ and, by Theorems~\ref{thm.x.rank-nst-*}
+      and~\ref{thm.x.rank-nst-*}, there is a~$\delta'_\Hnst$ such
+      that~$\delta\nst[*]\delta'_\Hnst$
+      with~$\rank(\delta)\ge\rank(\delta'_\Hnst)$.  The rest of this proof
+      is similar to that of Case~\ref{thm.x.term.Hnst} above.\qedhere
+    \end{case}
+  \end{induction}
+\end{proof}
+
+
+\subsubsection*{Memory bounds}
 
 TODO: Acho que sai direto do~$\pot(p)$.
 
