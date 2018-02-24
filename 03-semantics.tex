@@ -228,7 +228,7 @@ level:
   \Rtag{push}\\[\JOT]
   %%
   &\AxiomC{$n>0$}
-  \AxiomC{$\ceu{p=\Nop}\vee\isblocked(p,n)$}
+  \AxiomC{$p=\ceu{\Nop,\Break}\vee\isblocked(p,n)$}
   \BinaryInfC{$\<p,n,\nil>\out\<p,n-1,\nil>$}
   \DisplayProof
   \Rtag{pop}
@@ -1420,9 +1420,12 @@ the reaction.
     nested-irreducible.  Then, by Theorem~\ref{thm.x.term-nst-*},
     $\delta\nst[*]\delta'_\Hnst$ for some~$\delta'_\Hnst$.  By
     Theorem~\ref{thm.x.rank-nst-*},
-    \[
-      \<i,j>=\<0,0>\ge\rank(\delta')\,,
-    \]
+    $\<i,j>=\<0,0>\ge\rank(\delta')$,
+    %%
+    % \[
+    %   \<i,j>=\<0,0>\ge\rank(\delta')\,,
+    % \]
+    %%
     which implies~$\rank(\delta')=\<0,0>$.
   \end{basis}
   \begin{induction}
@@ -1481,14 +1484,23 @@ the reaction.
 \end{proof}
 
 
-\subsubsection{Memory bounds}
+\subsubsection{Memory bound}
 
-TODO: Acho que sai direto do~$\pot(p)$.
+As \CEU has no mechanism for heap allocation, unbounded iteration, or
+general recursion, the maximum memory usage of a given \CEU program is
+determined solely by the length of its code, the number of variables it
+uses, and the size of the event stack that it requires to run.  The code
+length and the number of variables used are easily determined by code
+inspection.  The maximum size of the event stack during a reaction of
+program~$p$ to external event~$e$ corresponds to~$\pot(p,e)$, i.e., to the
+maximum number of internal events that~$p$ may emit in a reaction to~$e$.
+If~$p$ may react to external events~$e_1$, \dots,~$e_n$ then, in the worst
+case, its event stack will need to
+store~$\max\{\pot(p,e_1),\dots,\pot(p,e_n)\}$ events.
 
-- program is finite
-- lexical scope
-    - no heap allocation
-- no code reentrancy
-    - reexecution only due to loops
-    - loop reuse nested vars
--
+% - program is finite
+% - lexical scope
+%     - no heap allocation
+% - no code reentrancy
+%     - reexecution only due to loops
+%     - loop reuse nested vars
