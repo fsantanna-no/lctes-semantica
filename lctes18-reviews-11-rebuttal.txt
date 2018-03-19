@@ -1,0 +1,112 @@
+We would like to thank the reviewers for the thoughtful comments, questions,
+and criticism.
+
+In a final version, we will address the main concern among reviews regarding
+the paper motivations.
+We will discuss why having a formal semantics of the language is important, and
+how it affected our own implementation.
+We will also discuss why the main results of the paper (memory boundedness,
+determinism, and termination) are particularly important in the context of
+embedded systems.
+
+We will accommodate all requested clarifications and corrections in a final
+version of the paper (more intuitive/complete descriptions of the semantics,
+compare with some specific work, etc.)
+Some of the comments are also addressed individually as follows.
+
+Review #11A
+===========
+
+> Concerning the language itself, it is clear indeed that the strong
+> restrictions <...> help to ensure the properties which are proved.
+> However, even if it is the case for other languages <...>, the fact of
+> linking the semantics of the language to what could be a particular
+> implementation (scheduling in lexical order) could be considered somewhat
+> questionable. While the language uses, in principle, parallel constructions,
+> the parallelism seems in any case very largely limited by such a choice.
+
+Considering the constant and low-level interactions with the underlying
+architecture in embedded systems (e.g., direct port manipulation), we believe
+that lexical scheduling must be part of the language specification as a
+pragmatic design decision.
+
+However, Céu has compile-time mechanisms to detect trails in parallel that
+never share resources (`[Section 2.2]`).
+In such cases, an implementation could take advantage of real parallelism.
+
+Review #11B
+===========
+
+> - There are no semantics given for certain language features, e.g. what
+>   happens when a call to a C function is made using the underscore syntax?
+>   Also, it’s mentioned that side effects and system calls behave like in
+>   conventional imperative languages, and it would be good to have a reference
+>   for what this behaviour is.
+
+In this context, C calls and system calls are synonymous.
+The behavior for calls and side effects, all encapsulated in the `mem(id)`
+primitive, is to modify a memory location in "instantaneous" time.
+They are opaque operations that have no effect on the application execution
+flow (e.g., they cannot block or abort execution).
+
+> Are there approaches to this distributed synchronous programming problem
+> other than the event-driven model?
+
+Most synchronous languages have a clock/tick-based model of time
+(`[Section 4]`).
+These models are duals since we can accommodate a single event in a single tick
+and vice versa.
+
+Review #11C
+===========
+
+> How does the focus on the control aspects of the language (and leaving out
+> side-effects and system calls) affect the semantics and the conclusions which
+> can be drawn from analysing it?
+
+The focus on control does not affect the logical semantics, abstract program
+behavior (independent of real-time considerations).
+Any modeling of side effects would have to assume, or somehow guarantee, not to
+break the synchronous model (e.g., that system calls are non-blocking).
+Such assumptions or guarantees would lead us to the same result.
+
+Review #11D
+===========
+
+> How is determinism ensured across different runs for the example in fig 2a,
+> if events A and B can occur in any order?
+
+The program behaves deterministically in the sense that the same inputs (event
+history) will necessarily produce the same output.
+
+> Overall, the paper gives the impression of proposing CEU, <...>. Is the
+> contribution the actual formalization of these semantics?
+
+Yes, the contribution is the actual formalization and proofs of memory
+boundedness, determinism, and termination.
+
+> Otherwise, how was synchronization between traits implemented previously in
+> CEU to ensure correctness?
+
+From the very beginning, the language has been designed (and implemented) with
+these safety properties in mind.
+The proposed formalization of this paper has helped us to validate the design
+and has also influenced the current implementation.
+
+> Can await-emit lead to a deadlock if called from two concurrent trails,
+> waiting on each other?
+
+No.
+An `emit` remains pending until its triggered internal reaction completes.
+If it is pending it cannot be in an `await`, so a new `emit` in the triggered
+reaction cannot retrigger the original `emit`.
+Stack-based internal events prevents code reentrancy that would occur with a
+queue-based policy.
+
+> How does the compiler ensure that no non-blocking operations are called from
+> CEU? Is there a black list of library calls?
+
+The actual implementation of Céu supports a command-line option that accepts a
+white list of library calls.
+If a program tries to use a function not in this list, the compiler raises an
+error.
