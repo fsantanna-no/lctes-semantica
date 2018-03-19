@@ -272,7 +272,7 @@ Figure~\ref{fig.isblocked}).
 This condition ensures that an $\ceu{\EmitInt}$ only resumes after its internal
 reaction completes and blocks in the current stack level.
 
-At the beginning of the reaction, an external event is emitted, which
+At the beginning of a reaction, an external event is emitted, which
 will trigger rule \R{push}, which will immediately raise the stack level
 to~1.
 At the end of the reaction, the program will block or terminate and
@@ -741,7 +741,7 @@ and will eventually resume in the current reaction (see rule \R{pop}).
       \bcast(\ceu{\Fin{p}},e)
       &=\ceu{\Fin{p}}\\[-1\jot]
       %%
-      \bcast(\ceu{p;\,q})
+      \bcast(\ceu{p;\,q},e)
       &=\ceu{\bcast(p,e);\,q}\\[-1\jot]
       %%
       \bcast(\ceu{p\AtLoop{q}},e)
@@ -926,7 +926,7 @@ partial function.
 The next two lemmas establish the determinism of a single application
 of~$\out$ and~$\nst$.  Lemma~\ref{lem.x.det-out} follows from a simple
 inspection of rules~\R{push} and~\R{pop}.  The proof of
-Lemma~\ref{lem.x.det-out}, however, requires an induction on the structure
+Lemma~\ref{lem.x.det-nst}, however, requires an induction on the structure
 of the derivation trees produced by the rules for~$\nst$.  Both lemmas are
 used in the proof of Theorem~\ref{thm.x.det}, the main result of this
 section.  Theorem~\ref{thm.x.det} establishes that any given number of
@@ -1477,7 +1477,7 @@ description is the final result of the reaction.
     \begin{case}
       $\delta$~is not nested-irreducible.
       %%
-      Then~$e=\nil$ and, by Theorems~\ref{thm.x.rank-nst-*}
+      Then~$e=\nil$ and, by Theorem~\ref{thm.x.term-nst-*}
       and~\ref{thm.x.rank-nst-*}, there is a~$\delta'_\Hnst$ such
       that~$\delta\nst[*]\delta'_\Hnst$
       with~$\rank(\delta)\ge\rank(\delta'_\Hnst)$.  The rest of this proof
