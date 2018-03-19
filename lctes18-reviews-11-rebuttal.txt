@@ -9,9 +9,9 @@ We will also discuss why the main results of the paper (memory boundedness,
 determinism, and termination) are particularly important in the context of
 embedded systems.
 
-We will accommodate all requested clarifications and corrections in a final
-version of the paper (more intuitive/complete descriptions of the semantics,
-compare with some specific work, etc.)
+We will also accommodate all requested clarifications and corrections (e.g.,
+more intuitive/complete descriptions of the semantics, compare with some
+specific work, etc.)
 Some of the comments are also addressed individually as follows.
 
 Review #11A
@@ -78,12 +78,18 @@ Review #11D
 
 The program behaves deterministically in the sense that the same inputs (event
 history) will necessarily produce the same output.
+So, a history where `A` occurs before `B` is different from a history where `B`
+occurs first.
+Different inputs can produce different outputs.
 
+> It is not clear how many of these semantics exist in the implementation of
+> CEU presented in TECS'17. <...>.
 > Overall, the paper gives the impression of proposing CEU, <...>. Is the
 > contribution the actual formalization of these semantics?
 
 Yes, the contribution is the actual formalization and proofs of memory
 boundedness, determinism, and termination.
+Céu itself has already been presented in other publications such as TECS'17.
 
 > Otherwise, how was synchronization between traits implemented previously in
 > CEU to ensure correctness?
