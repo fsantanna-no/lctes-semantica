@@ -11,7 +11,7 @@ embedded systems.
 
 We will also accommodate all requested clarifications and corrections (e.g.,
 more intuitive/complete descriptions of the semantics, compare with some
-specific work, etc.)
+specific work, etc.).
 Some of the comments are also addressed individually as follows.
 
 Review #11A
