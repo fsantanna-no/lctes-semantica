@@ -20,8 +20,11 @@ We describe a small synchronous kernel highlighting the peculiarities of \CEU,
 in particular, the stack-based execution for internal events.
 %
 For the sake of simplicity, we focus on the control aspects of the language,
-leaving out side-effects and system calls (which behave like in conventional
-imperative languages).
+and encapsulate all side effects and system calls into a single abstract memory
+operation.
+Memory operations are opaque and behave like in conventional imperative
+languages (i.e., reads and writes), having no effect on the application
+execution flow (e.g., they cannot block or abort execution).
 
 \subsection{Abstract Syntax}
 \label{sec.sem.syntax}
