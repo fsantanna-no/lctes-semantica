@@ -90,15 +90,14 @@ At compile time, we can ensure that the program fits in the device's restricted
 memory and that it will not grow unexpectedly during runtime.
 \item[Deterministic Execution:]
 We can simulate an entire program execution providing an input history with the
-guarantee that it will always behave the same.
-This can be done in negligible time in a controlled development environment and
-with multiple users (e.g., multiple developers each on its desktop) before
-deploying the application in the actual device.
+guarantee that it will always have the same behavior.
+This can be done in negligible time in a controlled development environment by
+multiple developers before deploying the application in the actual device.
 \item[Terminating Reactions:]
 Real-time applications must guarantee responses within specified deadlines.
 A terminating semantics enforces upper bounds for all reactions and guarantees
 that programs always progress with the time.
 In addition, it also ensures that programs always reach an idle state amenable
-to entering in standby mode, which is can improve the autonomy of
-battery-powered devices.
+to entering in standby mode, which can improve the autonomy of battery-powered
+devices.
 \end{description}
