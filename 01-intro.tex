@@ -62,9 +62,9 @@ outcomes as follows:
 
 \begin{enumerate}
 \item
-    Understanding, finding corner cases, and setting compromises.
-    After the semantics was complete and discussed in extent, we found a bug in
-    the order of execution of statements in a specific case.
+    Understanding, finding corner cases, and stabilizing the language.
+    After the semantics was complete and discussed in extent in our group, we
+    found a critical bug in the order of execution of statements.
 \item
     Explaining core aspects of the language in a reduced, precise, and
     unambiguous way.
@@ -72,17 +72,18 @@ outcomes as follows:
     the surface (e.g., \CEU and Esterel).
 \item
     Implementing the language.
-    Small-step operational semantics typically describe abstract machines that
-    are close to concrete implementations.
+    A small-step operational semantics describes an abstract machine that is
+    close to a concrete implementation.
     The current implementation of the \CEU scheduler is based on the formal
-    semantics.
+    semantics presented in this paper.
 \item
     Proving properties for particular or all programs in the language.
-    We prove that all programs in \CEU are memory bounded, deterministic, and
-    react in finite time.
+    For instance, in this work, we prove that all programs in \CEU are memory
+    bounded, deterministic, and react in finite time.
 \end{enumerate}
 
-The last item is particularly important in the context of embedded systems:
+The last item is particularly important in the context of constrained embedded
+systems:
 
 \begin{description}
 \item[Memory Boundedness:]
@@ -91,13 +92,14 @@ memory and that it will not grow unexpectedly during runtime.
 \item[Deterministic Execution:]
 We can simulate an entire program execution providing an input history with the
 guarantee that it will always have the same behavior.
-This can be done in negligible time in a controlled development environment by
-multiple developers before deploying the application in the actual device.
+This can be done in negligible time in a controlled development environment
+before deploying the application in the actual device (e.g., by multiple
+developers in standard desktops).
 \item[Terminating Reactions:]
 Real-time applications must guarantee responses within specified deadlines.
 A terminating semantics enforces upper bounds for all reactions and guarantees
 that programs always progress with the time.
-In addition, it also ensures that programs always reach an idle state amenable
-to entering in standby mode, which can improve the autonomy of battery-powered
-devices.
+%In addition, it also ensures that programs always reach an idle state amenable
+%to entering in standby mode, which can improve the autonomy of battery-powered
+%devices.
 \end{description}
