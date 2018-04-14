@@ -1038,10 +1038,9 @@ description~$\delta$ is nested-irreducible.
 The use of qualifier ``irreducible'' in Definition~\ref{def.x.Hnst} is
 justified by Proposition~\ref{prop.x.irr-nst-i}.  The proposition
 establishes that if a finite number of applications of~$\nst$ results in an
-irreducible description, then that can only occur exactly once, at some
-specific number~$i$.  The proof of the lemma follows directly from the
-definition of~$\nst$ by contradiction on the hypothesis that there is
-such~$k\ne{i}$.
+irreducible description, then that occurs exactly once, at some specific
+number~$i$.  The proof of the lemma follows directly from the definition
+of~$\nst$ by contradiction on the hypothesis that there is such~$k\ne{i}$.
 
 \begin{proposition}
   \label{prop.x.irr-nst-i}
@@ -1143,7 +1142,7 @@ are formalized in the next assumption.
 \end{assumption}
 
 Theorem~\ref{thm.x.term-nst-*} establishes that a finite (possibly zero)
-number of~$\nst$ transitions eventually lead to a nested-irreducible
+number of~$\nst$ transitions eventually leads to a nested-irreducible
 description.  The proof is by induction on the structure of programs
 (members of set~$P$) and uses Lemma~\ref{lem.x.props-nst-i} and
 Assumption~\ref{ass.x.syn-rest}.
@@ -1169,9 +1168,9 @@ potency and rank.
   that can be executed during a reaction of~$p$ to~$e$.
 
   More formally, $\pot(p,e)=\pot'(\bcast(p,e))$ where~$\pot'$ is an
-  auxiliary function that counts the number of reachable~$\ceu{\EmitInt}$
-  expressions in the program resulting from the broadcast of event~$e$
-  to~$p$.
+  auxiliary function that counts the maximum number of
+  reachable~$\ceu{\EmitInt}$ expressions in the program resulting from the
+  broadcast of event~$e$ to~$p$.
 
   The auxiliary function~$\pot'$ is defined by
   clauses~\eqref{def.x.pot.first}--\eqref{def.x.pot.last}:
