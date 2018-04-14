@@ -1,8 +1,8 @@
 \section{\CEU}
 \label{sec.ceu}
 
-\CEU is a synchronous reactive language in which programs evolve in a sequence
-of discrete reactions to external events.
+\CEU~\cite{ceu.sensys13,ceu.tecs17} is a synchronous reactive language in which
+programs evolve in a sequence of discrete reactions to external events.
 %
 It is designed for control-intensive applications, supporting concurrent lines
 of execution, known as \emph{trails}, and instantaneous broadcast communication
@@ -132,7 +132,7 @@ be instantaneous, such as non-blocking~I/O and simple data structure accessors.%
 \footnote {
 The actual implementation of Céu supports a command-line option that accepts a
 white list of library calls.
-If a program tries to use a function not in this list, the compiler raises an
+If a program tries to use a function not in the list, the compiler raises an
 error.
 }
 
@@ -255,7 +255,7 @@ as illustrated in Listing~\ref{lst.sub}.
   numbers=left,
   basicstyle=\ttfamily\footnotesize,
   float=h,
-  caption={A \CEU program with a ``subroutine''.},
+  caption={A ``subroutine'' that increments its argument.},
   label={lst.sub},
 ]
 event int* inc;         // declares subroutine "inc"
@@ -310,16 +310,17 @@ First, they are guaranteed to react in bounded time.
 %
 Second, memory for locals is also bounded, not requiring data stacks.
 
-At first sight, event iteration such as in ``\code{every e do <...> end}'' seems
-to be equivalent to ``\code{loop do await e; <...> end}''.
-However, the \code{loop} variation would not compile because it does not
-contain a path to an external input \code{await} (since \code{e} is an internal
-event).
+At first sight, the constructions ``\code{every e do <...> end}'' and
+``\code{loop do await e; <...> end}'' seem to be equivalent.
+However, the \code{loop} variation would not compile since it does not contain
+an external input \code{await} (\code{e} is an internal event).
 %
-However, event iterators enforce other syntactic restrictions and cannot
-contain \code{await} or \code{break} statements.
-The absence of \code{break} guarantees that an iterator never terminates from
-itself, essentially behaving as a safe blocking point in the program.
+The \code{every} variation compiles because event iterators have an additional
+syntactic restriction that they cannot contain \code{break} or \code{await}
+statements.
+This restriction guarantees that an iterator never terminates from itself and,
+thus, always awaits its identifying event, essentially behaving as a safe
+blocking point in the program.
 %
 For this reason, the restriction that execution paths within loops must
 contain at least one external \code{await} is extended to alternatively contain
@@ -461,7 +462,7 @@ sides in the composition need not be tweaked with synchronization primitives nor
 state variables to affect each other.
 %
 In addition, abortion is \emph{immediate} in the sense that it executes
-atomically in the current micro reaction.
+atomically inside the current micro reaction.
 %
 Immediate orthogonal abortion is a distinctive feature of synchronous languages
 and cannot be expressed effectively in traditional (asynchronous)
@@ -474,9 +475,9 @@ For this reason, \CEU provides a \code{finalize} construct to unconditionally
 execute a series of statements even if the enclosing block is externally
 aborted.
 
-\CEU also enforces the use of \code{finalize} for system calls that deal with
-pointers representing resources, as illustrated in the two examples of
-Figure~\ref{lst.fin.ceu}:
+\CEU also enforces, at compile time, the use of \code{finalize} for system
+calls that deal with pointers representing resources, as illustrated in the two
+examples of Figure~\ref{lst.fin.ceu}:
 %
 \begin{itemize}
     \item If \CEU \textbf{passes} a pointer to a system call (ln.~\ax:5), the
