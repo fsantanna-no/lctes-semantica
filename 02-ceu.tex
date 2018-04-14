@@ -128,7 +128,13 @@ Therefore, access to~C is straightforward and syntactically traceable.
 %
 To ensure that programs operate under the synchronous hypothesis, the compiler
 environment should only provide access to~C operations that can be assumed to
-be instantaneous, such as non-blocking~I/O and simple data structure accessors.
+be instantaneous, such as non-blocking~I/O and simple data structure accessors.%
+\footnote {
+The actual implementation of Céu supports a command-line option that accepts a
+white list of library calls.
+If a program tries to use a function not in this list, the compiler raises an
+error.
+}
 
 \subsection{External and Internal Events}
 \label{sec.ceu.evts}

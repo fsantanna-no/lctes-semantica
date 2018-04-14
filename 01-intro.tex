@@ -36,9 +36,10 @@ systems~\cite{ceumedia.webmedia16} and games~\cite{ceu.mod15}.
 %the past 6 years.
 
 \CEU inherits the synchronous and imperative mindset of Esterel but adopts a
-simpler semantics with fine-grained execution control~\cite{ceu.tecs17}.
+simpler semantics with fine-grained execution control.
 %
-The list that follows summarizes the semantic peculiarities of \CEU:
+The list that follows summarizes the semantic peculiarities of
+\CEU~\cite{ceu.tecs17}:
 %
 \begin{itemize}
     \item Fine-grained, intra-reaction deterministic execution, which makes
@@ -55,5 +56,48 @@ and terminating reactions to the environment, i.e., that for a given
 arbitrary timeline of input events, multiple executions of the same program
 always react in bounded time and arrive at the same final finite memory
 state.
+%
+Conceiving a formal semantics for \CEU leads to a number of capabilities and
+outcomes as follows:
 
-% TODO: \fs{Descrever seções.}
+\begin{enumerate}
+\item
+    Understanding, finding corner cases, and setting compromises.
+    After the semantics was complete and discussed in extent, we found a bug in
+    the order of execution of statements in a specific case.
+\item
+    Explaining core aspects of the language in a reduced, precise, and
+    unambiguous way.
+    This is particularly important when comparing languages that are similar in
+    the surface (e.g., \CEU and Esterel).
+\item
+    Implementing the language.
+    Small-step operational semantics typically describe abstract machines that
+    are close to concrete implementations.
+    The current implementation of the \CEU scheduler is based on the formal
+    semantics.
+\item
+    Proving properties for particular or all programs in the language.
+    We prove that all programs in \CEU are memory bounded, deterministic, and
+    react in finite time.
+\end{enumerate}
+
+The last item is particularly important in the context of embedded systems:
+
+\begin{description}
+\item[Memory Boundedness:]
+At compile time, we can ensure that the program fits in the device's restricted
+memory and that it will not grow unexpectedly during runtime.
+\item[Deterministic Execution:]
+We can simulate an entire program execution providing an input history with the
+guarantee that it will always have the same behavior.
+This can be done in negligible time in a controlled development environment by
+multiple developers before deploying the application in the actual device.
+\item[Terminating Reactions:]
+Real-time applications must guarantee responses within specified deadlines.
+A terminating semantics enforces upper bounds for all reactions and guarantees
+that programs always progress with the time.
+In addition, it also ensures that programs always reach an idle state amenable
+to entering in standby mode, which can improve the autonomy of battery-powered
+devices.
+\end{description}

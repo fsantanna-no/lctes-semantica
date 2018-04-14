@@ -47,6 +47,14 @@ it''}~\cite{esterel.primer}.
 For this reason, Esterel, does not support shared-memory concurrency:
 \emph{``if a variable is written by some thread, then it can neither be read
 nor be written by concurrent threads''}~\cite{esterel.primer}.
+%
+Considering the constant and low-level interactions with the underlying
+architecture in embedded systems (e.g., direct port manipulation), we believe
+that it is advantageous to embrace lexical scheduling as part of the language
+specification as a pragmatic design decision to enforce determinism.
+%
+However, since \CEU statically detects trails not sharing memory, an optimized
+scheduler could exploit real parallelism in such cases.
 
 Regarding the integration with $C$ language-based environments, \CEU
 supports a finalization mechanism for external resources.
