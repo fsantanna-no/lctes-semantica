@@ -92,12 +92,12 @@ memory and that it will not grow unexpectedly during runtime.
 We can simulate an entire program execution providing an input history with the
 guarantee that it will always have the same behavior.
 This can be done in negligible time in a controlled development environment by
-multiple developers before deploying the application in the actual device.
+multiple developers before deploying the application to the actual device.
 \item[Terminating Reactions:]
 Real-time applications must guarantee responses within specified deadlines.
 A terminating semantics enforces upper bounds for all reactions and guarantees
-that programs always progress with the time.
-In addition, it also ensures that programs always reach an idle state amenable
+that programs always progress with time.
+In addition, it ensures that programs always reach an idle state amenable
 to entering in standby mode, which can improve the autonomy of battery-powered
 devices.
 \end{description}
