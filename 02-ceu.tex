@@ -35,38 +35,38 @@ implemented.
 
 Listing~\ref{lst.syntax} shows a compact reference of~\CEU.
 
-\bgroup
-\def\T<#1>{\langle\mathit{#1}\rangle}
 \def\C#1{\rmfamily\itshape//~#1}
 \def\CC#1#2{\hfill\makebox[#1][l]{\C{#2}}}
+\def\T<#1>{\langle\mathit{#1}\rangle}
+\bgroup
 \begin{lstlisting}[
-  basicstyle=\ttfamily\footnotesize,
+  basicstyle=\ttfamily\small,
   caption={The concrete syntax of \CEU.},
   label={lst.syntax},
 ]
 |\C{Declarations}|
-input $\T<type>$ $\T<id>$; | \CC{19.5em}{declares an external input event} |
-event $\T<type>$ $\T<id>$; | \CC{19.5em}{declares an internal event}       |
-var   $\T<type>$ $\T<id>$; | \CC{19.5em}{declares a variable}              |
+input $\T<type>$ $\T<id>$; |\CC{19.5em}{declares an external input event} |
+event $\T<type>$ $\T<id>$; |\CC{19.5em}{declares an internal event}       |
+var   $\T<type>$ $\T<id>$; |\CC{19.5em}{declares a variable}              |
 
 |\C{Event handling}|
-$\T<id>$ = await $\T<id>$; | \CC{19.5em}{awaits an event and assigns the received value} |
-emit $\T<id>$($\T<exp>$); | \CC{19.5em}{emits an event passing a value} |
+$\T<id>$ = await $\T<id>$; |\CC{19.5em}{awaits event and assigns the received value} |
+emit $\T<id>$($\T<expr>$); |\CC{19.5em}{emits event passing a value} |
 
 |\C{Control flow}|
-$\T<stmt>$ ; $\T<stmt>$ | \CC{10em}{sequence}     |
-if $\T<exp>$ then $\T<stmts>$ else $\T<stmts>$ end | \CC{10em}{conditional}  |
-loop do $\T<stmts>$ end | \CC{10em}{repetition}   |
-every $\T<id>$ in $\T<id>$ do $\T<stmts>$ end | \CC{10em}{event iteration}   |
-finalize [$\T<stmts>$] with $\T<stmts>$ end | \CC{10em}{finalization} |
+$\T<stmt>$ ; $\T<stmt>$ | \CC{8em}{sequence}     |
+if $\T<expr>$ then $\T<stmt>$ else $\T<stmt>$ end | \CC{8em}{conditional}  |
+loop do $\T<stmt>$ end | \CC{8em}{repetition}   |
+every $\T<id>$ in $\T<id>$ do $\T<stmt>$ end | \CC{8em}{event iteration}   |
+finalize [$\T<stmt>$] with $\T<stmt>$ end | \CC{8em}{finalization} |
 
 |\C{Logical parallelism}|
-par/or  do $\T<stmts>$ with $\T<stmts>$ end | \CC{13em}{aborts when any side ends}      |
-par/and do $\T<stmts>$ with $\T<stmts>$ end | \CC{13em}{terminates when all sides end} |
+par/or  do $\!\T<stmt>\!$ with $\!\T<stmt>\!$ end |\CC{13.5em}{aborts if any side ends}      |
+par/and do $\!\T<stmt>\!$ with $\!\T<stmt>\!$ end |\CC{13.5em}{terminates if all sides end} |
 
 |\C{Assignment \& Integration with C}|
-$\T<id>$ = $\T<exp>$; | \CC{19.5em}{assigns a value to a variable}              |
-_$\T<id>$($\T<exps>$) | \CC{19.5em}{calls a C function (id starts with `\_'\,)} |
+$\T<id>$ = $\T<expr>$; | \CC{19.5em}{assigns a value to a variable}              |
+_$\T<id>$($\T<exprs>$) | \CC{19.5em}{calls a C function (id starts with `\_'\,)} |
 \end{lstlisting}
 \egroup
 
@@ -99,7 +99,7 @@ network handlers), as we discuss in Section~\ref{sec.ceu.fin}.
 
 \begin{lstlisting}[
   numbers=left,
-  basicstyle=\ttfamily\footnotesize,
+  basicstyle=\ttfamily\small,
   float=h,
   caption={A \CEU program that toggles a LED on radio receive,
            terminating on a button press always with the LED~off.},
@@ -149,7 +149,7 @@ associated reaction.
 The life-cycle of a program in \CEU can be summarized as
 follows~\cite{ceu.sensys13}:
 %
-\begin{enumerate}[i]
+\begin{enumerate}[i.]
 \item The program initiates a ``boot reaction'' in a single trail (parallel
       constructs may create new trails).
 \item Active trails execute until they await or terminate, one after
@@ -181,7 +181,7 @@ time in \CEU, as illustrated in Figure~\ref{fig.ticks}.
 %
 The continuous timeline shows an absolute reference clock with ``physical
 timestamps'' for the event occurrences (e.g., event~\code{C} occurs at
-$17ms521us$).
+17ms521us).
 %
 The discrete timeline shows how the same occurring events fit in the logical
 notion of time of \CEU.
@@ -205,15 +205,15 @@ at \code{D-4}.
 %handled in the subsequent reactions~\code{E-5} and~\code{E-6}.
 
 \begingroup
-\begin{figure}[t]
+\begin{figure}[h]
 \centering
-\begin{tikzpicture}[x=.9em,y=.9em,
+\begin{tikzpicture}[x=1em,y=1em,
   font=\footnotesize\sffamily,>=stealth,
   time/.style={font=\scriptsize\sffamily},
   cross/.style={inner sep=0pt,outer sep=0pt},
   evt/.style={fill=white,inner sep=1.85pt,outer sep=0pt},
   rng/.style={fill=white,inner sep=1pt,outer sep=0pt,
-    font=\ttfamily\scriptsize}]
+    font=\ttfamily\footnotesize}]
   \draw[->]
   (0,0)
     node[align=right,anchor=east,xshift=-.5em]
@@ -237,10 +237,10 @@ at \code{D-4}.
   \draw[semithick,dotted] (0,1-|B) -- (0,-6-|B);
   \draw[semithick,dotted] (0,1-|C) -- (0,-6-|C);
   \draw[semithick,dotted] (0,1-|D) -- (0,-5-|D);
-  \node[evt](Aevt) at (A) {\textbf{A}};
-  \node[evt](Bevt) at (B) {\textbf{B}};
-  \node[evt](Cevt) at (C) {\textbf{C}};
-  \node[evt](Devt) at (D) {\textbf{D}};
+  \node[evt](Aevt) at (A) {\texttt{\textbf{A}}};
+  \node[evt](Bevt) at (B) {\texttt{\textbf{B}}};
+  \node[evt](Cevt) at (C) {\texttt{\textbf{C}}};
+  \node[evt](Devt) at (D) {\texttt{\textbf{D}}};
   \node[anchor=east,xshift=-.5em] at (A){\emph{External Input}};
   %%
   \draw[-]
@@ -270,6 +270,7 @@ at \code{D-4}.
   \draw[->] (Devt) -- (P5);
   \end{scope}
 \end{tikzpicture}
+\vskip-.6em
 %\includegraphics[width=\columnwidth]{tick_min}
 \caption{The discrete notion of time in \CEU.}
 \label{fig.ticks}
@@ -319,22 +320,22 @@ as illustrated in Listing~\ref{lst.sub}.
 
 \begin{lstlisting}[
   numbers=left,
-  basicstyle=\ttfamily\footnotesize,
+  basicstyle=\ttfamily\small,
   float=h,
   caption={A ``subroutine'' that increments its argument.},
   label={lst.sub},
 ]
-event int* inc;         // declares subroutine "inc"
+event int* inc;       |\C{declares subroutine "inc"}|
 par/or do
     var int* p;
-    every p in inc do   // implements "inc" through an event iterator
+    every p in inc do |\C{implements "inc" through event iterator}|
         *p = *p + 1;
     end
 with
     var int v = 1;
-    emit inc(&v);       // calls "inc"
-    emit inc(&v);       // calls "inc"
-    _assert(v==3);      // asserts result after the two returns
+    emit inc(&v);     |\C{calls "inc"}|
+    emit inc(&v);     |\C{calls "inc"}|
+    _assert(v==3);    |\C{asserts result after the two returns}|
 end
 \end{lstlisting}
 %\vskip-\baselineskip
@@ -376,8 +377,8 @@ First, they are guaranteed to react in bounded time.
 %
 Second, memory for locals is also bounded, not requiring data stacks.
 
-At first sight, the constructions ``\code{every e do <...> end}'' and
-``\code{loop do await e; <...> end}'' seem to be equivalent.
+At first sight, the constructions ``\code{every e do $\T<\cdots>$ end}'' and
+``\code{loop do await e; $\T<\cdots>$ end}'' seem to be equivalent.
 However, the \code{loop} variation would not compile since it does not contain
 an external input \code{await} (\code{e} is an internal event).
 %
@@ -403,8 +404,8 @@ environment.
 
 \begingroup
 \begin{figure}[t]
-\begin{minipage}[h]{0.45\linewidth}
-\begin{lstlisting}[numbers=right,basicstyle=\ttfamily\footnotesize]
+\begin{minipage}[t]{0.45\linewidth}
+\begin{lstlisting}[numbers=right,basicstyle=\ttfamily\small]
 input void A;
 input void B;
 var int x = 1;
@@ -416,14 +417,14 @@ with
     x = x * 2;
 end
 \end{lstlisting}
-\small{\ax Accesses to \code{x} are never\\\phantom{\ax}\relax concurrent.}
+\small{\ax\ Accesses to \code{x} are never concurrent.}
 \end{minipage}%
 %
-\begin{minipage}[h]{0.53\linewidth}
+\begin{minipage}[t]{0.53\linewidth}
 %\begin{lstlisting}
-\begin{lstlisting}[xleftmargin=2em,basicstyle=\ttfamily\footnotesize]
+\begin{lstlisting}[xleftmargin=1.75em,basicstyle=\ttfamily\small]
 input void A;
-// (empty line)
+|\C{(empty line)}|
 var int y = 1;
 par/and do
     await A;
@@ -434,14 +435,16 @@ with
 end
 
 \end{lstlisting}
-\small{\bx Accesses to \code{y} are concurrent\\
-\phantom{\bx}\relax but still deterministic.}
+\hskip1.5em
+\begin{minipage}[t]{.9\columnwidth}
+\small{\bx\ Accesses to \code{y} are concurrent but still deterministic.}
+\end{minipage}%
 \end{minipage}%
 %\rule{8.4cm}{0.37pt}
 \caption{Shared-memory concurrency in \CEU:
-\ax is safe because the trails access \code{x} atomically in different
+\ax\ is safe because the trails access \code{x} atomically in different
 reactions;
-\bx is unsafe because both trails access \code{y} in the same reaction}
+\bx\ is unsafe because both trails access \code{y} in the same reaction}
 \label{lst.shared}
 \end{figure}
 \endgroup
@@ -503,11 +506,11 @@ calls that deal with pointers representing resources, as illustrated in the two
 examples of Figure~\ref{lst.fin.ceu}.
 %
 %\begin{itemize}
- If \CEU \textbf{passes} a pointer to a system call (ln.~\ax:5), the
-          pointer represents a \textbf{local} resource (ln.~\ax:2) that
+ If \CEU \emph{passes} a pointer to a system call (ln.~\ax:5), the
+          pointer represents a \emph{local} resource (ln.~\ax:2) that
           requires finalization (ln.~\ax:7).
- If \CEU \textbf{receives} a pointer from a system call return
-          (ln.~ \bx:4), the pointer represents an \textbf{external} resource
+ If \CEU \emph{receives} a pointer from a system call return
+          (ln.~ \bx:4), the pointer represents an \emph{external} resource
           (ln.~\bx:2) that requires finalization (ln.~\bx:6).
 %\end{itemize}
 
@@ -536,10 +539,10 @@ cannot check if it actually handles the resource properly.}
 
 \begin{figure}[t]
 \begin{minipage}[t]{0.45\linewidth}
-\begin{lstlisting}[numbers=right,basicstyle=\ttfamily\footnotesize]
+\begin{lstlisting}[numbers=right,basicstyle=\ttfamily\small]
 par/or do
    var _msg_t msg;
-   <...> // prepare msg
+   $\T<\cdots>$   |\C{prepare msg}|
    finalize
       _send(&msg);
    with
@@ -547,30 +550,33 @@ par/or do
    end
    await SEND_ACK;
 with
-   <...>
+   $\T<\cdots>$
 end
-//
+|\C{(empty line)}|
 \end{lstlisting}
-\small{\ax\!Local resource finalization\rlap{.}}
+\small{\ax\ Local resource finalization.}
 \end{minipage}%
 %
 \begin{minipage}[t]{0.53\linewidth}
-\begin{lstlisting}[xleftmargin=2em,basicstyle=\ttfamily\footnotesize]
+\begin{lstlisting}[xleftmargin=1.75em,basicstyle=\ttfamily\small]
 par/or do
    var _FILE* f;
    finalize
-      f = _fopen(...);
+      f = _fopen($\dots$);
    with
       _fclose(f);
    end
-   _fwrite(..., f);
+   _fwrite($\dots$, f);
    await A;
-   _fwrite(..., f);
+   _fwrite($\dots$, f);
 with
-   <...>
+   $\T<\cdots>$
 end
 \end{lstlisting}
-\small{\quad\bx\!External resource finalization\rlap{.}}
+\hskip1em
+\begin{minipage}[t]{.94\columnwidth}
+\small{\bx\ External resource finalization.}
+\end{minipage}%
 \end{minipage}%
 %\rule{8.4cm}{0.37pt}
 \caption{%
