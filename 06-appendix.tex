@@ -278,36 +278,22 @@
 \end{proof}
 
 
-\begin{definition}
-  \label{def.Hnst}
-  %%
-  A description~$\delta=\<p,n,e>$ is \emph{nested-irre\-ducible}
-  iff~$e\ne\nil$ or~$p=\ceu{\Nop},\ceu{\Break}$ or~$\isblocked(p,n)$~is
-  true.
-\end{definition}
-
-
-\begin{proposition}
-  \label{prop.irr-nst-i}
-  %%
-  If~$\delta\nst[i]\delta_\Hnst'$ then, for all~$k\ne{i}$, there is
-  no~$\delta_\Hnst''$ such that~$\delta\nst[k]\delta''_\Hnst$.
-\end{proposition}
+\propxirrnsti*
 \begin{proof}
   By contradiction on the hypothesis that there is such~$k$.
   %%
   Let~$\delta\nst[i]\delta'_\Hnst$, for some~$i\ge0$.
   %%
   There are two cases.
-  \begin{case}
-    \label{prop.irr-nst-i-case1}
+  \begin{casex}
+  \item\label{prop.x.irr-nst-i-case1}
     %%
     Suppose there are~$k>i$ and~$\delta''_\Hnst$ such
     that~$\delta\nst[k]\delta''$.
     %%
     Then, by definition of~$\nst[k]$,
     \begin{equation}
-      \label{prop.irr-nst-i-eq1}
+      \label{prop.x.irr-nst-i-eq1}
       %%
       \delta\nst[i]\delta'\nst[i+1]\delta_1'\nst[i+2]\cdots\nst[k]\delta''.
     \end{equation}
@@ -315,48 +301,19 @@
     or~$p=\ceu{\Nop},\ceu{\Break}$ or~$\isblocked(p',n)$.  In any of these
     cases, by the definition of~$\nst$, there is no~$\delta_1'$ such
     that~$\delta'\nst[1]\delta_1'$, which
-    contradicts~\eqref{prop.irr-nst-i-eq1}.  Therefore, no such~$k$ can
+    contradicts~\eqref{prop.x.irr-nst-i-eq1}.  Therefore, no such~$k$ can
     exist.
-  \end{case}
-  \begin{case}
-    Suppose there are~$k<i$ and~$\delta''_\Hnst$ such
+    %%
+  \item Suppose there are~$k<i$ and~$\delta''_\Hnst$ such
     that~$\delta\nst[k]\delta''$.  Then, since~$i>k$, by
-    Case~\ref{prop.irr-nst-i-case1}, $\delta'$~cannot exist, which is
+    Case~\ref{prop.x.irr-nst-i-case1}, $\delta'$~cannot exist, which is
     absurd.  Therefore, the assumption that there is such~$k$ is
     false.\qedhere
-  \end{case}
+  \end{casex}
 \end{proof}
 
 
-\begin{lemma}
-  \label{lem.props-nst-i}\strut\\
-  %%
-  If~$\<p_1,n,e>\nst[i]\<p_1',n,e'>$, for any~$p_2$:
-  \begin{enumerate:a}
-  \item\label{lem.props-nst-i.a}
-    $\<\ceu{p_1;\,p_2},n,e>\nst[i]\<p_1';p_2,n,e'>$.
-    %%
-  \item\label{lem.props-nst-i.b}
-    $\<\ceu{p_1\AtLoop{p_2}},n,e>\nst[i]\<\ceu{p_1'\AtLoop{p_2}},n,e'>$.
-    %%
-  \item\label{lem.props-nst-i.c}
-    $\<\ceu{{p_1}\AtAnd{p_2}},n,e>\nst[i]\<\ceu{{p_1'}\AtAnd{p_2}},n,e'>$.
-    %%
-  \item\label{lem.props-nst-i.d}
-    $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[i]\<\ceu{{p_1}'\AtOr{p_2}},n,e'>$.
-  \end{enumerate:a}
-  \smallskip
-  If~$\<p_2,n,e>\nst[i]\<p_2',n,e'>$, for any~$p_1$ such
-  that~$\isblocked(p_1,n)$:
-  \begin{enumerate:a}
-    \setcounter{enumi}{4}
-  \item\label{lem.props-nst-i.e}
-    $\<\ceu{{p_1}\AtAnd{p_2}},n,e>\nst[i]\<\ceu{{p_1}\AtAnd{p_2'}},n,e'>$.
-    %%
-  \item\label{lem.props-nst-i.f}
-    $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[i]\<\ceu{{p_1}\AtOr{p_2'}},n,e'>$.
-  \end{enumerate:a}
-\end{lemma}
+\lemxpropsnsti*
 \begin{proof}
   By induction on~$i$.
   %%
@@ -364,102 +321,103 @@
   \item The lemma is trivially true for~$i=0$, as~$p_1=p_1'$, and follows
     directly from~\R{seq-adv} for~$i=1$.  Suppose
     \begin{equation}
-      \label{lem.props-nst-i.a.eq1}
+      \label{lem.x.props-nst-i.a.eq1}
       \<p_1,n,e>\nst[1]\<p_1'',n,e''>\nst[i-1]\<p_1',n,e'>\,,
     \end{equation}
     for some~$i>1$.  Then~$\<p_1'',n,e''>$ is not nested-irreducible, i.e.,
-    $e=\nil$ and~$p\ne{\ceu{\Nop},\ceu{\Break}}$ and~$\isblocked(p_1'',n)$
-    is false.  By~\eqref{lem.props-nst-i.a.eq1} and by~\R{seq-adv},
+    $e=\nil$ and~$p\ne{\ceu{\Nop},\ceu{\Break}}$
+    and~$\lnot\isblocked(p_1'',n)$.  By~\eqref{lem.x.props-nst-i.a.eq1} and
+    by~\R{seq-adv},
     \begin{equation}
-      \label{lem.props-nst-i.a.eq2}
+      \label{lem.x.props-nst-i.a.eq2}
       \<\ceu{p_1;\,p_2},n,e>\nst[1]\<\ceu{p_1'';\,p_2},n,e''>\,.
     \end{equation}
-    From~\eqref{lem.props-nst-i.a.eq1}, by the induction hypothesis,
+    From~\eqref{lem.x.props-nst-i.a.eq1}, by the induction hypothesis,
     \begin{equation}
-      \label{lem.props-nst-i.a.eq3}
+      \label{lem.x.props-nst-i.a.eq3}
       \<\ceu{p_1'';\,p_2},n,e''>\nst[i-1]\<\ceu{p_1';\,p_2},n,e'>\,.
     \end{equation}
-    From~\eqref{lem.props-nst-i.a.eq2} and~\eqref{lem.props-nst-i.a.eq3},
+    From~\eqref{lem.x.props-nst-i.a.eq2} and~\eqref{lem.x.props-nst-i.a.eq3},
     \[
       \<\ceu{p_1;\,p_2},n,e>\nst[i]\<\ceu{p_1';\,p_2},n,e'>\,.
     \]
 
-  \item Similar to Case~\eqref{lem.props-nst-i.a}.
+  \item Similar to item~\ref{lem.x.props-nst-i.a}.
     %%
     % The lemma is trivially true for~$n=0$, as~$p_1=p_1'$, and follows
     % directly from~\R{loop-adv} for~$n=1$.  Suppose
     % \begin{equation}
-    %   \label{lem.props-nst-i.b.eq1}
+    %   \label{lem.x.props-nst-i.b.eq1}
     %   \<p_1,n,e>\nst[1]\<p_1'',n,e''>\nst[n-1]\<p_1',n,e'>\,,
     % \end{equation}
     % for some~$n>1$.  Then~$\<p_1'',n,e''>$ is not nested-irreducible.
-    % By~\eqref{lem.props-nst-i.b.eq1} and by~\R{loop-adv},
+    % By~\eqref{lem.x.props-nst-i.b.eq1} and by~\R{loop-adv},
     % \begin{equation}
-    %   \label{lem.props-nst-i.b.eq2}
+    %   \label{lem.x.props-nst-i.b.eq2}
     %   \<\ceu{p_1\AtLoop{p_2}},n,e>\nst[1]\<\ceu{p_1''\Loop{p_2}},n,e''>\,.
     % \end{equation}
-    % From~\eqref{lem.props-nst-i.b.eq1}, by the induction hypothesis,
+    % From~\eqref{lem.x.props-nst-i.b.eq1}, by the induction hypothesis,
     % \begin{equation}
-    %   \label{lem.props-nst-i.b.eq3}
+    %   \label{lem.x.props-nst-i.b.eq3}
     %   \<\ceu{p_1''\AtLoop{p_2}},n,e''>
     %   \nst[n-1]\<\ceu{p_1'\AtLoop{p_2}},n,e'>\,.
     % \end{equation}
-    % From~\eqref{lem.props-nst-i.b.eq2} and~\eqref{lem.props-nst-i.b.eq3},
+    % From~\eqref{lem.x.props-nst-i.b.eq2} and~\eqref{lem.x.props-nst-i.b.eq3},
     % \[
     %   \<\ceu{p_1\AtLoop{p_2}},n,e>\nst[n]\<\ceu{p_1'\AtLoop{p_2}},n,e'>\,.
     % \]
     %%
 
-  \item Similar to Case~\eqref{lem.props-nst-i.a}.
+  \item Similar to item~\ref{lem.x.props-nst-i.a}.
     %%
     % The lemma is trivially true for~$n=0$, as~$p_1=p_1'$, and follows
     % directly from~\R{and-adv1} for~$n=1$.  Suppose
     % \begin{equation}
-    %   \label{lem.props-nst-i.c.eq1}
+    %   \label{lem.x.props-nst-i.c.eq1}
     %   \<p_1,n,e>\nst[1]\<p_1'',n,e''>\nst[n-1]\<p_1',n,e'>\,,
     % \end{equation}
     % for some~$n>1$.  Then~$\<p_1'',n,e''>$ is not nested-irreducible.
-    % By~\eqref{lem.props-nst-i.c.eq1} and by~\R{and-adv1},
+    % By~\eqref{lem.x.props-nst-i.c.eq1} and by~\R{and-adv1},
     % \begin{equation}
-    %   \label{lem.props-nst-i.c.eq2}
+    %   \label{lem.x.props-nst-i.c.eq2}
     %   \<\ceu{{p_1}\AtAnd{p_2}},n,e>
     %   \nst[1]\<\ceu{{p_1}''\AtAnd{p_2}},n,e''>\,.
     % \end{equation}
-    % From~\eqref{lem.props-nst-i.c.eq1}, by the induction hypothesis,
+    % From~\eqref{lem.x.props-nst-i.c.eq1}, by the induction hypothesis,
     % \begin{equation}
-    %   \label{lem.props-nst-i.a.eq3}
+    %   \label{lem.x.props-nst-i.a.eq3}
     %   \<\ceu{{p_1''}\AtAnd{p_2}},n,e''>
     %   \nst[n-1]\<\ceu{{p_1'}\AtAnd{p_2}},n,e'>\,.
     % \end{equation}
-    % From~\eqref{lem.props-nst-i.c.eq2} and~\eqref{lem.props-nst-i.c.eq3},
+    % From~\eqref{lem.x.props-nst-i.c.eq2} and~\eqref{lem.x.props-nst-i.c.eq3},
     % \[
     %   \<\ceu{{p_1}\AtAnd{p_2}},n,e>
     %   \nst[n]\<\ceu{{p_1'}\AtAnd{p_2}},n,e'>\,.
     % \]
     %%
 
-  \item Similar to Case~\eqref{lem.props-nst-i.a}.
+  \item Similar to item~\ref{lem.x.props-nst-i.a}.
     %%
     % The lemma is trivially true for~$n=0$, as~$p_1=p_1'$, and follows
     % directly from~\R{or-adv1} for~$n=1$.  Suppose
     % \begin{equation}
-    %   \label{lem.props-nst-i.d.eq1}
+    %   \label{lem.x.props-nst-i.d.eq1}
     %   \<p_1,n,e>\nst[1]\<p_1'',n,e''>\nst[n-1]\<p_1',n,e'>\,,
     % \end{equation}
     % for some~$n>1$.  Then~$\<p_1'',n,e''>$ is not nested-irreducible.
-    % By~\eqref{lem.props-nst-i.d.eq1} and by~\R{or-adv1},
+    % By~\eqref{lem.x.props-nst-i.d.eq1} and by~\R{or-adv1},
     % \begin{equation}
-    %   \label{lem.props-nst-i.d.eq2}
+    %   \label{lem.x.props-nst-i.d.eq2}
     %   \<\ceu{{p_1}\AtOr{p_2}},n,e>
     %   \nst[1]\<\ceu{{p_1}''\AtOr{p_2}},n,e''>\,.
     % \end{equation}
-    % From~\eqref{lem.props-nst-i.d.eq1}, by the induction hypothesis,
+    % From~\eqref{lem.x.props-nst-i.d.eq1}, by the induction hypothesis,
     % \begin{equation}
-    %   \label{lem.props-nst-i.a.eq3}
+    %   \label{lem.x.props-nst-i.a.eq3}
     %   \<\ceu{{p_1''}\AtOr{p_2}},n,e''>
     %   \nst[n-1]\<\ceu{{p_1'}\AtOr{p_2}},n,e'>\,.
     % \end{equation}
-    % From~\eqref{lem.props-nst-i.d.eq2} and~\eqref{lem.props-nst-i.d.eq3},
+    % From~\eqref{lem.x.props-nst-i.d.eq2} and~\eqref{lem.x.props-nst-i.d.eq3},
     % \[
     %   \<\ceu{{p_1}\AtOr{p_2}},n,e>
     %   \nst[n]\<\ceu{{p_1'}\AtOr{p_2}},n,e'>\,.
@@ -469,62 +427,34 @@
   \item The lemma is trivially true for~$i=0$, as~$p_2=p_2'$, and follows
     directly from~\R{and-adv2} for~$i=1$.  Suppose
     \begin{equation}
-      \label{lem.props-nst-i.e.eq1}
+      \label{lem.x.props-nst-i.e.eq1}
       \<p_2,n,e>\nst[1]\<p_2'',n,e''>\nst[i-1]\<p_2',n,e'>\,,
     \end{equation}
     for some~$i>1$.  Then~$\<p_2'',n,e''>$ is not nested-irreducible.
-    By~\eqref{lem.props-nst-i.e.eq1} and by~\R{and-adv2},
+    By~\eqref{lem.x.props-nst-i.e.eq1} and by~\R{and-adv2},
     \begin{equation}
-      \label{lem.props-nst-i.e.eq2}
+      \label{lem.x.props-nst-i.e.eq2}
       \<\ceu{{p_1}\AtAnd{p_2}},n,e>
       \nst[1]\<\ceu{{p_1}\AtAnd{p_2''}},n,e''>\,.
     \end{equation}
-    From~\eqref{lem.props-nst-i.e.eq1}, by the induction hypothesis,
+    From~\eqref{lem.x.props-nst-i.e.eq1}, by the induction hypothesis,
     \begin{equation}
-      \label{lem.props-nst-i.e.eq3}
+      \label{lem.x.props-nst-i.e.eq3}
       \<\ceu{{p_1}\AtAnd{p_2''}},n,e''>
       \nst[i-1]\<\ceu{{p_1}\AtOr{p_2'}},n,e'>\,.
     \end{equation}
-    From~\eqref{lem.props-nst-i.e.eq2} and~\eqref{lem.props-nst-i.e.eq3},
+    From~\eqref{lem.x.props-nst-i.e.eq2} and~\eqref{lem.x.props-nst-i.e.eq3},
     \[
       \<\ceu{{p_1}\AtAnd{p_2}},n,e>
       \nst[i]\<\ceu{{p_1}\AtAnd{p_2'}},n,e'>\,.
     \]
 
-  \item Similar to Case~\eqref{lem.props-nst-i.e}.\qedhere
+  \item Similar to item~\ref{lem.x.props-nst-i.e}.\qedhere
   \end{enumerate:a}
 \end{proof}
 
 
-\begin{assumption}[Syntactic restrictions]\strut
-  \label{ass.syn-rest}
-  %%
-  \begin{enumerate:a}
-  \item\label{ass.syn-rest.fin} If~$p=\ceu{\Fin{p_1}}$ then~$p_1$ contain no
-    occurrences of~$\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$, $\ceu{\Every}$,
-    or~$\ceu{\Fin}$ expressions.  Consequently, for any~$n$,
-    \[
-      \<\clear(p_1),n,\nil>\nst[*]\<\ceu{\Nop},n,\nil>\,.
-    \]
-    %%
-  \item\label{ass.syn-rest.loop} If~$p=\ceu{\Loop{p_1}}$ then all execution
-    paths of~$p_1$ contain at least one occurrence of a
-    matching~$\ceu{\Break}$ or an~$\ceu{\AwaitExt}$ expression.
-    Consequently, for all~$n$, there are~$p_1'$ and~$e$ such that
-    \[
-      \<\ceu{\Loop{p_1}},n,\nil>\nst[*]\<p_1',n,e>\,,
-    \]
-    where~$p_1'=\ceu{{\Break}\AtLoop{p_1}}$ or~$\isblocked(p_1',n)$\,.
-  \end{enumerate:a}
-\end{assumption}
-
-
-\begin{theorem}
-  \label{thm.term-nst-*}
-  %%
-  For any~$\delta$ there is a~$\delta'_\Hnst$ such
-  that~$\delta\nst[*]\delta'_\Hnst$.
-\end{theorem}
+\thmxtermnstx*
 \begin{proof}
   By induction on the structure of programs.
   %%
@@ -533,40 +463,33 @@
   is not the case.  Then, depending on the structure of~$p$, there are~11
   possibilities.  In each one of them, we show that such~$\delta'_\Hnst$
   indeed exists.
-  \begin{case}
-    $p=\ceu{\Mem(\Id)}$.
+  \begin{casex}
+  \item $p=\ceu{\Mem(\Id)}$.
     %%
     Then, by~\R{mem},
     \[
       \<\ceu{\Mem(\Id)},n,\nil>\nst[1]\<\ceu{\Nop},n,\nil>_\Hnst\,.
     \]
-  \end{case}
 
-  \begin{case}
-    $p=\ceu{\EmitInt(e)}$.
+  \item $p=\ceu{\EmitInt(e)}$.
     %%
     Then, by~\R{emit-int},
     \[
       \<\ceu{\EmitInt(e)},n,\nil>\nst[1]\<\ceu{\CanRun(n)},n,e>_\Hnst\,.
     \]
-  \end{case}
 
-  \begin{case}
-    $p=\ceu{\CanRun(n)}$.
+  \item $p=\ceu{\CanRun(n)}$.
     %%
     Then, by~\R{can-run},
     \[
       \<\ceu{\CanRun(n)},n,\nil>\nst[1]\<\ceu{\Nop},n,\nil>_\Hnst\,.
     \]
-  \end{case}
 
-  \begin{case}
-    $p=\ceu{\IfElse{\Mem(\Id)}{p'}{p''}}$.
+  \item $p=\ceu{\IfElse{\Mem(\Id)}{p'}{p''}}$.
     %%
     There are two subcases.
-    \begin{subcase}
-      \label{thm.term-nst-*.if-true}
-      $\eval(\ceu{\Mem(\Id)})$~is true.
+    \begin{casex}
+    \item\label{thm.x.term-nst-*.if-true} $\eval(\ceu{\Mem(\Id)})$.
       %%
       Then, by~\R{if-true} and by the induction hypothesis, there is
       a~$\delta'$ such that
@@ -575,11 +498,10 @@
         &\nst[1]\<p',n,e>\\
         &\nst[*]\delta'_\Hnst\,.
       \end{align*}
-    \end{subcase}
-    \begin{subcase}
-      $\eval(\ceu{\Mem(\Id)})$~is false.
       %%
-      Similar to Case~\ref{thm.term-nst-*.if-true}.
+    \item$\lnot\eval(\ceu{\Mem(\Id)})$.
+      %%
+      Similar to Case~\ref{thm.x.term-nst-*.if-true}.
       %%
       % Then, by~\R{if-false} and by the induction hypothesis, there is
       % a~$\delta'$ such that
@@ -589,16 +511,13 @@
       %   &\nst[*]\delta'_\Hnst\,.
       % \end{align*}
       %%
-    \end{subcase}
-  \end{case}
+    \end{casex}
 
-  \begin{case}
-    $p=\ceu{p';\,p''}$.
+  \item $p=\ceu{p';\,p''}$.
     %%
     There are three subcases.
-    \begin{subcase}
-      \label{thm.term-nst-*.seq-nop}
-      $p'=\ceu{\Nop}$.
+    \begin{casex}
+    \item\label{thm.x.term-nst-*.seq-nop} $p'=\ceu{\Nop}$.
       %%
       Then, by~\R{seq-nop} and by the induction hypothesis, there is
       a~$\delta'$ such that
@@ -606,106 +525,94 @@
         \<\ceu{\Nop;\,p''},n,\nil>
         \nst[1]\<p'',n,e>\nst[*]\delta'_\Hnst\,.
       \]
-    \end{subcase}
-    \begin{subcase}
-      \label{thm.term-nst-*.seq-brk}
-      $p'=\ceu{\Break}$.
+      %%
+    \item\label{thm.x.term-nst-*.seq-brk} $p'=\ceu{\Break}$.
       %%
       Then, by~\R{seq-brk},
       \[
         \<\ceu{\Break;\,p''},n,\nil>\nst[1]\<\ceu{\Break},n,\nil>_\Hnst\,.
       \]
-    \end{subcase}
-    \begin{subcase}
-      \label{thm.term-nst-*.seq-adv}
+      %%
+    \item\label{thm.x.term-nst-*.seq-adv}
       $p'\ne\ceu{\Nop},\ceu{\Break}$.
       %%
       Then, by the induction hypothesis, there are~$p_1'$ and~$e$ such that
       \[
         \<p',n,\nil>\nst[*]\<p_1',n,e>_\Hnst\,.
       \]
-      By item~\eqref{lem.props-nst-i.a} of Lemma~\ref{lem.props-nst-i},
+      By item~\ref{lem.x.props-nst-i.a} of Lemma~\ref{lem.x.props-nst-i},
       \begin{equation}
-        \label{thm.term-nst-*.seq-adv.eq1}
+        \label{thm.x.term-nst-*.seq-adv.eq1}
         \<\ceu{p';\,p''},n,\nil>\nst[*]\<\ceu{p_1';\,p''},n,e>\,.
       \end{equation}
       It remains to be shown that~$\<\ceu{p_1';\,p''},n,e>$ is
       nested-irreducible.  There are four possibilities following from the
       fact that the simpler~$\<p_1',n,e>$ is nested-irreducible.
       %%
-      \begin{subsubcase}
-        $e\ne\nil$.  Then, by the definition of~$\Hnst$,
+      \begin{casex}
+      \item $e\ne\nil$.  Then, by the definition of~$\Hnst$,
         description~$\<\ceu{p_1';\,p''},n,e>$ is nested-irreducible.
-      \end{subsubcase}
-      \begin{subsubcase}
-        $p_1'=\ceu{\Nop}$.
         %%
-        From~\eqref{thm.term-nst-*.seq-adv.eq1},
+      \item $p_1'=\ceu{\Nop}$.
+        %%
+        From~\eqref{thm.x.term-nst-*.seq-adv.eq1},
         \[
           \<\ceu{p';\,p''},n,\nil>\nst[*]\<\ceu{\Nop;\,p''},n,e>\,.
         \]
         From this point on, this case is similar to
-        Case~\ref{thm.term-nst-*.seq-nop}.
+        Case~\ref{thm.x.term-nst-*.seq-nop}.
         %%
-      \end{subsubcase}
-      \begin{subsubcase}
-        $p_1'=\ceu{\Break}$.
+      \item $p_1'=\ceu{\Break}$.
         %%
-        From~\eqref{thm.term-nst-*.seq-adv.eq1},
+        From~\eqref{thm.x.term-nst-*.seq-adv.eq1},
         \[
           \<\ceu{p';\,p''},n,\nil>\nst[*]\<\ceu{\Break;\,p''},n,e>\,.
         \]
         From this point on, this case is similar to
-        Case~\ref{thm.term-nst-*.seq-brk}.
-      \end{subsubcase}
-      \begin{subsubcase}
-        $\isblocked(p_1',n)$~is true.
+        Case~\ref{thm.x.term-nst-*.seq-brk}.
+        %%
+      \item$\isblocked(p_1',n)$.
         %%
         Then, by definition,
         \[
           \isblocked(\ceu{p_1';p''},n)=\isblocked(p_1',n)=\mathit{true}\,.
         \]
-        Hence, from~\eqref{thm.term-nst-*.seq-adv.eq1} and by the
+        Hence, from~\eqref{thm.x.term-nst-*.seq-adv.eq1} and by the
         definition~$\Hnst$, description~$\<\ceu{p_1';\,p''},n,e>$ is
         nested-irreducible.
-      \end{subsubcase}
-    \end{subcase}
-  \end{case}
+      \end{casex}
+    \end{casex}
 
-  \begin{case}
-    \label{thm.term-nst-*.loop}
+  \item\label{thm.x.term-nst-*.loop}
     $p=\ceu{\Loop{p'}}$.
     %%
-    Then, by item~\eqref{ass.syn-rest.loop} of
-    Assumption~\ref{ass.syn-rest},
-    \begin{equation}\label{thm.term-nst-*.loop-expd.eq1}
+    Then, by item~\ref{ass.x.syn-rest.loop} of
+    Assumption~\ref{ass.x.syn-rest},
+    \begin{equation}\label{thm.x.term-nst-*.loop-expd.eq1}
       \<\ceu{\Loop{p'}},n,\nil>\nst[*]\<p_1',n,e>\,,
     \end{equation}
     for some~$e$ and~$p_1'$ such that either~$p_1'=\ceu{\Break\AtLoop{p'}}$
     or~$\isblocked(p_1',n)$.
-    \begin{subcase}
-      $p_1'=\ceu{\Break\AtLoop{p'}}$.
+    \begin{casex}
+    \item$p_1'=\ceu{\Break\AtLoop{p'}}$.
       %%
-      From~\eqref{thm.term-nst-*.loop-expd.eq1}, by~\R{loop-brk},
+      From~\eqref{thm.x.term-nst-*.loop-expd.eq1}, by~\R{loop-brk},
       \begin{align*}
         \<\ceu{\Loop{p'}},n,\nil>
         &\nst[*]\<\ceu{\Break\AtLoop{p'}},n,e>\\
         &\nst[1]\<\ceu{\Nop},n,e>_\Hnst\,.
       \end{align*}
-    \end{subcase}
-    \begin{subcase}
-      $\isblocked(p_1',n)$ is true.  Hence,
-      from~\eqref{thm.term-nst-*.loop-expd.eq1} and by the definition
+      %%
+    \item$\isblocked(p_1',n)$.  Hence,
+      from~\eqref{thm.x.term-nst-*.loop-expd.eq1} and by the definition
       of~$\Hnst$, $\<p_1',n,e>_\Hnst$.
-    \end{subcase}
-  \end{case}
+    \end{casex}
 
-  \begin{case}
-    $p=\ceu{p'\AtLoop{p''}}$.
+  \item$p=\ceu{p'\AtLoop{p''}}$.
     %%
     There are three subcases.
-    \begin{subcase}
-      $p'=\ceu{\Nop}$.
+    \begin{casex}
+    \item$p'=\ceu{\Nop}$.
       %%
       Then, by~\R{loop-nop},
       \[
@@ -713,34 +620,30 @@
         \nst[1]\<\ceu{\Loop{p''}},n,\nil>\,.
       \]
       From this point on, this case is similar to
-      Case~\ref{thm.term-nst-*.loop}.
-    \end{subcase}
-    \begin{subcase}
-      $p'=\ceu{\Break}$.  Then, by~\R{loop-brk},
+      Case~\ref{thm.x.term-nst-*.loop}.
+      %%
+    \item$p'=\ceu{\Break}$.  Then, by~\R{loop-brk},
       \[
         \<\ceu{\Break\AtLoop{p''}},n,\nil>
         \nst[1]\<\ceu{\Nop},n,\nil>_\Hnst\,.
       \]
-    \end{subcase}
-    \begin{subcase}
-      $p'\ne\ceu{\Nop},\ceu{\Break}$.  Then, by the induction hypothesis,
+      %%
+    \item$p'\ne\ceu{\Nop},\ceu{\Break}$.  Then, by the induction hypothesis,
       there are~$p_1'$ and~$e$ such that
       \[
         \<p',n,\nil>\nst[*]\<p'_1,n,e>_\Hnst\,.
       \]
-      By item~\eqref{lem.props-nst-i.b} of Lemma~\ref{lem.props-nst-i},
+      By item~\ref{lem.x.props-nst-i.b} of Lemma~\ref{lem.x.props-nst-i},
       \[
         \<\ceu{p'\AtLoop{p''}},n,\nil>
         \nst[*]\<\ceu{p_1'\AtLoop{p''}},n,e>\,.
       \]
       It remains to be show that~$\<\ceu{p_1'\AtLoop{p''}},n,e>$ is
       nested-irreducible.  The rest of this proof is similar to that of
-      Case~\ref{thm.term-nst-*.seq-adv}.
-    \end{subcase}
-  \end{case}
+      Case~\ref{thm.x.term-nst-*.seq-adv}.
+    \end{casex}
 
-  \begin{case}
-    $p=\ceu{{p'}\And{p''}}$.
+  \item$p=\ceu{{p'}\And{p''}}$.
     %%
     Then, by~\R{and-expd},
     \[
@@ -748,21 +651,19 @@
       \nst[1]\<\ceu{{p'}\AtAnd{(\CanRun(n);\,p'')}},n,\nil>\,.
     \]
     From this point on, this case is similar to
-    Case~\ref{thm.term-nst-*.and}.
-  \end{case}
-
-  \begin{case}
-    \label{thm.term-nst-*.and}
+    Case~\ref{thm.x.term-nst-*.and}.
+    %%
+  \item\label{thm.x.term-nst-*.and}
     %%
     $p=\ceu{{p'}\AtAnd{p''}}$.
     %%
     There are two subcases.
-    \begin{subcase}
-      $\isblocked(p',n)$ is false.
+    \begin{casex}
+    \item$\lnot\isblocked(p',n)$.
       %%
       There are three subcases.
-      \begin{subsubcase}
-        \label{thm.term-nst-*.and-nop1}
+      \begin{casex}
+      \item\label{thm.x.term-nst-*.and-nop1}
         $p'=\ceu{\Nop}$.
         %%
         Then, by~\R{and-nop1} and by the induction hypothesis, there
@@ -772,28 +673,26 @@
           \nst[1]\<p'',n,\nil>
           \nst[*]\delta'_\Hnst\,.
         \]
-      \end{subsubcase}
-      \begin{subsubcase}
-        \label{thm.term-nst-*.and-brk1}
+        %%
+      \item\label{thm.x.term-nst-*.and-brk1}
         $p'=\ceu{\Break}$.
         %%
         Then, by~\R{and-brk1},
         \begin{align}
-          \label{thm.term-nst-*.and-brk1.eq1}
+          \label{thm.x.term-nst-*.and-brk1.eq1}
           &\<\ceu{{\Break}\AtAnd{p''}},n,\nil>\\
           &\qquad\nst[1]\<\ceu{\clear(p'');\,\Break},n,\nil>\,.\notag
         \end{align}
-        From~\eqref{thm.term-nst-*.and-brk1.eq1}, by
-        item~\eqref{ass.syn-rest.fin} of Assumption~\ref{ass.syn-rest} and
-        by~\R{seq-nop},
+        From~\eqref{thm.x.term-nst-*.and-brk1.eq1}, by
+        item~\ref{ass.x.syn-rest.fin} of Assumption~\ref{ass.x.syn-rest}
+        and by~\R{seq-nop},
         \begin{align*}
           \<\ceu{\clear(p'');\,\Break},n,\nil>
           &\nst[*]\<\ceu{\Nop;\,\Break},n,\nil>\\
           &\nst[1]\<\ceu{\Break},n,\nil>_\Hnst\,.
         \end{align*}
-      \end{subsubcase}
-      \begin{subsubcase}
-        \label{thm.term-nst-*.and-adv1}
+        %%
+      \item\label{thm.x.term-nst-*.and-adv1}
         $p'\ne\ceu{\Nop},\ceu{\Break}$.
         %%
         Then, by the induction hypothesis, there are~$p_1'$ and~$e$ such
@@ -801,7 +700,7 @@
         \[
           \<p',n,\nil>\nst[*]\<p_1',n,e>_\Hnst\,.
         \]
-        By item~\eqref{lem.props-nst-i.c} of Lemma~\ref{lem.props-nst-i},
+        By item~\ref{lem.x.props-nst-i.c} of Lemma~\ref{lem.x.props-nst-i},
         \[
           \<\ceu{{p'}\AtAnd{p''}},n,\nil>
           \nst[*]\<\ceu{{p_1'}\AtAnd{p''}},n,e>\,.
@@ -814,30 +713,28 @@
         \item If~$e\ne\nil$ then, by
           definition,~$\<\ceu{{p_1'}\AtAnd{p''}},n,e>_\Hnst$.
         \item If~$p_1'=\ceu{\Nop}$, this case is similar to
-          Case~\ref{thm.term-nst-*.and-nop1}.
+          Case~\ref{thm.x.term-nst-*.and-nop1}.
         \item If~$p_1'=\ceu{\Break}$, this case is similar to
-          Case~\ref{thm.term-nst-*.and-brk1}.
+          Case~\ref{thm.x.term-nst-*.and-brk1}.
         \item If~$\isblocked(p_1',n)$, this case is similar to
-          Case~\ref{thm.term-nst-*.and2}.
+          Case~\ref{thm.x.term-nst-*.and2}.
         \end{enumerate}
-      \end{subsubcase}
-    \end{subcase}
-    \begin{subcase}
-      \label{thm.term-nst-*.and2}
-      $\isblocked(p',n)$ is true.
+      \end{casex}
+      %%
+    \item\label{thm.x.term-nst-*.and2}
+      $\isblocked(p',n)$.
       %%
       There are three subcases.
-      \begin{subsubcase}
-        \label{thm.term-nst-*.and-nop2}
+      \begin{casex}
+      \item\label{thm.x.term-nst-*.and-nop2}
         $p''=\ceu{\Nop}$.
         %%
         Then, by~\R{and-nop2},
         \[
           \<\ceu{{p'}\AtAnd{\Nop}},n,\nil>\nst[1]\<p',n,\nil>_\Hnst\,.
         \]
-      \end{subsubcase}
-      \begin{subsubcase}
-        \label{thm.term-nst-*.and-brk2}
+        %%
+      \item\label{thm.x.term-nst-*.and-brk2}
         $p''=\ceu{\Break}$.
         %%
         Then, by~\R{and-brk2},
@@ -846,10 +743,9 @@
           \nst[1]\<\ceu{\clear(p');\,\Break},n,\nil>\,.
         \]
         From this point on, this case is similar to
-        Case~\ref{thm.term-nst-*.and-brk1}.
-      \end{subsubcase}
-      \begin{subsubcase}
-        \label{thm.term-nst-*.and-adv2}
+        Case~\ref{thm.x.term-nst-*.and-brk1}.
+        %%
+      \item\label{thm.x.term-nst-*.and-adv2}
         $p''\ne\ceu{\Nop},\ceu{\Break}$.
         %%
         Then, by the induction hypothesis, there are~$p_1''$ and~$e$ such
@@ -857,7 +753,7 @@
         \[
           \<p'',n,\nil>\nst[*]\<p_1'',n,e>_\Hnst\,.
         \]
-        By item~\eqref{lem.props-nst-i.e} of Lemma~\ref{lem.props-nst-i},
+        By item~\ref{lem.x.props-nst-i.e} of Lemma~\ref{lem.x.props-nst-i},
         \[
           \<\ceu{{p'}\AtAnd{p''}},n,\nil>
           \nst[*]\<\ceu{{p'}\AtAnd{p_1''}},n,e>\,.
@@ -870,18 +766,16 @@
         \item If~$e\ne\nil$ then, by definition,
           $\<\ceu{{p'}\AtAnd{p_1''}},n,e>_\Hnst$.
         \item If~$p_1''=\ceu{\Nop}$, this case is similar to
-          Case~\ref{thm.term-nst-*.and-nop2}.
+          Case~\ref{thm.x.term-nst-*.and-nop2}.
         \item If~$p_1''=\ceu{\Break}$, this case is similar to
-          Case~\ref{thm.term-nst-*.and-brk2}.
+          Case~\ref{thm.x.term-nst-*.and-brk2}.
         \item If~$\isblocked(p_1'',n)$ then, as both sides are blocked, by
           definition, $\<\ceu{{p'}\AtAnd{p_1''}},n,e>_\Hnst$.
         \end{enumerate}
-      \end{subsubcase}
-    \end{subcase}
-  \end{case}
+      \end{casex}
+    \end{casex}
 
-  \begin{case}
-    $p=\ceu{{p'}\Or{p''}}$.
+  \item$p=\ceu{{p'}\Or{p''}}$.
     %%
     Then, by~\R{or-expd},
     \[
@@ -889,166 +783,70 @@
       \nst[1]\<\ceu{{p'}\AtOr{(\CanRun(n);\,p'')}},n,\nil>\,.
     \]
     From this point on, this case is similar to
-    Case~\ref{thm.term-nst-*.or}.
-  \end{case}
+    Case~\ref{thm.x.term-nst-*.or}.
 
-  \begin{case}
-    \label{thm.term-nst-*.or}
+  \item\label{thm.x.term-nst-*.or}
     $p=\ceu{{p'}\AtOr{p''}}$.
     %%
     There are two subcases.
-    \begin{subcase}
-      $\isblocked(p',n)$~is false.
+    \begin{casex}
+    \item$\lnot\isblocked(p',n)$.
       %%
       There are three subcases.
-      \begin{subsubcase}
-        \label{thm.term-nst-*.or-nop1}
-        $p'=\ceu{\Nop}$.  Then, by~\R{or-nop1},
+      \begin{casex}
+      \item\label{thm.x.term-nst-*.or-nop1} $p'=\ceu{\Nop}$.  Then,
+        by~\R{or-nop1},
         \begin{equation}
-          \label{thm.term-nst-*.or-nop1.eq1}
+          \label{thm.x.term-nst-*.or-nop1.eq1}
           \<\ceu{{\Nop}\AtOr{p''}},n,\nil>
           \nst[1]\<\ceu{\clear(p'')},n,\nil>\,.
         \end{equation}
-        From~\eqref{thm.term-nst-*.or-nop1.eq1}, by
-        item~\eqref{ass.syn-rest.fin} Assumption~\ref{ass.syn-rest},
+        From~\eqref{thm.x.term-nst-*.or-nop1.eq1}, by
+        item~\ref{ass.x.syn-rest.fin} Assumption~\ref{ass.x.syn-rest},
         \[
           \<\ceu{\clear(p'')},n,\nil>\nst[*]\<\ceu{\Nop},n,\nil>_\Hnst\,.
         \]
-      \end{subsubcase}
-      \begin{subsubcase}
-        \label{thm.term-nst-*.or-brk1}
+        %%
+      \item\label{thm.x.term-nst-*.or-brk1}
         $p'=\ceu{\Break}$.
         %%
-        Similar to Case~\ref{thm.term-nst-*.and-brk1}.
-      \end{subsubcase}
-      \begin{subsubcase}
-        $p'\ne\ceu{\Nop},\ceu{\Break}$.
+        Similar to Case~\ref{thm.x.term-nst-*.and-brk1}.
         %%
-        Similar to Case~\ref{thm.term-nst-*.and-adv1}.
-      \end{subsubcase}
-    \end{subcase}
-    \begin{subcase}
-      \label{thm.term-nst-*.or-adv1}
-      $\isblocked(p',n)$~is true.
+      \item$p'\ne\ceu{\Nop},\ceu{\Break}$.
+        %%
+        Similar to Case~\ref{thm.x.term-nst-*.and-adv1}.
+      \end{casex}
+      %%
+    \item\label{thm.x.term-nst-*.or-adv1}$\isblocked(p',n)$.
       %%
       There are three subcases.
-      \begin{subsubcase}
-        $p''=\ceu{\Nop}$.
+      \begin{casex}
+      \item$p''=\ceu{\Nop}$.
         %%
         Then, by~\R{or-nop2},
         \begin{equation}
-          \label{thm.term-nst-*.or-nop2.eq1}
+          \label{thm.x.term-nst-*.or-nop2.eq1}
           \<\ceu{p'\AtOr{\Nop}},n,\nil>
           \nst[1]\<\clear(p'),n,\nil>\,.
         \end{equation}
-        From~\eqref{thm.term-nst-*.or-nop2.eq1}, by
-        item~\eqref{ass.syn-rest.fin} of Assumption~\ref{ass.syn-rest} and
+        From~\eqref{thm.x.term-nst-*.or-nop2.eq1}, by
+        item~\ref{ass.x.syn-rest.fin} of Assumption~\ref{ass.x.syn-rest} and
         by definition of~$\clear$,
         \[
           \<\ceu{\clear(p')},n,\nil>\nst[*]\<\ceu{\Nop},n,\nil>_\Hnst\,.
         \]
-      \end{subsubcase}
-      \begin{subsubcase}
-        $p''=\ceu{\Break}$.
         %%
-        Similar to Case~\ref{thm.term-nst-*.and-brk2}.
-      \end{subsubcase}
-      \begin{subsubcase}
-        $p''\ne\ceu{\Nop},\ceu{\Break}$.
+      \item$p''=\ceu{\Break}$.
         %%
-        Similar to Case~\ref{thm.term-nst-*.and-adv2}.\qedhere
-      \end{subsubcase}
-    \end{subcase}
-  \end{case}
+        Similar to Case~\ref{thm.x.term-nst-*.and-brk2}.
+        %%
+      \item$p''\ne\ceu{\Nop},\ceu{\Break}$.
+        %%
+        Similar to Case~\ref{thm.x.term-nst-*.and-adv2}.\qedhere
+      \end{casex}
+    \end{casex}
+  \end{casex}
 \end{proof}
-
-
-\begin{definition}
-  \label{def.pot}
-  %%
-  The potency of a program~$p$ in reaction to event~$e$,
-  denoted~$\pot(p,e)$, is the maximum number of~$\ceu{\EmitInt}$ expressions
-  that can be executed during a reaction of~$p$ to~$e$.
-
-  More formally,
-  \[
-    \pot(p,e)=\pot'(\bcast(p,e))\,,
-  \]
-  where~$\pot'$ is an auxiliary function that counts the number of
-  reachable~$\ceu{\EmitInt}$ expressions in the program resulting from the
-  broadcast of event~$e$ to~$p$.
-
-  The auxiliary function~$\pot'$ is defined by
-  clauses~\label{def.pot.first}--\label{def.pot.last}:
-  \begin{enumerate:a}
-  \item\label{def.pot.first}$\pot'(\ceu{\EmitInt}(e))=1$;
-    %%
-  \item$\pot'(\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}})
-    =\max\{\pot'(p_1),\pot'(p_2)\}$;
-    %%
-  \item$\pot'(\ceu{\Loop{p_1}})=\pot'(p_1)$;
-    %%
-  \item$\pot'(\ceu{{p_1}\And{p_2}})=\pot'(p_1)+\pot'(p_2)$;
-    %%
-  \item$\pot'(\ceu{{p_1}\Or{p_2}})=\pot'(p_1)+\pot'(p_2)$;
-    %%
-  \item If~$p_1\ne\ceu{\Break},\ceu{\AwaitExt(e)}$,
-    \begin{align*}
-      \pot'(\ceu{p_1;\,p_2})&=\pot'(p_1)+\pot'(p_2)\\
-      \pot'(\ceu{p_1\AtLoop{p_2}})&=
-      \begin{cases}
-        \pot'(p_1)              &\text{if\enspace(\dag)}\\
-        \pot'(p_1)+\pot'(p_2)   &\text{otherwise,}\\
-      \end{cases}
-    \end{align*}
-    where~(\dag) stands for: ``a~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$ occurs
-    in all execution paths of~$p_1$'';
-    %%
-  \item\label{def.pot.before-last} If~$p_1,p_2\ne\ceu{\Break}$,
-    \[
-      \pot'(\ceu{{p_1}\AtAnd{p_2}})=\pot'(p_1)+\pot'(p_2)\,;
-    \]
-    %%
-  \item\label{def.pot.last} If~$p_1,p_2\ne\ceu{\Break}$
-    and~$p_1,p_2\ne\ceu{\Nop}$,
-    \[
-      \pot'(\ceu{{p_1}\AtOr{p_2}})=\pot'(p_1)+\pot'(p_2)\,;
-    \]
-    %%
-  \item Otherwise, if none
-    of~\eqref{def.pot.first}--\eqref{def.pot.before-last} applies,
-    $\pot(\_)=0$.
-  \end{enumerate:a}
-  %%
-  %%\gl{Should~$\pot'(\ceu{\protect\Every{e}\,{p_1}})\ne0$ above?}
-  %%
-\end{definition}
-
-
-\begin{definition}
-  \label{def.rank}
-  %%
-  The \emph{rank} of a description~$\delta=\<p,n,e>$,
-  denoted~$\rank(\delta)$, is a pair of nonnegative integers~$\<i,j>$ such
-  that
-  \begin{alignat*}{2}
-    i&=\pot(p,e) &\quad\text{and}\quad
-    j&=
-       \begin{cases}
-         n  &\text{if~$e=\nil$}\\
-         n+1&\text{otherwise\,.}
-       \end{cases}
-  \end{alignat*}
-\end{definition}
-
-
-\begin{definition}
-  \label{def.H}
-  %%
-  A description~$\delta$ is \emph{irreducible} (in symbols, $\delta_\#$) iff
-  it is nested-irreducible and its~$\rank(\delta)$ is~$\<i,0>$, for
-  some~$i\ge0$.
-\end{definition}
 
 
 \begin{lemma}\strut
@@ -1457,7 +1255,7 @@
     applied).  There are two possibilities:  either~$\delta$ is
     nested-irreducible or it is not.  In the first case, the theorem is
     trivially true, as~$\delta\nst[0]\delta_\Hnst$.  Suppose~$\delta$ is not
-    nested-irreducible.  Then, by Theorem~\ref{thm.term-nst-*},
+    nested-irreducible.  Then, by Theorem~\ref{thm.x.term-nst-*},
     $\delta\nst[*]\delta'_\Hnst$ for some~$\delta'_\Hnst$.  By
     Theorem~\ref{thm.rank-nst-*},
     \[
@@ -1488,7 +1286,7 @@
           \label{thm.term.Hnst-j>0-nonnil}
           $e\ne\nil$.
           %%
-          Then, by~\R{out} and by Theorem~\ref{thm.term-nst-*}, there
+          Then, by~\R{out} and by Theorem~\ref{thm.x.term-nst-*}, there
           are~$\delta_1'$ and~$\delta'_\Hnst=\<p',n+1,e'>$ such that
           \[
             \delta\outpush\delta_1'\nst[*]\delta'_\Hnst\,.
@@ -1529,7 +1327,7 @@
     \begin{case}
       $\delta$~is not nested-irreducible.
       %%
-      Then~$e=\nil$ and, by Theorems~\ref{thm.term-nst-*}
+      Then~$e=\nil$ and, by Theorems~\ref{thm.x.term-nst-*}
       and~\ref{thm.rank-nst-*}, there is a~$\delta'_\Hnst$ such
       that~$\delta\nst[*]\delta'_\Hnst$
       with~$\rank(\delta)\ge\rank(\delta'_\Hnst)$.  The rest of this proof

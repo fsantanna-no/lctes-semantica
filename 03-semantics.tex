@@ -1043,8 +1043,9 @@ transitions~$\nst$ and~$\out$.
   \label{def.x.Hnst}
   %%
   A description~$\delta=\<p,n,e>$ is \emph{nested-irre\-ducible}
-  iff~$e\ne\nil$ or~$p=\ceu{\Nop},\ceu{\Break}$ or~$\isblocked(p,n)$~is
-  true.
+  iff~$e\ne\nil$ or~$p=\ceu{\Nop}$ or~$p=\ceu{\Break}$
+  or~$\isblocked(p,n)$.\footnote{We often abbreviate ``$p=\ceu{\Nop}$
+    or~$p=\ceu{\Break}$'' as~``$p=\ceu{\Nop,\Break}$''.}
 \end{definition}
 
 Nested-irreducible descriptions serve as normal forms for~$\nst$
@@ -1053,24 +1054,25 @@ applications.  We will write~$\delta_\Hnst$ to indicate that
 description~$\delta$ is nested-irreducible.
 
 The use of qualifier ``irreducible'' in Definition~\ref{def.x.Hnst} is
-justified by Proposition~\ref{prop.x.irr-nst-i}.  The proposition
-establishes that if a finite number of applications of~$\nst$ results in an
-irreducible description, then that occurs exactly once, at some specific
-number~$i$.  The proof of the lemma follows directly from the definition
-of~$\nst$ by contradiction on the hypothesis that there is such~$k\ne{i}$.
+justified by Proposition~\ref{prop.x.irr-nst-i}, which states that if a
+finite number of applications of~$\nst$ results in an irreducible
+description, then that occurs exactly once, at some specific number~$i$.
+The proof of Proposition~\ref{prop.x.irr-nst-i} follows directly from the
+definition of~$\nst$ by contradiction on the hypothesis that there is
+such~$k\ne{i}$.
 
-\begin{proposition}
+\begin{restatable}{proposition}{propxirrnsti}
   \label{prop.x.irr-nst-i}
   %%
   If~$\delta\nst[i]\delta_\Hnst'$ then, for all~$k\ne{i}$, there is
   no~$\delta_\Hnst''$ such that~$\delta\nst[k]\delta''_\Hnst$.
-\end{proposition}
+\end{restatable}
 
-The next lemma establishes that sequences of~$\nst$ transitions behave
-as expected regarding the order of evaluation of composition members.  Its
+The next lemma establishes that sequences of~$\nst$ transitions behave as
+expected regarding the order of evaluation of composition branches.  Its
 proof follows by induction on~$i$.
 
-\begin{lemma}
+\begin{restatable}{lemma}{lemxpropsnsti}
   \label{lem.x.props-nst-i}\strut\\
   %%
   If~$\<p_1,n,e>\nst[i]\<p_1',n,e'>$, for any~$p_2$:
@@ -1098,7 +1100,7 @@ proof follows by induction on~$i$.
   \item\label{lem.x.props-nst-i.f}
     $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[i]\<\ceu{{p_1}\AtOr{p_2'}},n,e'>$.
   \end{enumerate:a}
-\end{lemma}
+\end{restatable}
 %%
 % \begin{proof}[Proof of~(a)]
 %   By induction on~$i$.  The lemma is trivially true for~$i=0$,
@@ -1127,9 +1129,11 @@ proof follows by induction on~$i$.
 % \end{proof}
 %%
 
-The syntactic restrictions discussed in Section~\ref{sec.sem}, regarding the
-body of~$\ceu{\Fin}$ and~$\ceu{\Loop}$ expressions, and their consequences,
-are formalized in the next assumption.
+The syntactic restriction discussed in Section~\ref{sec.ceu.evts}, regarding
+the body of loops, and the restriction mentioned earlier in this section,
+regarding the body of~$\ceu{\Fin}$ statements, are formalized in
+Assumption~\ref{ass.x.syn-rest} below.  These restrictions are essential to
+prove the next theorem, Theorem~\ref{thm.x.term-nst-*}.
 
 \begin{assumption}[Syntactic restrictions]\strut
   \label{ass.x.syn-rest}
@@ -1160,16 +1164,19 @@ are formalized in the next assumption.
 
 Theorem~\ref{thm.x.term-nst-*} establishes that a finite (possibly zero)
 number of~$\nst$ transitions eventually leads to a nested-irreducible
-description.  The proof is by induction on the structure of programs
-(members of set~$P$) and uses Lemma~\ref{lem.x.props-nst-i} and
-Assumption~\ref{ass.x.syn-rest}.
+description.  Put another way, it establishes that, for any input
+description~$\delta$, it is always possible to transform~$\delta$ in a
+nested-irreducible description~$\delta'$ by applying to it a sufficiently
+long sequence of~$\nst$ transitions.  The proof follows by induction on the
+structure of programs (members of set~$P$) and depends on
+Lemma~\ref{lem.x.props-nst-i} and Assumption~\ref{ass.x.syn-rest}.
 
-\begin{theorem}
+\begin{restatable}{theorem}{thmxtermnstx}
   \label{thm.x.term-nst-*}
   %%
   For any~$\delta$ there is a~$\delta'_\Hnst$ such
   that~$\delta\nst[*]\delta'_\Hnst$.
-\end{theorem}
+\end{restatable}
 
 The main result of this section, Theorem~\ref{thm.x.term}, is similar to
 Theorem~\ref{thm.x.term-nst-*} but applies to transitions~$\trans$ in
