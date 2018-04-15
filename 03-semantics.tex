@@ -25,6 +25,7 @@ Side-effects and system calls are encapsulated in an abstract memory access
 primitive and are assumed to behave like in conventional imperative
 languages.
 
+
 \subsection{Abstract Syntax}
 \label{sec.sem.syntax}
 
@@ -181,7 +182,7 @@ emitted event~$e$ to a modified triple as follows:
 \[
   \<p,n,e>\trans\<p',n',e'>\,,
 \]
-where~$p,p'\in\P$ are abstract-language programs, $n,n'\in\N$ are nonnegative
+where~$p,p'\in\P$ are abstract-language programs, $n,n'\in\N$ are non-negative
 integers representing the current stack level, and~$e,e'\in\E\cup\{\nil\}$ are
 the events emitted before and after the transition (both possibly being the
 empty event~$\nil$).
@@ -231,7 +232,7 @@ the stack level.
   \Rtag{push}\\[\JOT]
   %%
   &\AxiomC{$n>0$}
-  \AxiomC{$p=\ceu{\Nop,\Break}\vee\isblocked(p,n)$}
+  \AxiomC{$p=\ceu{\Nop} \vee p=\ceu{\Break} \vee \isblocked(p,n)$}
   \BinaryInfC{$\<p,n,\nil>\out\<p,n-1,\nil>$}
   \DisplayProof
   \Rtag{pop}
@@ -270,8 +271,8 @@ Rule \R{push} is the only rule in the semantics that matches an
 emitted event and also immediately consumes it.
 
 Rule \R{pop} only decreases the stack level, not affecting the
-program, and only applies if the program is blocked (see function~$\isblocked$ in
-Figure~\ref{fig.isblocked}).
+program, and only applies if the program is blocked (see function~$\isblocked$
+in Figure~\ref{fig.isblocked}) or terminated ($p=\ceu{\Nop}$ or $p=\ceu{\Break}$).
 This condition ensures that an $\ceu{\EmitInt}$ only resumes after its internal
 reaction completes and blocks in the current stack level.
 

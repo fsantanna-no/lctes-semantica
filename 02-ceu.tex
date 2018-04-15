@@ -1,8 +1,8 @@
 \section{\CEU}
 \label{sec.ceu}
 
-\CEU is a synchronous reactive language in which programs evolve in a sequence
-of discrete reactions to external events.
+\CEU~\cite{ceu.sensys13,ceu.tecs17} is a synchronous reactive language in which
+programs evolve in a sequence of discrete reactions to external events.
 %
 It is designed for control-intensive applications, supporting concurrent lines
 of execution, known as \emph{trails}, and instantaneous broadcast communication
@@ -101,8 +101,8 @@ network handlers), as we discuss in Section~\ref{sec.ceu.fin}.
   numbers=left,
   basicstyle=\ttfamily\footnotesize,
   float=h,
-  caption={A program in \CEU that toggles a LED on every radio receive,
-           terminating on a button press always with the LED off.},
+  caption={A \CEU program that toggles a LED on radio receive,
+           terminating on a button press always with the LED~off.},
   label={lst.ceu},
 ]
 input void BUTTON;
@@ -133,7 +133,7 @@ be instantaneous, such as non-blocking~I/O and simple data structure accessors.%
 \footnote {
 The actual implementation of Céu supports a command-line option that accepts a
 white list of library calls.
-If a program tries to use a function not in this list, the compiler raises an
+If a program tries to use a function not in the list, the compiler raises an
 error.
 }
 
@@ -205,7 +205,7 @@ at \code{D-4}.
 %handled in the subsequent reactions~\code{E-5} and~\code{E-6}.
 
 \begingroup
-\begin{figure}[h]
+\begin{figure}[t]
 \centering
 \begin{tikzpicture}[x=.9em,y=.9em,
   font=\footnotesize\sffamily,>=stealth,
@@ -321,7 +321,7 @@ as illustrated in Listing~\ref{lst.sub}.
   numbers=left,
   basicstyle=\ttfamily\footnotesize,
   float=h,
-  caption={A \CEU program with a ``subroutine''.},
+  caption={A ``subroutine'' that increments its argument.},
   label={lst.sub},
 ]
 event int* inc;         // declares subroutine "inc"
@@ -376,16 +376,17 @@ First, they are guaranteed to react in bounded time.
 %
 Second, memory for locals is also bounded, not requiring data stacks.
 
-At first sight, event iteration such as in ``\code{every e do <...> end}'' seems
-to be equivalent to ``\code{loop do await e; <...> end}''.
-However, the \code{loop} variation would not compile because it does not
-contain a path to an external input \code{await} (since \code{e} is an internal
-event).
+At first sight, the constructions ``\code{every e do <...> end}'' and
+``\code{loop do await e; <...> end}'' seem to be equivalent.
+However, the \code{loop} variation would not compile since it does not contain
+an external input \code{await} (\code{e} is an internal event).
 %
-However, event iterators enforce other syntactic restrictions and cannot
-contain \code{await} or \code{break} statements.
-The absence of \code{break} guarantees that an iterator never terminates from
-itself, essentially behaving as a safe blocking point in the program.
+The \code{every} variation compiles because event iterators have an additional
+syntactic restriction that they cannot contain \code{break} or \code{await}
+statements.
+This restriction guarantees that an iterator never terminates from itself and,
+thus, always awaits its identifying event, essentially behaving as a safe
+blocking point in the program.
 %
 For this reason, the restriction that execution paths within loops must
 contain at least one external \code{await} is extended to alternatively contain
@@ -453,14 +454,14 @@ For instance, consider the examples in Figure~\ref{lst.shared}, both
 defining shared variables (ln.~3), and assigning to them in parallel trails
 (ln.~6, 9).
 
-In example \ax, the two assignments to \code{x} can only execute in
+In \ax, the two assignments to \code{x} can only execute in
 reactions to different events \code{A} and \code{B} (ln.~5, 8), which cannot
 occur simultaneously by definition.
 Hence, for the sequence of events \code{A->B}, \code{x} becomes \code{4}
 (\code{(1+1)*2}), while for \code{B->A}, \code{x} becomes \code{3}
 (\code{(1*2)+1}).
 
-In example \bx, the two assignments to \code{y} are simultaneous because
+In \bx, the two assignments to \code{y} are simultaneous because
 they execute in reaction to the same event \code{A}.
 Since \CEU employs lexical order for intra-reaction statements, the execution
 is still deterministic, and \code{y} always becomes \code{4} (\code{(1+1)*2}).
@@ -479,7 +480,61 @@ deterministic semantics of the language.
 \subsection{Abortion and Finalization}
 \label{sec.ceu.fin}
 
-\begin{figure}[h]
+The \code{par/or} of \CEU is an orthogonal abortion mechanism because the two
+sides in the composition need not be tweaked with synchronization primitives nor
+state variables to affect each other.
+%
+In addition, abortion is \emph{immediate} in the sense that it executes
+atomically inside the current micro reaction.
+%
+Immediate orthogonal abortion is a distinctive feature of synchronous languages
+and cannot be expressed effectively in traditional (asynchronous)
+multi-threaded languages~\cite{esterel.preemption,sync_async.threadsstop}.
+
+However, aborting lines of execution that deal with external resources may lead
+to inconsistencies.
+%
+For this reason, \CEU provides a \code{finalize} construct to unconditionally
+execute a series of statements even if the enclosing block is externally
+aborted.
+
+\CEU also enforces, at compile time, the use of \code{finalize} for system
+calls that deal with pointers representing resources, as illustrated in the two
+examples of Figure~\ref{lst.fin.ceu}.
+%
+%\begin{itemize}
+ If \CEU \textbf{passes} a pointer to a system call (ln.~\ax:5), the
+          pointer represents a \textbf{local} resource (ln.~\ax:2) that
+          requires finalization (ln.~\ax:7).
+ If \CEU \textbf{receives} a pointer from a system call return
+          (ln.~ \bx:4), the pointer represents an \textbf{external} resource
+          (ln.~\bx:2) that requires finalization (ln.~\bx:6).
+%\end{itemize}
+
+\CEU tracks the interaction of system calls with pointers and requires
+finalization clauses to accompany them.
+%
+In Figure~\ref{lst.fin.ceu}.a, the local variable \code{msg}
+(ln.~2) is an internal resource passed as a pointer to \code{\_send} (ln.~5),
+which is an asynchronous call that transmits the buffer in the background.
+If the block aborts (ln.~11) before receiving an acknowledge from the
+environment (ln.~9), the local \code{msg} goes out of scope and the external
+transmission now holds a \emph{dangling pointer}.
+The finalization ensures that the transmission also aborts (ln.~7).
+%
+In Figure~\ref{lst.fin.ceu}.b, the call to \code{\_fopen} (ln.
+4) returns an external file resource as a pointer.
+If the block aborts (ln.~12) during the \code{await A} (ln.~9), the file
+remains open as a \emph{memory leak}.
+The finalization ensures that the file closes properly (ln.~6).
+%
+In both cases, the code does not compile without the \code{finalize}
+construct.%
+\footnote{%
+The compiler only forces the programmer to write the finalization clause, but
+cannot check if it actually handles the resource properly.}
+
+\begin{figure}[t]
 \begin{minipage}[t]{0.45\linewidth}
 \begin{lstlisting}[numbers=right,basicstyle=\ttfamily\footnotesize]
 par/or do
@@ -522,61 +577,6 @@ end
 \CEU enforces the use of finalization to prevent dangling pointers and memory leaks.}
 \label{lst.fin.ceu}
 \end{figure}
-
-The \code{par/or} of \CEU is an orthogonal abortion mechanism because the two
-sides in the composition need not be tweaked with synchronization primitives nor
-state variables to affect each other.
-%
-In addition, abortion is \emph{immediate} in the sense that it executes
-atomically in the current micro reaction.
-%
-Immediate orthogonal abortion is a distinctive feature of synchronous languages
-and cannot be expressed effectively in traditional (asynchronous)
-multi-threaded languages~\cite{esterel.preemption,sync_async.threadsstop}.
-
-However, aborting lines of execution that deal with external resources may lead
-to inconsistencies.
-%
-For this reason, \CEU provides a \code{finalize} construct to unconditionally
-execute a series of statements even if the enclosing block is externally
-aborted.
-
-\CEU also enforces the use of \code{finalize} for system calls that deal with
-pointers representing resources, as illustrated in the two examples of
-Figure~\ref{lst.fin.ceu}.
-%
-%\begin{itemize}
- If \CEU \textbf{passes} a pointer to a system call (ln.~\ax:5), the
-          pointer represents a \textbf{local} resource (ln.~\ax:2) that
-          requires finalization (ln.~\ax:7).
- If \CEU \textbf{receives} a pointer from a system call return
-          (ln.~ \bx:4), the pointer represents an \textbf{external} resource
-          (ln.~\bx:2) that requires finalization (ln.~\bx:6).
-%\end{itemize}
-
-\CEU tracks the interaction of system calls with pointers and requires
-finalization clauses to accompany them.
-%
-In Figure~\ref{lst.fin.ceu}.a, the local variable \code{msg}
-(ln.~2) is an internal resource passed as a pointer to \code{\_send} (ln.~5),
-which is an asynchronous call that transmits the buffer in the background.
-If the block aborts (ln.~11) before receiving an acknowledge from the
-environment (ln.~9), the local \code{msg} goes out of scope and the external
-transmission now holds a \emph{dangling pointer}.
-The finalization ensures that the transmission also aborts (ln.~7).
-%
-In Figure~\ref{lst.fin.ceu}.b, the call to \code{\_fopen} (ln.
-4) returns an external file resource as a pointer.
-If the block aborts (ln.~12) during the \code{await A} (ln.~9), the file
-remains open as a \emph{memory leak}.
-The finalization ensures that the file closes properly (ln.~6).
-%
-In both cases, the code does not compile without the \code{finalize}
-construct.%
-\footnote{%
-The compiler only forces the programmer to write the finalization clause, but
-cannot check if it actually handles the resource properly.
-}
 
 The finalization mechanism of \CEU is fundamental to preserve the orthogonality
 of the \code{par/or} construct since the clean up code is encapsulated in the
