@@ -14,17 +14,16 @@
 \section{Formal Semantics}
 \label{sec.sem}
 
-In this section, we introduce a reduced syntax for \CEU and propose an
-operational semantics to formally describe the behavior of its programs.
-We describe a small synchronous kernel highlighting the peculiarities of \CEU,
-in particular, the stack-based execution for internal events.
+In this section, we introduce a reduced, abstract syntax for \CEU and
+present an operational semantics that formalizes the behavior of its
+programs.
+% We describe a small synchronous kernel highlighting the peculiarities of \CEU,
+% in particular, the stack-based execution for internal events.
 %
-For the sake of simplicity, we focus on the control aspects of the language,
-and encapsulate all side effects and system calls into a single abstract memory
-operation.
-Memory operations are opaque and behave like in conventional imperative
-languages (i.e., reads and writes), having no effect on the application
-execution flow (e.g., they cannot block or abort execution).
+The semantics deals only with the control aspects of \CEU.
+Side-effects and system calls are encapsulated in an abstract memory access
+primitive and are assumed to behave like in conventional imperative
+languages.
 
 \subsection{Abstract Syntax}
 \label{sec.sem.syntax}
@@ -62,11 +61,11 @@ execution flow (e.g., they cannot block or abort execution).
 %-
 
 The grammar below defines the syntax of a subset of \CEU that is
-sufficient to describe all semantic peculiarities of the language.
+sufficient to describe all peculiarities of the language.
 \bgroup
 \def\lbl#1{\quad\text{\emph{#1}}}%
 \newdimen\X
-\X=-1\jot
+\X=-1.25\jot
 \begin{alignat*}{2}
   P\Coloneqq
       &\enspace\ceu{\Mem(\Id)}
@@ -122,48 +121,50 @@ sufficient to describe all semantic peculiarities of the language.
 \end{alignat*}
 \egroup
 
-The~$\ceu{\Mem(id)}$ primitive represents all accesses, assignments, and system
-calls that affect a memory location identified by~$id$.
+The~$\ceu{\Mem(id)}$ primitive represents any access, assignment, or system
+call that affects the memory location identified by~$id$.\footnotemark\
 %
-According to the synchronous hypothesis of \CEU, $\ceu{\Mem}$ expressions are
+Following the synchronous hypothesis, $\ceu{\Mem}$ expressions are
 considered to be atomic and instantaneous.
 %
-As the challenging parts of \CEU reside on its control structures, we are not
-concerned here with a precise semantics for side effects, but only with their
-occurrences in programs.
+% As the challenging parts of \CEU reside on its control structures, we are not
+% concerned here with a precise semantics for side effects, but only with their
+% occurrences in programs.
 %
 %The special notation $nop$ is used to represent an innocuous $mem$ expression
 %(it can be thought as a synonym for $mem(\epsilon)$, where $\epsilon$ is an
 %unused identifier).
-
-We assume that $\ceu{\Mem}$, $\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$
-and~$\ceu{\EmitInt}$ expressions do not share identifiers:
-any identifier is either a variable, an external event, or an internal event.
-
-Most expressions in the abstract language are mapped to their counterparts in
-the concrete language.
-The exceptions are the finalization block~$\ceu{\Fin{P}}$ and the
-\texttt{@}-expressions which result from expansions in the transition rules to
-be presented.
-
-Regarding mismatches between the concrete and abstract languages, the concrete
-\code{await} and \code{emit} primitives support communication of values between
-them, e.g., an ``\code{emit a(10)}'' awakes a ``\code{v=await a}'' setting
-variable~\code{v} to~10.
-To reproduce this functionality in the formal semantics, we can use a shared
-variable to hold the value of an $\ceu{\EmitInt}$ and access it after the
-corresponding $\ceu{\AwaitInt}$ awakes.
 %
-Also, a ``\code{finalize $A$ with $B$ end; $C$}'' in the concrete language is
-equivalent to ``\ceu{A;\;((\Fin{B})\ \Or\ C)}'' in the abstract language.
-In the concrete language, $A$ and~$C$ execute in sequence, and
+\footnotetext{Although the same symbol~$\ceu{\Id}$ is used in their
+  definition, the $\ceu{\Mem}$, $\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$
+  and~$\ceu{\EmitInt}$ expressions do not share identifiers: any identifier
+  is either a variable, an external event, or an internal event.}
+
+Most expressions in the abstract language are mapped to their counterparts
+in the concrete language.  The exceptions are the finalization
+block~$\ceu{\Fin{p}}$ and the \texttt{@}-expressions which do not exist in
+the concrete language.  (These expressions result from the expansion of the
+transition rules to be presented.)
+
+A further difference between the concrete and abstract languages regards the
+emit-await pair.  In the concrete language the \code{await} and \code{emit}
+expressions support communication of values between them, e.g., an
+``\code{emit a(10)}'' awakes a ``\code{v=await a}'' setting
+variable~\code{v} to~10.  Although the abstract $\ceu{\AwaitInt}$
+and~$\ceu{\EmitInt}$ expression do not support such communication of values,
+it can be easily simulated: we can use a shared variable to hold the value
+of an $\ceu{\EmitInt}$ and access it after the corresponding
+$\ceu{\AwaitInt}$ awakes.
+
+Finally, a ``\code{finalize $A$ with $B$ end; $C$}'' in the concrete
+language is equivalent to ``\ceu{A;\;((\Fin{B})\ \Or\ C)}'' in the abstract
+language.  In the concrete language, $A$ and~$C$ execute in sequence, and
 the finalization code~$B$ is implicitly suspended waiting for~$C$
-termination.
-In the abstract language, ``$\ceu{\Fin B}$'' suspends forever when reached (it is
-an awaiting expression that never awakes).
-Hence, we need an explicit \code{or} to execute~$C$ in parallel, whose
-termination aborts ``$\ceu{\Fin B}$'', which finally causes~$B$ to
-execute (by the semantic rules to be discussed).
+termination.  In the abstract language, ``$\ceu{\Fin B}$'' suspends forever
+when reached (it is an awaiting expression that never awakes).  Hence, we
+need an explicit \code{or} to execute~$C$ in parallel, whose termination
+aborts ``$\ceu{\Fin B}$'', which finally causes~$B$ to execute (by the
+semantic rules below).
 
 \subsection{Operational Semantics}
 
@@ -172,8 +173,8 @@ input event, i.e., starting from an input event, how the program behaves and
 becomes idle again to proceed to a subsequent reaction.
 %
 We use a set of small-step operational rules~\cite{Plotkin-G-D-1981} which
-are designed in such a way that at most one transition is possible at any
-time, resulting in deterministic reactions.
+ensure that at most one transition is possible at any time, resulting in
+deterministic reactions.
 %
 The transition rules map a triple with a program~$p$, a stack level~$n$, and an
 emitted event~$e$ to a modified triple as follows:
@@ -184,12 +185,12 @@ where~$p,p'\in\P$ are abstract-language programs, $n,n'\in\N$ are nonnegative
 integers representing the current stack level, and~$e,e'\in\E\cup\{\nil\}$ are
 the events emitted before and after the transition (both possibly being the
 empty event~$\nil$).
-$\E$ is a set of primitive events.
+%$\E$ is a set of primitive events.
 
 We will refer to the triples on the left-hand and right-hand sides of
-symbol~$\trans$ as \emph{descriptions} (denoted~$\delta$).  The triple on the
-left-hand side of symbol~$\trans$ is called the \emph{input description}, and
-the triple on its right-hand side is called the \emph{output description}.
+symbol~$\trans$ as \emph{descriptions} (denoted~$\delta$).  The description
+on the left-hand side of~$\trans$ is the \emph{input description},
+and the one on the right-hand side is the \emph{output description}.
 
 %-
 % \begin{align*}
@@ -205,12 +206,11 @@ the triple on its right-hand side is called the \emph{output description}.
 %-
 
 At the beginning of a reaction to an input event~$id$, the input description is
-initialized with stack level~0 ($n=0$) and with the externally emitted event
-($e=id$).
+initialized with stack level~0 ($n=0$) and with the externally emitted event~$e=id$.
 %, but \code{emitInt} expressions can increase the stack level.
 At the end of a reaction, after an arbitrary but finite number of transitions,
-the last output description will block with a (possibly) modified program~$p'$, at stack
-level~0, and with no event emitted~($\nil$):
+the last output description will block with a (possibly) modified program~$p'$ at stack
+level~0 and with no event emitted:
 \[
   \<p,0,e>\mathbin{\trans[*]}\<p',0,\nil>\,.
 \]

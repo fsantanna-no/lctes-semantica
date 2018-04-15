@@ -69,8 +69,8 @@
 \def\@int{\mathit{int}}
 \def\@ext{\mathit{ext}}
 \let\ext\@ext
-\def\@ceuop#1{\mathop{\small{\texttt{#1}}}}%
-\def\@ceubin#1{\mathbin{\small{\texttt{#1}}}}%
+\def\@ceuop#1{\mathop{\relax{\texttt{#1}}}}%
+\def\@ceubin#1{\mathbin{\relax{\texttt{#1}}}}%
 \def\ceu{\protect\@ceu}
 \def\@ceu#1{%
   \bgroup
