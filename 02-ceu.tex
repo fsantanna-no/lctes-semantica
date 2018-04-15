@@ -37,50 +37,51 @@ Listing~\ref{lst.syntax} shows a compact reference of~\CEU.
 
 \bgroup
 \def\T<#1>{\langle\mathit{#1}\rangle}
-\def\C#1#2{\hfill\rmfamily\itshape\makebox[#1\columnwidth][l]{//~#2}}
+\def\C#1{\rmfamily\itshape//~#1}
+\def\CC#1#2{\hfill\makebox[#1][l]{\C{#2}}}
 \begin{lstlisting}[
   basicstyle=\ttfamily\footnotesize,
   caption={The concrete syntax of \CEU.},
   label={lst.syntax},
 ]
-|\C{1.}{Declarations}|
-input $\T<type>$ $\T<id>$; | \C{.6}{declares an external input event} |
-event $\T<type>$ $\T<id>$; | \C{.6}{declares an internal event}       |
-var   $\T<type>$ $\T<id>$; | \C{.6}{declares a variable}              |
+|\C{Declarations}|
+input $\T<type>$ $\T<id>$; | \CC{19.5em}{declares an external input event} |
+event $\T<type>$ $\T<id>$; | \CC{19.5em}{declares an internal event}       |
+var   $\T<type>$ $\T<id>$; | \CC{19.5em}{declares a variable}              |
 
-|\C{1.}{Event handling}|
-$\T<id>$ = await $\T<id>$;   | \C{.6}{awaits an event and assigns the received value} |
-emit $\T<id>$($\T<exp>$);    | \C{.6}{emits an event passing a value} |
+|\C{Event handling}|
+$\T<id>$ = await $\T<id>$; | \CC{19.5em}{awaits an event and assigns the received value} |
+emit $\T<id>$($\T<exp>$); | \CC{19.5em}{emits an event passing a value} |
 
-|\C{1.}{Control flow}|
-$\T<stmt>$ ; $\T<stmt>$                          | \C{.45}{sequence}     |
-if $\T<exp>$ then $\T<stmts>$ else $\T<stmts>$ end    | \C{.45}{conditional}  |
-loop do $\T<stmts>$ end                      | \C{.45}{repetition}   |
-every $\T<id>$ in $\T<id>$ do $\T<stmts>$ end         | \C{.45}{event iteration}   |
-finalize [$\T<stmts>$] with $\T<stmts>$ end       | \C{.45}{finalization} |
+|\C{Control flow}|
+$\T<stmt>$ ; $\T<stmt>$ | \CC{10em}{sequence}     |
+if $\T<exp>$ then $\T<stmts>$ else $\T<stmts>$ end | \CC{10em}{conditional}  |
+loop do $\T<stmts>$ end | \CC{10em}{repetition}   |
+every $\T<id>$ in $\T<id>$ do $\T<stmts>$ end | \CC{10em}{event iteration}   |
+finalize [$\T<stmts>$] with $\T<stmts>$ end | \CC{10em}{finalization} |
 
-|\C{1.}{Logical parallelism}|
-par/or  do $\T<stmts>$ with $\T<stmts>$ end | \C{.45}{aborts when any side ends}      |
-par/and do $\T<stmts>$ with $\T<stmts>$ end | \C{.45}{terminates when all sides ends} |
+|\C{Logical parallelism}|
+par/or  do $\T<stmts>$ with $\T<stmts>$ end | \CC{13em}{aborts when any side ends}      |
+par/and do $\T<stmts>$ with $\T<stmts>$ end | \CC{13em}{terminates when all sides end} |
 
-|\C{1.}{Assignment \& Integration with C}|
-$\T<id>$ = $\T<exp>$; | \C{.6}{assigns a value to a variable}              |
-_$\T<id>$($\T<exps>$) | \C{.6}{calls a C function (id starts with `\_'\,)} |
+|\C{Assignment \& Integration with C}|
+$\T<id>$ = $\T<exp>$; | \CC{19.5em}{assigns a value to a variable}              |
+_$\T<id>$($\T<exps>$) | \CC{19.5em}{calls a C function (id starts with `\_'\,)} |
 \end{lstlisting}
 \egroup
 
 Listing~\ref{lst.ceu} shows a complete example in \CEU that toggles a LED
-whenever a radio packet is received, terminating with a button press always
+whenever a radio packet is received, terminating on a button press always
 with the LED off.
 %
-The implementation first declares the \code{BUTTON} and \code{RADIO\_RECV} as
+The program first declares the \code{BUTTON} and \code{RADIO\_RECV} as
 input events (ln.~1--2).
 Then, it uses a \code{par/or} composition to run two activities in parallel:
 a single-statement trail that waits for a button press before terminating
 (ln.~4), and an endless loop that toggles the LED on and off on radio receives
 (ln.~9--14).
 The \code{finalize} clause (ln.~6--8) ensures that, no matter how its enclosing
-trail terminates, the LED will be unconditionally turned off (ln.~7).
+trail terminates, the LED will be unconditionally turned off~(ln.~7).
 
 The \code{par/or} composition, which stands for a \emph{parallel-or}, provides
 an orthogonal abortion mechanism~\cite{esterel.preemption} in which its
@@ -175,13 +176,6 @@ in a subsequent reaction.
 
 \subsubsection*{External events and discrete time}
 
-\begin{figure}[b]
-\centering
-\includegraphics[width=\columnwidth]{tick_min}
-\caption{The discrete notion of time in \CEU.}
-\label{fig.ticks}
-\end{figure}
-
 The sequential processing of external input events induces a discrete notion of
 time in \CEU, as illustrated in Figure~\ref{fig.ticks}.
 %
@@ -209,6 +203,78 @@ at \code{D-4}.
 %
 %Finally, two instances of event~\code{E} occur during~\code{D-4}; they are
 %handled in the subsequent reactions~\code{E-5} and~\code{E-6}.
+
+\begingroup
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[x=.9em,y=.9em,
+  font=\footnotesize\sffamily,>=stealth,
+  time/.style={font=\scriptsize\sffamily},
+  cross/.style={inner sep=0pt,outer sep=0pt},
+  evt/.style={fill=white,inner sep=1.85pt,outer sep=0pt},
+  rng/.style={fill=white,inner sep=1pt,outer sep=0pt,
+    font=\ttfamily\scriptsize}]
+  \draw[->]
+  (0,0)
+    node[align=right,anchor=east,xshift=-.5em]
+        {Continuous\\Timeline\\(Real World)}
+    node[anchor=north west,xshift=-.5em,time]
+        {0ms000us}
+    node[anchor=north west,xshift=8.75em,time]
+        {17ms521us}
+  -- (18.5,0)
+    node[anchor=north east,xshift=.1em,time]
+        {30ms000us};
+  \node[cross] at (0,0){x};
+  %%
+  \coordinate(Ext) at ($(0,0)!.5!(0,-5)$);
+  \coordinate(A) at (Ext-|4,0);
+  \coordinate(B) at (Ext-|5.5,0);
+  \coordinate(C) at (Ext-|9,0);
+  \coordinate(D) at (Ext-|15,0);
+  %%
+  \draw[semithick,dotted] (0,1-|A) -- (0,-6-|A);
+  \draw[semithick,dotted] (0,1-|B) -- (0,-6-|B);
+  \draw[semithick,dotted] (0,1-|C) -- (0,-6-|C);
+  \draw[semithick,dotted] (0,1-|D) -- (0,-5-|D);
+  \node[evt](Aevt) at (A) {\textbf{A}};
+  \node[evt](Bevt) at (B) {\textbf{B}};
+  \node[evt](Cevt) at (C) {\textbf{C}};
+  \node[evt](Devt) at (D) {\textbf{D}};
+  \node[anchor=east,xshift=-.5em] at (A){\emph{External Input}};
+  %%
+  \draw[-]
+  (0,-5)
+    node[align=right,anchor=east,xshift=-.5em]
+        {Discrete\\Timeline\\(\CEU)}
+  -- (18.5,-5);
+  \node[cross](P0) at (0,-5){x};
+  \node[cross](P1) at (4.75,-5){x};
+  \node[cross](P2) at (10,-5){x};
+  \node[cross](P3) at (12.5,-5){x};
+  \node[cross](P4) at (14.5,-5){x};
+  \node[cross](P5) at (15.5,-5){x};
+  \node[cross](P6) at (18.5,-5){x};
+  \node[rng] at ($(P0)!.5!(P1)$){boot-0};
+  \node[rng] at ($(P1)!.5!(P2)$){A-1};
+  \node[rng] at ($(P2)!.5!(P3)$){B-2};
+  \node[rng] at ($(P3)!.5!(P4)$){C-3};
+  \node[rng] at ($(P5)!.5!(P6)$){D-4};
+  \draw[decorate,decoration={brace,raise=-1pt,mirror,amplitude=2pt}]
+  ($(P4)+(0,-.5)$) -- node[below,time] {Idle period} ($(P5)+(0,-.5)$);
+  %%
+  \begin{scope}[shorten >=1.5pt]
+  \draw[->] (Aevt) -- (P1);
+  \draw[->] (Bevt) -- (P2);
+  \draw[->] (Cevt) -- (P3);
+  \draw[->] (Devt) -- (P5);
+  \end{scope}
+\end{tikzpicture}
+%\includegraphics[width=\columnwidth]{tick_min}
+\caption{The discrete notion of time in \CEU.}
+\label{fig.ticks}
+\end{figure}
+\endgroup
 
 Unique input events imply mutually exclusive reactions, which execute
 atomically and never overlap.
@@ -334,9 +400,10 @@ Hence, an important goal of \CEU is to ensure a reliable behavior for programs
 with concurrent lines of execution sharing memory and interacting with the
 environment.
 
-\begin{figure}[h]
+\begingroup
+\begin{figure}[t]
 \begin{minipage}[h]{0.45\linewidth}
-\begin{lstlisting}[numbers=right]
+\begin{lstlisting}[numbers=right,basicstyle=\ttfamily\footnotesize]
 input void A;
 input void B;
 var int x = 1;
@@ -348,12 +415,12 @@ with
     x = x * 2;
 end
 \end{lstlisting}
-\centering\small{\ax Accesses to \code{x} are never concurrent.}
+\small{\ax Accesses to \code{x} are never\\\phantom{\ax}\relax concurrent.}
 \end{minipage}%
 %
 \begin{minipage}[h]{0.53\linewidth}
 %\begin{lstlisting}
-\begin{lstlisting}[xleftmargin=2em]
+\begin{lstlisting}[xleftmargin=2em,basicstyle=\ttfamily\footnotesize]
 input void A;
 // (empty line)
 var int y = 1;
@@ -366,16 +433,17 @@ with
 end
 
 \end{lstlisting}
-\centering\small{\bx Accesses to \code{y} are concurrent but still deterministic.}
+\small{\bx Accesses to \code{y} are concurrent\\
+\phantom{\bx}\relax but still deterministic.}
 \end{minipage}%
 %\rule{8.4cm}{0.37pt}
 \caption{Shared-memory concurrency in \CEU:
-example \ax is safe because the trails access \code{x} atomically in different
+\ax is safe because the trails access \code{x} atomically in different
 reactions;
-example \bx is unsafe because both trails access \code{y} in the same reaction.
-\label{lst.shared}%
-}
+\bx is unsafe because both trails access \code{y} in the same reaction}
+\label{lst.shared}
 \end{figure}
+\endgroup
 
 In \CEU, when multiple trails are active in the same reaction, they are
 scheduled in lexical order, i.e., in the order they appear in the program
@@ -413,7 +481,7 @@ deterministic semantics of the language.
 
 \begin{figure}[h]
 \begin{minipage}[t]{0.45\linewidth}
-\begin{lstlisting}[numbers=right]
+\begin{lstlisting}[numbers=right,basicstyle=\ttfamily\footnotesize]
 par/or do
    var _msg_t msg;
    <...> // prepare msg
@@ -428,11 +496,11 @@ with
 end
 //
 \end{lstlisting}
-\small{\ax\!Local resource finalization}
+\small{\ax\!Local resource finalization\rlap{.}}
 \end{minipage}%
 %
 \begin{minipage}[t]{0.53\linewidth}
-\begin{lstlisting}[xleftmargin=2em]
+\begin{lstlisting}[xleftmargin=2em,basicstyle=\ttfamily\footnotesize]
 par/or do
    var _FILE* f;
    finalize
@@ -447,13 +515,12 @@ with
    <...>
 end
 \end{lstlisting}
-\centering\small{\bx External resource finalization}
+\small{\quad\bx\!External resource finalization\rlap{.}}
 \end{minipage}%
 %\rule{8.4cm}{0.37pt}
 \caption{%
-\CEU enforces the use of finalization to prevent \emph{dangling pointers} for
-local resources and \emph{memory leaks} for external resources.%
-\label{lst.fin.ceu}}
+\CEU enforces the use of finalization to prevent dangling pointers and memory leaks.}
+\label{lst.fin.ceu}
 \end{figure}
 
 The \code{par/or} of \CEU is an orthogonal abortion mechanism because the two
@@ -476,17 +543,17 @@ aborted.
 
 \CEU also enforces the use of \code{finalize} for system calls that deal with
 pointers representing resources, as illustrated in the two examples of
-Figure~\ref{lst.fin.ceu}:
+Figure~\ref{lst.fin.ceu}.
 %
-\begin{itemize}
-    \item If \CEU \textbf{passes} a pointer to a system call (ln.~\ax:5), the
+%\begin{itemize}
+ If \CEU \textbf{passes} a pointer to a system call (ln.~\ax:5), the
           pointer represents a \textbf{local} resource (ln.~\ax:2) that
           requires finalization (ln.~\ax:7).
-    \item If \CEU \textbf{receives} a pointer from a system call return
+ If \CEU \textbf{receives} a pointer from a system call return
           (ln.~ \bx:4), the pointer represents an \textbf{external} resource
           (ln.~\bx:2) that requires finalization (ln.~\bx:6).
-\end{itemize}
-%
+%\end{itemize}
+
 \CEU tracks the interaction of system calls with pointers and requires
 finalization clauses to accompany them.
 %

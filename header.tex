@@ -3,6 +3,17 @@
 \usepackage{enumerate}
 \usepackage{etoolbox}
 \usepackage{mathtools}
+\usepackage{tikz}
+\usetikzlibrary{
+  arrows,
+  arrows.meta,
+  calc,
+  decorations.pathreplacing,
+  decorations.text,
+  math,
+  positioning,
+  shapes,
+}
 
 % Céu.
 \newcommand{\CEU}{\textsc{C\'{e}u}\xspace}
@@ -58,8 +69,8 @@
 \def\@int{\mathit{int}}
 \def\@ext{\mathit{ext}}
 \let\ext\@ext
-\def\@ceuop#1{\mathop{\normalfont{\texttt{#1}}}}%
-\def\@ceubin#1{\mathbin{\normalfont{\texttt{#1}}}}%
+\def\@ceuop#1{\mathop{\small{\texttt{#1}}}}%
+\def\@ceubin#1{\mathbin{\small{\texttt{#1}}}}%
 \def\ceu{\protect\@ceu}
 \def\@ceu#1{%
   \bgroup
@@ -190,3 +201,7 @@
 \newcommand{\Hout}{{\#\@out}}
 \newcommand{\Hnst}{{\#\@nst}}
 \makeatother
+
+% Hacks to reduce the space after captions.
+\setlength{\textfloatsep}{.5\baselineskip}
+\setlength{\intextsep}{.5\baselineskip}
