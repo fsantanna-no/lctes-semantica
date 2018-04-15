@@ -149,7 +149,7 @@ associated reaction.
 The life-cycle of a program in \CEU can be summarized as
 follows~\cite{ceu.sensys13}:
 %
-\begin{enumerate}[i.]
+\begin{enumerate:i}
 \item The program initiates a ``boot reaction'' in a single trail (parallel
       constructs may create new trails).
 \item Active trails execute until they await or terminate, one after
@@ -160,7 +160,7 @@ follows~\cite{ceu.sensys13}:
 \item On the occurrence of a new external input event, the environment
       awakes \emph{all} trails awaiting that event, and the program goes back to
       step~(ii).
-\end{enumerate}
+\end{enumerate:i}
 
 A program must react to an event completely before handling the next one.
 %

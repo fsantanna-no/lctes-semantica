@@ -3,6 +3,7 @@
 \usepackage{enumerate}
 \usepackage{etoolbox}
 \usepackage{mathtools}
+\usepackage{thm-restate}
 \usepackage{tikz}
 \usetikzlibrary{
   arrows,
@@ -143,6 +144,19 @@
   \AtBeginEnvironment{subcase}{\setcounter{subsubcase}{0}}
 }
 \makeatother
+
+% Alternative enumerations and proof by cases.
+\usepackage{enumitem}
+\newlist{enumerate:a}{enumerate}{4}
+\setlist[enumerate:a]{label=(\alph*)}
+\newlist{enumerate:i}{enumerate}{4}
+\setlist[enumerate:i]{label=(\roman*)}
+%%
+\newlist{casex}{enumerate}{4}
+\SetLabelAlign{casex}{\emph{Case}~#1.\hfil}
+\setlist[casex]{itemsep=1ex,leftmargin=\parindent,labelindent=\parindent,
+labelwidth=*,align=casex,label*=.\arabic*}
+\setlist[casex,1]{label=\arabic*,leftmargin=0pt,labelindent=0pt}
 
 % Proof trees (used to typeset proofs and rules).
 \usepackage{bussproofs}

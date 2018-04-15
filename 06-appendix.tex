@@ -1,61 +1,24 @@
 \section{Detailed Proofs}
 \label{sec.proofs}
 
-\subsection*{Determinism}
-
 
-\begin{lemma}
-  \label{lem.det-out}
-  %%
-  If~$\delta\out\delta_1$ and~$\delta\out\delta_2$ then~$\delta_1=\delta_2$.
-\end{lemma}
+\lemxdetout*
 \begin{proof}
   The lemma is vacuously true if~$\delta$ cannot be advanced by~$\out$
   transitions.  Suppose that is not the case and let~$\delta=\<p,n,e>$,
   $\delta_1=\<p_1,n_1,e_1>$ and~$\delta_2=\<p_2,n_2,e_2>$.  Then, there are
   two possibilities.
-  \begin{case}
-    $e\ne\nil$.  Both transitions are applications of~\R{push}.
+  \begin{casex}
+  \item $e\ne\nil$.  Both transitions are applications of~\R{push}.
     Hence~$p_1=p_2=\bcast(p,e)$, $n_1=n_2=n+1$, and~$e_1=e_2=\nil$.
-  \end{case}
-  \begin{case}
-    $e=\nil$.  Both transitions are applications of~\R{pop}.
-    Hence~$p_1=p_2=p$, $n_1=n_2=n-1$, and~$e_1=e_2=\nil$.\qedhere
-  \end{case}
+    %%
+  \item $e=\nil$.  Both transitions are applications of~\R{pop}.
+    Hence $p_1=p_2=p$, $n_1=n_2=n-1$, and~$e_1=e_2=\nil$.\qedhere
+  \end{casex}
 \end{proof}
 
-% \begin{theorem}
-%   \label{thm.det-out-i}
-%   %%
-%   If~$\delta\out[i]\delta_1$ and~$\delta\out[i]\delta_2$
-%   then~$\delta_1=\delta_2$.
-% \end{theorem}
-% \begin{proof}
-%   By induction on~$i$.
-%   %%
-%   The theorem is trivially true if~$i=0$ and follows directly from
-%   Lemma~\ref{lem.det-out} if~$i=1$.  (The theorem is vacuously true
-%   for~$\outpush$ transitions if~$i>1$ since they cannot be applied more
-%   than once in a row and cannot occur after a~$\outpop$ transition.)
-%   %%
-%   Suppose
-%   \[
-%     \delta\out[1]\delta_1'\out[i-1]\delta_1
-%     \quad\text{and}\quad
-%     \delta\out[1]\delta_2'\out[i-1]\delta_2\,,
-%   \]
-%   for some~$i>1$, $\delta_1'$ and~$\delta_2'$.
-%   %%
-%   By Lemma~\ref{lem.det-out}, $\delta_1'=\delta_2'$.  By the induction
-%   hypothesis, $\delta_1=\delta_2$.\qedhere
-% \end{proof}
-
 
-\begin{lemma}
-  \label{lem.det-nst}
-  %%
-  If~$\delta\nst\delta_1$ and~$\delta\nst\delta_2$ then~$\delta_1=\delta_2$.
-\end{lemma}
+\lemxdetnst*
 \begin{proof}
   By induction on the structure of~$\nst$ derivations.  The lemma is
   vacuously true if~$\delta$ cannot be advanced by~$\nst$ transitions.
@@ -76,108 +39,92 @@
   Depending on the structure of program~$p$, the following~11 cases are
   possible.  (Note that~$p$ cannot be an~$\ceu{\AwaitExt}$,
   $\ceu{\AwaitInt}$, $\ceu{\Break}$, $\ceu{\Every}$, $\ceu{\Fin}$,
-  or~$\ceu{\Nop}$ expression as there are no~$\nst$ rules to transition such
+  or~$\ceu{\Nop}$ statement as there are no~$\nst$ rules to transition such
   programs.)
 
-  \begin{case}
-    $p=\ceu{\Mem(\Id)}$.
+  \begin{casex}
+  \item $p=\ceu{\Mem(\Id)}$.
     %%
     Then derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{mem},
     i.e., their conclusions are obtained by an application of this rule.
     Hence~$p_1=p_2=\ceu{\Nop}$ and~$e_1=e_2=\nil$.
-  \end{case}
-
-  \begin{case}
-    $p=\ceu{\EmitInt(e')}$.
+    %%
+  \item $p=\ceu{\EmitInt(e')}$.
     %%
     Then~$\pi_1$ and~$\pi_2$ are instances of~\R{emit-int}.
     Hence~$p_1=p_2=\ceu{\CanRun(n)}$ and~$e_1=e_2=e'$.
-  \end{case}
-
-  \begin{case}
-    $p=\ceu{\CanRun(n)}$.
     %%
+  \item $p=\ceu{\CanRun(n)}$.
+    %% \
     Then~$\pi_1$ and~$\pi_2$ are instances of~\R{can-run}.
     Hence~$p_1=p_2=\ceu{\Nop}$ and~$e_1=e_2=\nil$.
-  \end{case}
-
-  \begin{case}
-    $p=\ceu{\IfElse{\Mem(\Id)}{p'}{p''}}$.
+    %%
+  \item $p=\ceu{\IfElse{\Mem(\Id)}{p'}{p''}}$.
     %%
     There are two subcases.
-    \begin{subcase}
-      $\eval(\ceu{\Mem(\Id)})$~is true.
+    \begin{casex}
+    \item$\eval(\ceu{\Mem(\Id)})$.
       %%
       Then~$\pi_1$ and~$\pi_2$ are instances of~\R{if-true}.
       Hence~$p_1=p_2=p'$ and~$e_1=e_2=\nil$.
-    \end{subcase}
-    \begin{subcase}
-      $\eval(\ceu{\Mem(\Id)})$ is false.
+      %%
+    \item$\lnot\eval(\ceu{\Mem(\Id)})$.
       %%
       Then~$\pi_1$ and~$\pi_2$ are instances of~\R{if-false}.
       Hence~$p_1=p_2=p''$ and~$e_1=e_2=\nil$.
-    \end{subcase}
-  \end{case}
-
-  \begin{case}
-    $p=\ceu{p';\,p''}$.
+    \end{casex}
+    %%
+  \item$p=\ceu{p';\,p''}$.
     %%
     There are three subcases.
-    \begin{subcase}
-      $p'=\ceu{\Nop}$.
+    \begin{casex}
+    \item $p'=\ceu{\Nop}$.
       %%
       Then~$\pi_1$ and~$\pi_2$ are instances of~\R{seq-nop}.
       Hence~$p_1=p_2=p''$ and~$e_1=e_2=\nil$.
-    \end{subcase}
-    \begin{subcase}
-      $p'=\ceu{\Break}$.
+      %%
+    \item $p'=\ceu{\Break}$.
       %%
       Then~$\pi_1$ and~$\pi_2$ are instances of~\R{seq-brk}.
       Hence~$p_1=p_2=\ceu{\Break}$ and~$e_1=e_2=\nil$.
-    \end{subcase}
-    \begin{subcase}
-      $p'\ne\ceu{\Nop},\ceu{\Break}$.
       %%
-      Then~$\pi_1$ and~$\pi_2$ are instances of~\R{seq-adv}.
-      Thus there are derivations~$\pi_1'$ and~$\pi_2'$ such that
+    \item $p'\ne\ceu{\Nop},\ceu{\Break}$.
+      %%
+      Then~$\pi_1$ and~$\pi_2$ are instances of~\R{seq-adv}.  Thus there
+      are derivations~$\pi_1'$ and~$\pi_2'$ such that
       \begin{align*}
         \pi_1'&\Vdash\<p',n,\nil>\nst\<p_1',n,e_1'>\\
         \pi_2'&\Vdash\<p',n,\nil>\nst\<p_2',n,e_2'>
       \end{align*}
       for some~$p_1'$, $p_2'$, $e_1'$, and~$e_2'$.  By the induction
       hypothesis, $p_1'=p_2'$ and~$e_1'=e_2'$.
-      Hence~$p_1=\ceu{p_1';p''}=\ceu{p_2';p''}=p_2$ and~$e_1=e_1'=e_2'=e_2$.
-    \end{subcase}
-  \end{case}
-
-  \begin{case}
-    $p=\ceu{\Loop{p'}}$.
+      Hence~$p_1=\ceu{p_1';p''}=\ceu{p_2';p''}=p_2$
+      and~$e_1=e_1'=e_2'=e_2$.
+    \end{casex}
+    %%
+  \item $p=\ceu{\Loop{p'}}$.
     %%
     Then~$\pi_1$ and~$\pi_2$ are instances of~\R{loop-expd}.
     Hence~$p_1=p_2=\ceu{p'\AtLoop{p'}}$ and~$e_1=e_2=\nil$.
-  \end{case}
-
-  \begin{case}
-    $p=\ceu{p'\AtLoop{p''}}$.
+    %%
+  \item $p=\ceu{p'\AtLoop{p''}}$.
     %%
     There are three subcases.
-    \begin{subcase}
-      $p'=\ceu{\Nop}$.
+    \begin{casex}
+    \item $p'=\ceu{\Nop}$.
       %%
       Then~$\pi_1$ and~$\pi_2$ are instances of~\R{loop-nop}.
       Hence~$p_1=p_2=\ceu{\Loop{p''}}$ and~$e_1=e_2=\nil$.
-    \end{subcase}
-    \begin{subcase}
-      $p'=\ceu{\Break}$.
+      %%
+    \item $p'=\ceu{\Break}$.
       %%
       Then~$\pi_1$ and~$\pi_2$ are instances of~\R{loop-brk}.
       Hence~$p_1=p_2=\ceu{\Nop}$ and~$e_1=e_2=\nil$.
-    \end{subcase}
-    \begin{subcase}
-      $p'\ne\ceu{\Nop},\ceu{\Break}$.
       %%
-      Then~$\pi_1$ and~$\pi_2$ are instances of~\R{loop-adv}.
-      Thus there are derivations~$\pi_1'$ and~$\pi_2'$ such that
+    \item $p'\ne\ceu{\Nop},\ceu{\Break}$.
+      %%
+      Then~$\pi_1$ and~$\pi_2$ are instances of~\R{loop-adv}.  Thus there
+      are derivations~$\pi_1'$ and~$\pi_2'$ such that
       \begin{align*}
         \pi_1'&\Vdash\<p',n,\nil>\nst\<p_1',n,e_1'>\\
         \pi_2'&\Vdash\<p',n,\nil>\nst\<p_2',n,e_2'>
@@ -186,43 +133,36 @@
       hypothesis, $p_1'=p_2'$ and~$e_1'=e_2'$.
       Hence~$p_1=\ceu{p_1'\AtLoop{p''}}=\ceu{p_2'\AtLoop{p''}}=p_2$
       and~$e_1=e_1'=e_2'=e_2$.
-    \end{subcase}
-  \end{case}
-
-  \begin{case}
-    $p=\ceu{p'\And{p''}}$.
+    \end{casex}
+  \item $p=\ceu{p'\And{p''}}$.
     %%
     Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-expd}.
-    Hence~$p_1=p_2=\ceu{{p'}\AtAnd{(\CanRun(n);\,p'')}}$ and~$e_1=e_2=\nil$.
-  \end{case}
-
-  \begin{case}
-    $p=\ceu{p'\AtAnd{p''}}$.
+    Hence~$p_1=p_2=\ceu{{p'}\AtAnd{(\CanRun(n);\,p'')}}$
+    and~$e_1=e_2=\nil$.
+    %%
+  \item $p=\ceu{p'\AtAnd{p''}}$.
     %%
     There are two subcases.
-    \begin{subcase}
-      $\isblocked(p',n)$~is false.
+    \begin{casex}
+    \item$\lnot\isblocked(p',n)$.
       %%
       There are three subcases.
-      \begin{subsubcase}
-        $p'=\ceu{\Nop}$.
+      \begin{casex}
+      \item $p'=\ceu{\Nop}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-nop1}.
         Hence~$p_1=p_2=p''$ and~$e_1=e_2=\nil$.
-      \end{subsubcase}
-      \begin{subsubcase}
-        \label{lem.det-nst.and-brk1}
+        %%
+      \item\label{lem.x.det-nst.and-brk1}
         $p'=\ceu{\Break}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-brk1}.
         Hence~$p_1=p_2=\ceu{\clear(p'');\Break}$ and~$e_1=e_2=\nil$.
-      \end{subsubcase}
-      \begin{subsubcase}
-        \label{lem.det-nst.and-adv1}
-        $p'\ne\ceu{\Nop},\ceu{\Break}$.
         %%
-        Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-adv1}.
-        Thus there are derivations~$\pi_1'$ and~$\pi_2'$ such that
+      \item\label{lem.x.det-nst.and-adv1}$p'\ne\ceu{\Nop},\ceu{\Break}$.
+        %%
+        Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-adv1}.  Thus
+        there are derivations~$\pi_1'$ and~$\pi_2'$ such that
         \begin{align*}
           \pi_1'&\Vdash\<p',n,\nil>\nst\<p_1',n,e_1'>\\
           \pi_2'&\Vdash\<p',n,\nil>\nst\<p_2',n,e_2'>
@@ -231,31 +171,26 @@
         hypothesis, $p_1'=p_2'$ and~$e_1'=e_2'$.
         Hence~$p_1=\ceu{{p_1'}\And{p''}}=\ceu{{p_2'}\And{p''}}=p_2$
         and~$e_1=e_1'=e_2'=e_2$.
-      \end{subsubcase}
-    \end{subcase}
-    \begin{subcase}
-      $\isblocked(p',n)$~is true.
+      \end{casex}
+      %%
+    \item$\isblocked(p',n)$.
       %%
       There are three subcases.
-      \begin{subsubcase}
-        $p''=\ceu{\Nop}$.
+      \begin{casex}
+      \item $p''=\ceu{\Nop}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-nop2}.
         Hence~$p_1=p_2=p'$ and~$e_1=e_2=\nil$.
-      \end{subsubcase}
-      \begin{subsubcase}
-        \label{lem.det-nst.and-brk2}
-        $p''=\ceu{\Break}$.
+        %%
+      \item\label{lem.x.det-nst.and-brk2}$p''=\ceu{\Break}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-brk2}.
         Hence~$p_1=p_2=\ceu{\clear(p');\Break}$ and~$e_1=e_2=\nil$.
-      \end{subsubcase}
-      \begin{subsubcase}
-        \label{lem.det-nst.and-adv2}
-        $p''\ne\ceu{\Nop},\ceu{\Break}$.
         %%
-        Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-adv2}.  Thus there
-        are derivations~$\pi_1''$ and~$\pi_2''$ such that
+      \item\label{lem.x.det-nst.and-adv2}$p''\ne\ceu{\Nop},\ceu{\Break}$.
+        %%
+        Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-adv2}.  Thus
+        there are derivations~$\pi_1''$ and~$\pi_2''$ such that
         \begin{align*}
           \pi_1''&\Vdash\<p'',n,\nil>\nst\<p_1'',n,e_1''>\\
           \pi_2''&\Vdash\<p'',n,\nil>\nst\<p_2'',n,e_2''>
@@ -264,88 +199,64 @@
         hypothesis, $p_1''=p_2''$ and~$e_1''=e_2''$.
         Hence~$p_1=\ceu{{p'}\And{p_1''}}=\ceu{{p'}\And{p_2''}}=p_2$
         and~$e_1=e_1''=e_2''=e_2$.
-      \end{subsubcase}
-    \end{subcase}
-  \end{case}
-
-  \begin{case}
-    $p=\ceu{p'\Or{p''}}$.
+      \end{casex}
+    \end{casex}
+    %%
+  \item$p=\ceu{p'\Or{p''}}$.
     %%
     Then~$\pi_1$ and~$\pi_2$ are instances of~\R{or-expd}.
-    Hence~$p_1=p_2=\ceu{{p'}\AtOr{(\CanRun(n);\,p'')}}$ and~$e_1=e_2=\nil$.
-  \end{case}
-
-  \begin{case}
-    $p=\ceu{p'\AtOr{p''}}$.
+    Hence~$p_1=p_2=\ceu{{p'}\AtOr{(\CanRun(n);\,p'')}}$
+    and~$e_1=e_2=\nil$.
+    %%
+  \item$p=\ceu{p'\AtOr{p''}}$.
     %%
     There are two subcases.
-    \begin{subcase}
-      $\isblocked(p',n)$~is false.
+    \begin{casex}
+    \item$\lnot\isblocked(p',n)$.
       %%
       There are three subcases.
-      \begin{subsubcase}
-        $p'=\ceu{\Nop}$.
+      \begin{casex}
+      \item $p'=\ceu{\Nop}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{or-nop1}.
         Hence~$p_1=p_2=\clear(p'')$ and~$e_1=e_2=\nil$.
-      \end{subsubcase}
-      \begin{subsubcase}
-        $p'=\ceu{\Break}$.
         %%
-        Similar to Case~\ref{lem.det-nst.and-brk1}.
-      \end{subsubcase}
-      \begin{subsubcase}
-        $p'\ne\ceu{\Nop},\ceu{\Break}$.
+      \item $p'=\ceu{\Break}$.
         %%
-        Similar to Case~\ref{lem.det-nst.and-adv1}.
-      \end{subsubcase}
-    \end{subcase}
-    \begin{subcase}
-      $\isblocked(p',n)$~is true.
+        Similar to Case~\ref{lem.x.det-nst.and-brk1}.
+        %%
+      \item$p'\ne\ceu{\Nop},\ceu{\Break}$.
+        %%
+        Similar to Case~\ref{lem.x.det-nst.and-adv1}.
+      \end{casex}
+      %%
+    \item$\isblocked(p',n)$.
       %%
       There are three subcases.
-      \begin{subsubcase}
-        $p''=\ceu{\Nop}$.
+      \begin{casex}
+      \item $p''=\ceu{\Nop}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{or-nop1}.
         Hence~$p_1=p_2=\clear(p')$ and~$e_1=e_2=\nil$.
-      \end{subsubcase}
-      \begin{subsubcase}
-        $p''=\ceu{\Break}$.
         %%
-        Similar to Case~\ref{lem.det-nst.and-brk2}.
-      \end{subsubcase}
-      \begin{subsubcase}
-        $p''\ne\ceu{\Nop},\ceu{\Break}$.
+      \item $p''=\ceu{\Break}$.
         %%
-        Similar to Case~\ref{lem.det-nst.and-adv2}.
+        Similar to Case~\ref{lem.x.det-nst.and-brk2}.
         %%
-        \qedhere
-      \end{subsubcase}
-    \end{subcase}
-  \end{case}
+      \item $p''\ne\ceu{\Nop},\ceu{\Break}$.
+        %%
+        Similar to Case~\ref{lem.x.det-nst.and-adv2}.
+        %%
+      \end{casex}
+    \end{casex}
+  \end{casex}
 \end{proof}
 
-% \begin{theorem}
-%   \label{thm.det-nst-i}
-%   %%
-%   If~$\delta\nst[i]\delta_1$ and~$\delta\nst[i]\delta_2$
-%   then~$\delta_1=\delta_2$.
-% \end{theorem}
-% \begin{proof}
-%   By induction on~$i$.  Similar to the proof of
-%   Theorem~\ref{thm.det-out-pop-i}.
-% \end{proof}
-
 
-\begin{theorem}[Determinism]\label{thm.det}\strut\\
-  %%
-  If~$\delta\trans[i]\delta_1$ and~$\delta\trans[i]\delta_2$
-  then~$\delta_1=\delta_2$.
-\end{theorem}
+\thmxdet*
 \begin{proof}
   By induction on~$i$.  The theorem is trivially true if~$i=0$ and follows
-  directly from Lemmas~\ref{lem.det-out} and~\ref{lem.det-nst} for~$i=1$.
+  directly from Lemmas~\ref{lem.x.det-out} and~\ref{lem.x.det-nst} for~$i=1$.
   %%
   Suppose
   \[
@@ -355,19 +266,16 @@
   \]
   for some~$i>1$, $\delta_1'$ and~$\delta_2'$.
   There are two possibilities.
-  \begin{case}
-    $\delta\out[1]\delta_1'$ and~$\delta\out[1]\delta_2'$.  Then, by
-    Lemma~\ref{lem.det-out}, $\delta_1'=\delta_2'$, and by the induction
+  \begin{casex}
+  \item $\delta\out[1]\delta_1'$ and~$\delta\out[1]\delta_2'$.  Then, by
+    Lemma~\ref{lem.x.det-out}, $\delta_1'=\delta_2'$, and by the induction
     hypothesis, $\delta_1=\delta_2$.
-  \end{case}
-  \begin{case}
-    $\delta\nst[1]\delta_1'$ and~$\delta\nst[1]\delta_2'$.  Then, by
-    Lemma~\ref{lem.det-nst}, $\delta_1'=\delta_2'$, and by the induction
+    %%
+  \item $\delta\nst[1]\delta_1'$ and~$\delta\nst[1]\delta_2'$.  Then, by
+    Lemma~\ref{lem.x.det-nst}, $\delta_1'=\delta_2'$, and by the induction
     hypothesis, $\delta_1=\delta_2$.\qedhere
-  \end{case}
+  \end{casex}
 \end{proof}
-
-\subsection*{Termination}
 
 
 \begin{definition}
@@ -424,7 +332,7 @@
   \label{lem.props-nst-i}\strut\\
   %%
   If~$\<p_1,n,e>\nst[i]\<p_1',n,e'>$, for any~$p_2$:
-  \begin{enumerate}[(a)]
+  \begin{enumerate:a}
   \item\label{lem.props-nst-i.a}
     $\<\ceu{p_1;\,p_2},n,e>\nst[i]\<p_1';p_2,n,e'>$.
     %%
@@ -436,23 +344,23 @@
     %%
   \item\label{lem.props-nst-i.d}
     $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[i]\<\ceu{{p_1}'\AtOr{p_2}},n,e'>$.
-  \end{enumerate}
+  \end{enumerate:a}
   \smallskip
   If~$\<p_2,n,e>\nst[i]\<p_2',n,e'>$, for any~$p_1$ such
   that~$\isblocked(p_1,n)$:
-  \begin{enumerate}[(a)]
+  \begin{enumerate:a}
     \setcounter{enumi}{4}
   \item\label{lem.props-nst-i.e}
     $\<\ceu{{p_1}\AtAnd{p_2}},n,e>\nst[i]\<\ceu{{p_1}\AtAnd{p_2'}},n,e'>$.
     %%
   \item\label{lem.props-nst-i.f}
     $\<\ceu{{p_1}\AtOr{p_2}},n,e>\nst[i]\<\ceu{{p_1}\AtOr{p_2'}},n,e'>$.
-  \end{enumerate}
+  \end{enumerate:a}
 \end{lemma}
 \begin{proof}
   By induction on~$i$.
   %%
-  \begin{enumerate}[(a)]
+  \begin{enumerate:a}
   \item The lemma is trivially true for~$i=0$, as~$p_1=p_1'$, and follows
     directly from~\R{seq-adv} for~$i=1$.  Suppose
     \begin{equation}
@@ -584,14 +492,14 @@
     \]
 
   \item Similar to Case~\eqref{lem.props-nst-i.e}.\qedhere
-  \end{enumerate}
+  \end{enumerate:a}
 \end{proof}
 
 
 \begin{assumption}[Syntactic restrictions]\strut
   \label{ass.syn-rest}
   %%
-  \begin{enumerate}[(a)]
+  \begin{enumerate:a}
   \item\label{ass.syn-rest.fin} If~$p=\ceu{\Fin{p_1}}$ then~$p_1$ contain no
     occurrences of~$\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$, $\ceu{\Every}$,
     or~$\ceu{\Fin}$ expressions.  Consequently, for any~$n$,
@@ -607,7 +515,7 @@
       \<\ceu{\Loop{p_1}},n,\nil>\nst[*]\<p_1',n,e>\,,
     \]
     where~$p_1'=\ceu{{\Break}\AtLoop{p_1}}$ or~$\isblocked(p_1',n)$\,.
-  \end{enumerate}
+  \end{enumerate:a}
 \end{assumption}
 
 
@@ -1072,7 +980,7 @@
 
   The auxiliary function~$\pot'$ is defined by
   clauses~\label{def.pot.first}--\label{def.pot.last}:
-  \begin{enumerate}[(a)]
+  \begin{enumerate:a}
   \item\label{def.pot.first}$\pot'(\ceu{\EmitInt}(e))=1$;
     %%
   \item$\pot'(\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}})
@@ -1110,7 +1018,7 @@
   \item Otherwise, if none
     of~\eqref{def.pot.first}--\eqref{def.pot.before-last} applies,
     $\pot(\_)=0$.
-  \end{enumerate}
+  \end{enumerate:a}
   %%
   %%\gl{Should~$\pot'(\ceu{\protect\Every{e}\,{p_1}})\ne0$ above?}
   %%
@@ -1146,17 +1054,17 @@
 \begin{lemma}\strut
   \label{lem.rank-out}
   %%
-  \begin{enumerate}[(a)]
+  \begin{enumerate:a}
   \item\label{lem.rank-out-push} If~$\delta\outpush\delta'$
     then~$\rank(\delta)=\rank(\delta')$.
   \item\label{lem.rank-out-pop} If~$\delta\outpop\delta'$
     then~$\rank(\delta)>\rank(\delta')$.
-  \end{enumerate}
+  \end{enumerate:a}
 \end{lemma}
 \begin{proof}\strut
   Let~$\delta=\<p,n,e>$, $\delta'=\<p',n',e'>$,
   $\rank(\delta)=\<i,j>$, and~$\rank(\delta')=\<i',j'>$.
-  \begin{enumerate}[(a)]
+  \begin{enumerate:a}
   \item Suppose~$\<p,n,e>\outpush\<p',n',e'>$.  Then, by~\R{push},
     $e\ne\nil$, $p'=\bcast(p,e)$, $n'=n+1$, and~$e'=\nil$.  By
     Definition~\ref{def.rank}, $j=n+1$, as~$e\ne\nil$, and~$j'=n+1$,
@@ -1188,7 +1096,7 @@
     hence~$i=i'$.  And by Definition~\ref{def.rank}, $j=n$, as~$e=\nil$,
     and~$j'=n-1$, as~$e'=\nil$ and~$n'=n-1$; hence~$j>j'$.
     Therefore,~${\<i,j>}>{\<i',j'>}$.\qedhere
-  \end{enumerate}
+  \end{enumerate:a}
 \end{proof}
 
 
