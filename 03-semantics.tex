@@ -191,10 +191,10 @@ the events emitted before and after the transition (both possibly being the
 empty event~$\nil$).
 %$\E$ is a set of primitive events.
 
-We will refer to the triples on the left-hand and right-hand sides of
+We refer to the triples on the left-hand and right-hand sides of
 symbol~$\trans$ as \emph{descriptions} (denoted~$\delta$).  The description
-on the left of~$\trans$ is called the \emph{input description},
-the one on its right is called the \emph{output description}.
+on the left of~$\trans$ is called the \emph{input description}, the one on
+its right is called the \emph{output description}.
 
 %-
 % \begin{align*}
@@ -209,12 +209,14 @@ the one on its right is called the \emph{output description}.
 % \end{align*}
 %-
 
-At the beginning of a reaction to an input event~$id$, the input description is
-initialized with stack level~0 ($n=0$) and with the externally emitted event~$e=id$.
-%, but \code{emitInt} expressions can increase the stack level.
-At the end of a reaction, after an arbitrary but finite number of transitions,
-the last output description will block with a possibly modified program~$p'$ at stack
-level~0 and no event emitted:
+At the beginning of a reaction to an input event~$id$, the input description
+is initialized with stack level~0 ($n=0$) and with the externally emitted
+event~$e=\ceu{\Id}$.  At the end of a reaction, after an arbitrary but
+finite number of transitions, the last output description will block with a
+possibly modified program~$p'$ at stack level~0 and no event
+emitted\footnote{We write~$\trans[i]$ to mean~$i$ transitions in sequence,
+  and we write~$\trans[*]$ to mean a finite (possibly zero) number of
+  transitions in sequence.}:
 \[
   \<p,0,e>\mathbin{\trans[*]}\<p',0,\nil>\,.
 \]
@@ -228,18 +230,18 @@ $\out$ and \emph{nested transitions} $\nst$\,.
 The rules \R{push} and \R{pop} for~$\out$ transitions are non-recursive
 definitions that apply to the program as a whole.  These are the only rules
 that manipulate the stack level.
-\begin{align*}
-  &\AxiomC{$e\ne\nil$}
+\begin{gather*}
+  \AxiomC{$e\ne\nil$}
   \UnaryInfC{$\<p,n,e>\out\<\bcast(p,e),n+1,\nil>$}
   \DisplayProof
   \Rtag{push}\\[1.2\jot]
   %%
-  &\AxiomC{$n>0$}
+  \AxiomC{$n>0$}
   \AxiomC{$p=\ceu{\Nop} \vee p=\ceu{\Break} \vee \isblocked(p,n)$}
   \BinaryInfC{$\<p,n,\nil>\out\<p,n-1,\nil>$}
   \DisplayProof
   \Rtag{pop}
-\end{align*}
+\end{gather*}
 
 %-
 % { \setlength{\jot}{20pt}
@@ -309,7 +311,7 @@ rules \R{push} and \R{pop} from matching and, consequently, from
 inadvertently modifying the current stack level before the nested reaction
 is complete.
 
-A complete reaction consists of a series of transitions of the form
+A complete reaction consists of a series of transitions% of the form
 \begin{align*}
   \<p,0,e_\ext>\outpush\<p_1,1,\nil>
   \Big[\null\nst[*]\null\out\null\Big]\!\!\ast
@@ -335,14 +337,15 @@ A complete reaction consists of a series of transitions of the form
 % \end{align*}
 %-
 %
-where the~$\ast$'s stand for a finite (possibly zero) number of repetitions.
-First, a~$\outpush$ starts a nested reaction at level~1.
-Then, a series of alternations between zero or more~$\nst$ transitions (nested reactions) and a
-single~$\out$ transition (stack operation) takes place.
-Finally, a last~$\outpop$ transition decrements the
-stack level to~0 and terminates the reaction.
+First, a~$\outpush$ starts a nested reaction at level~1.  Then, a series of
+alternations between zero or more~$\nst$ transitions (nested reactions) and
+a single~$\out$ transition (stack operation) takes place.  Finally, a
+last~$\outpop$ transition decrements the stack level to~0 and terminates the
+reaction.
 
 The~$\nst$ rules for atoms are defined as follows:
+\begingroup
+\def\JOT{-.1\jot}
 \begin{align*}
   \<\ceu{\Mem(\Id)},n,\nil>
   &\nst\<\ceu{\Nop},n,\nil>\Rtag{mem}\\[\JOT]
@@ -353,6 +356,7 @@ The~$\nst$ rules for atoms are defined as follows:
   \<\ceu{\CanRun(n)},n,\nil>
   &\nst\<\ceu{\Nop},n,\nil>\Rtag{can-run}
 \end{align*}
+\endgroup
 
 %-
 % { \setlength{\jot}{20pt}
@@ -386,7 +390,7 @@ internal events.
 The rules for conditionals and sequences are the following:
 \vskip-.6\baselineskip
 \begingroup
-\def\JOT{.5\jot}
+\def\JOT{-.1\jot}
 \begin{gather*}
   \AxiomC{$\eval(\ceu{\Mem(\Id)})$}
   \UnaryInfC{$\<\ceu{\IfElse{\Mem(\Id)}{p}{q}},n,\nil>\nst\<p,n,\nil>$}
@@ -938,7 +942,7 @@ description either no rule is applicable or exactly one of them can be
 applied (no choice involved).  This coupled with the fact that the output of
 every rule is a function of its input implies that transitions are
 deterministic: the same input description, if it can transition, will always
-result in the same output description.  In other words, the transition
+result in the same output description.  Thus the transition
 relation~$\trans$ is in fact a partial function.
 
 The next two lemmas establish the determinism of a single application
@@ -963,8 +967,8 @@ the proof of the Theorem~\ref{thm.x.det}.
 The main result of this section, Theorem~\ref{thm.x.det}, establishes that
 any given number~$i\ge0$ of applications of arbitrary transition rules,
 starting from the same input description, will always lead to the same
-output description, i.e., any finite sequence of transitions behave
-deterministically.
+output description.  In other words, any finite sequence of transitions
+behave deterministically.
 
 \begin{restatable}[Determinism]{theorem}{thmxdet}
   \label{thm.x.det}
@@ -972,7 +976,6 @@ deterministically.
   $\delta\trans[i]\delta_1$ and~$\delta\trans[i]\delta_2$
   implies~$\delta_1=\delta_2$.
 \end{restatable}
-
 \begin{proof}
   By induction on~$i$.  The theorem is trivially true if~$i=0$ and follows
   directly from the previous lemmas if~$i=1$.  Suppose
@@ -1043,7 +1046,7 @@ sufficiently long sequence of applications of arbitrary transition rules
 will eventually lead to an irreducible description, i.e., one that cannot be
 modified by further transitions.  Before doing that, however, we need to
 introduce some notation and establish some basic properties of
-transitions~$\nst$ and~$\out$.
+the transition relations~$\nst$ and~$\out$.
 
 \begin{definition}
   \label{def.x.Hnst}
@@ -1170,12 +1173,12 @@ essential to prove the next theorem.
 
 Theorem~\ref{thm.x.term-nst-*} establishes that a finite (possibly zero)
 number of~$\nst$ transitions eventually leads to a nested-irreducible
-description.  Put another way, it establishes that, for any input
-description~$\delta$, it is always possible to transform~$\delta$ in a
-nested-irreducible description~$\delta'$ by applying to it a sufficiently
-long sequence of~$\nst$ transitions.  The proof follows by induction on the
-structure of programs (members of set~$P$) and depends on
-Lemma~\ref{lem.x.props-nst-i} and Assumption~\ref{ass.x.syn-rest}.
+description.  Hence, for any input description~$\delta$, it is always
+possible to transform~$\delta$ in a nested-irreducible description~$\delta'$
+by applying to it a sufficiently long sequence of~$\nst$ transitions.  The
+proof of the theorem follows by induction on the structure of programs
+(members of set~$P$) and depends on Lemma~\ref{lem.x.props-nst-i} and
+Assumption~\ref{ass.x.syn-rest}.
 
 \begin{restatable}{theorem}{thmxtermnstx}
   \label{thm.x.term-nst-*}
@@ -1187,8 +1190,8 @@ Lemma~\ref{lem.x.props-nst-i} and Assumption~\ref{ass.x.syn-rest}.
 The main result of this section, Theorem~\ref{thm.x.term}, is similar to
 Theorem~\ref{thm.x.term-nst-*} but applies to transitions~$\trans$ in
 general.  Before stating and proving it, we need to characterize irreducible
-descriptions in general.  This characterization, Definition~\ref{def.x.H},
-and depends on the notions of potency and rank.
+descriptions in general.  This characterization, given in
+Definition~\ref{def.x.H}, depends on the notions of potency and rank.
 
 \begin{definition}
   \label{def.x.pot}
@@ -1203,45 +1206,43 @@ and depends on the notions of potency and rank.
   reachable~$\ceu{\EmitInt}$ expressions in the program resulting from the
   broadcast of event~$e$ to~$p$.
 
-  The function~$\pot'$ is defined by the following clauses:
+  Function~$\pot'$ is defined by the following clauses:
   \begin{enumerate:a}
   \item\label{def.x.pot.first}$\pot'(\ceu{\EmitInt}(e))=1$.
     %%
-  \item$\pot'(\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}})=$\\
-    \strut\quad$\max\{\pot'(p_1),\pot'(p_2)\}$.
+  \item$\pot'(\ceu{\IfElse{\Mem(\Id)\!}{p_1\!}{p_2\!}})\!=\!
+    \max\{\pot'(p_1),\pot'(p_2)\}$.
     %%
   \item$\pot'(\ceu{\Loop{p_1}})=\pot'(p_1)$.
     %%
-  \item$\pot'(\ceu{{p_1}\And{p_2}})=\pot'(p_1)+\pot'(p_2)$.
-    %%
-  \item$\pot'(\ceu{{p_1}\Or{p_2}})=\pot'(p_1)+\pot'(p_2)$.
+  \item$\pot'(\ceu{{p_1}\And{p_2}})=\pot'(\ceu{{p_1}\Or{p_2}})=
+    \pot'(p_1)+\pot'(p_2)$.
     %%
   \item If~$p_1\ne\ceu{\Break},\ceu{\AwaitExt(e)}$,
     \begin{align*}
-      \pot'(\ceu{p_1;\,p_2})&=\pot'(p_1)+\pot'(p_2)\\
+      \pot'(\ceu{p_1;\,p_2})&=\pot'(p_1)+\pot'(p_2)\\[-.5\jot]
       \pot'(\ceu{p_1\AtLoop{p_2}})&=
       \begin{cases}
-        \pot'(p_1)              &\text{if\enspace(\dag)}\\
-        \pot'(p_1)+\pot'(p_2)   &\text{otherwise,}\\
+        \pot'(p_1)              &\text{if\enspace(\dag)}\\[-.5\jot]
+        \pot'(p_1)+\pot'(p_2)   &\text{otherwise,}\\[-.5\jot]
       \end{cases}
     \end{align*}
     where~(\dag) stands for: ``a~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$ occurs
     in all execution paths of~$p_1$''.
     %%
   \item If~$p_1,p_2\ne\ceu{\Break}$,
-    \[
-      \pot'(\ceu{{p_1}\AtAnd{p_2}})=\pot'(p_1)+\pot'(p_2)\,.
-    \]
+    $\pot'(\ceu{{p_1}\AtAnd{p_2}})=\pot'(p_1)+\pot'(p_2)$.
     %%
   \item\label{def.x.pot.before-last} If~$p_1,p_2\ne\ceu{\Break}$
     and~$p_1,p_2\ne\ceu{\Nop}$,
+    \vskip-.95em
     \[
       \pot'(\ceu{{p_1}\AtOr{p_2}})=\pot'(p_1)+\pot'(p_2)\,.
     \]
     %%
   \item\label{def.x.pot.last} Otherwise, if none
     of~\ref{def.x.pot.first}--\ref{def.x.pot.before-last} applies,
-    $\pot(\_)=0$.
+    $\pot'(\_)=0$.
   \end{enumerate:a}
 \end{definition}
 
@@ -1259,11 +1260,11 @@ and depends on the notions of potency and rank.
          n+1&\text{otherwise\,.}
        \end{cases}
   \end{alignat*}
-\end{definition}
-
 Intuitively, the rank of a description~$\delta$ is a measure of the maximum
 amount of ``work'' (transitions) required to transform~$\delta$ into an
-irreducible description, as defined bellow.
+irreducible description, in the following sense.
+\end{definition}
+
 
 \begin{definition}
   \label{def.x.H}
@@ -1288,235 +1289,106 @@ or~$i=i$ and~$j>j'$.
 The proof of Lemma~\ref{lem.x.rank-out} follows directly from~\R{push}
 and~\R{pop} and from Definitions~\ref{def.x.pot} and~\ref{def.x.rank}.  The
 proof of Lemma~\ref{lem.x.rank-nst}, however, is by induction on the
-structure of~$\nst$ derivations.  Since Lemma~\ref{lem.x.rank-nst} is of
-fundamental importance for the termination result, we present a sketch of its
-proof.
+structure of~$\nst$ derivations.
 
-\begin{lemma}\strut
+\begin{restatable}{lemma}{lemxrankout}\strut
   \label{lem.x.rank-out}
   %%
   \begin{enumerate:a}
-  \item\label{lem.rank-out-push} If~$\delta\outpush\delta'$
+  \item\label{lem.x.rank-out-push} If~$\delta\outpush\delta'$
     then~$\rank(\delta)=\rank(\delta')$.
-  \item\label{lem.rank-out-pop} If~$\delta\outpop\delta'$
+  \item\label{lem.x.rank-out-pop} If~$\delta\outpop\delta'$
     then~$\rank(\delta)>\rank(\delta')$.
   \end{enumerate:a}
-\end{lemma}
+\end{restatable}
 
-\begin{lemma}
+%\vskip-.25em
+
+\begin{restatable}{lemma}{lemxranknst}
   \label{lem.x.rank-nst}
   %%
   If~$\delta\nst\delta'$ then~$\rank(\delta)\ge\rank(\delta')$.
-\end{lemma}
-\begin{proof}
-  By induction on the structure of~$\nst$ derivations.  Let
-  \[
-    \delta=\<p,n,e>
-    \quad\text{and}\quad
-    \delta'=\<p',n',e'>
-  \]
-  be descriptions with~$\rank(\delta)=\<i,j>$ and~$\rank(\delta')=\<i',j'>$
-  such that~$\delta\nst\delta'$.  Then there is a derivation~$\pi$ whose
-  conclusion is~$\delta\nst\delta'$, i.e.,
-  $\pi\Vdash\<p,n,e>\nst\<p',n',e'>$.
-  %%
-  % \[
-  %   \pi\Vdash\<p,n,e>\nst\<p',n',e'>\,.
-  % \]
-  %%
-  By definition of~$\nst$, $e=\nil$ and~$n=n'$.  Depending on the structure
-  of program~$p$, there are~11 distinct cases to be considered.  In each one
-  of them, we need to show that~$\rank(\delta)\ge\rank(\delta')$.
-
-  We proceed to prove the case where~$p=\ceu{{p_1}\AtLoop{p_2}}$, which
-  itself consists of three subcases.
-  \begin{case}
-    $p_1=\ceu{\Nop}$.
-    %%
-    Then~$\pi$ is an instance of~\R{loop-nop}.  i.e., its conclusion is
-    obtained by an application of this rule.  Hence~$p'=p_2$ and~$e'=\nil$.
-    Thus
-    \begin{align*}
-        \rank(\delta)=\<\pot'(p_1)+\pot'(p_2),n>
-                     \ge\<pot'(p_2),n>=\rank(\delta')\,.
-    \end{align*}
-  \end{case}
-  \begin{case}
-    $p_1=\ceu{\Break}$.
-    %%
-    Then~$\pi$ is an instance of~\R{loop-brk}.
-    Hence~$p'=p_1$ and~$e'=\nil$.  Thus
-    $\rank(\delta)=\rank(\delta')=\<0,n>$.
-    %%
-    % \[
-    %   \rank(\delta)=\rank(\delta')=\<0,n>\,.
-    % \]
-    %%
-  \end{case}
-  \begin{case}
-    $p_1\ne\ceu{\Nop},\ceu{\Break}$.
-    %%
-    Then~$\pi$ is an instance of~\R{loop-adv}.  Hence there is a
-    derivation~$\pi'$ such that
-    \begin{equation}
-      \label{lem.x.rank-nst-eq1}
-      \pi'\Vdash\<p_1,n,\nil>\nst\<p_1',n,e_1'>\,,
-    \end{equation}
-    for some~$p_1'$ and~$e_1'$.  Thus~$p'=\ceu{p_1'\AtLoop{\,p_2}}$
-    and~$e'=e_1'$.
-
-    There are two subcases.
-    \begin{subcase}
-      \label{lem.x.rank-nst-case1}
-      $\pot'(p)=\pot'(p_1)$.
-      %%
-      Then, by Definition~\ref{def.pot}, every execution path of~$p_1$
-      contains a (matching)~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$ expression.
-      A single~$\nst$ cannot terminate the loop, since~$p_1\ne\ceu{\Break}$,
-      nor it can consume an~$\ceu{\AwaitExt}$, which means that all
-      execution paths in~$p_1'$ still contain a~$\ceu{\Break}$
-      or~$\ceu{\AwaitExt}$.  Hence~$\pot'(p')=\pot'(p_1')$.
-
-      There are two subcases.
-      \begin{subsubcase}
-        $e'=\nil$.
-        %%
-        Then $\rank(\delta)=\<pot'(p_1),n>$ and
-        $\rank(\delta')=\<pot'(p_1'),n>$.  From~\eqref{lem.x.rank-nst-eq1},
-        by the induction hypothesis, $\pot'(p_1)\ge\pot(p_1')$.  Thus
-        $\rank(\delta)\ge\rank(\delta')$.
-        %%
-        % \[
-        %   \rank(\delta)\ge\rank(\delta')\,.
-        % \]
-        %%
-      \end{subsubcase}
-      \begin{subsubcase}
-        $e'\ne\nil$.
-        %%
-        Then~$\pi'$ contains one application of~\R{emit-int} which consumes
-        one~$\ceu{\EmitInt(e')}$ expression from~$p_1$ and which implies
-        $\pot'(p_1)>\pot'(p_1')$.  Thus
-        \[
-          \hskip1em\rank(\delta)\!=\!\<\pot'(p_1),n>
-          >\<\pot'(p_1'),n+1>\!=\!\rank(\delta')\,.
-        \]
-        %%
-        % \begin{align*}
-        %   \rank(\delta)&=\<\pot'(p_1),n>\\
-        %                &>\<\pot'(p_1'),n+1>=\rank(\delta')\,.
-        % \end{align*}
-        %%
-      \end{subsubcase}
-    \end{subcase}
-    \begin{subsubcase}
-      $\pot'(p)=\pot'(p_1)+\pot'(p_2)$.
-      %%
-      Then some execution path in~$p_1$ does not contain a
-      (matching)~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$ expression.
-      Since~$p_1\ne\ceu{\Nop}$, a single~$\nst$ cannot restart the loop,
-      which means that~$p_1'$ still contain some execution path in which
-      a~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$ does not occur.
-      Hence~$\pot'(p')=\pot'(p_1')+\pot'(p_2)$.  The rest of this proof is
-      similar to that of Case~\ref{lem.x.rank-nst-case1}.\qedhere
-    \end{subsubcase}
-  \end{case}
-\end{proof}
+\end{restatable}
 
 The next theorem is a generalization of Lemma~\ref{lem.x.rank-nst}
-for~$\nst[*]$ transitions.  Its proof is by induction on~$i$.
+for~$\nst[*]$.  Its proof follows from the lemma by induction on~$i$.
 
-\begin{theorem}
+\begin{restatable}{theorem}{thmxranknstx}
   \label{thm.x.rank-nst-*}
   %%
   If~$\delta\nst[*]\delta'$ then~$\rank(\delta)\ge\rank(\delta')$.
-\end{theorem}
+\end{restatable}
 
 We now state and prove the main result of this section,
-Theorem~\ref{thm.x.term}, viz., the termination theorem for~$\trans[*]$.
-The idea of the proof is that a sufficiently large sequence of~$\nst$
-and~$\out$ transitions eventually decrease the rank of the current
-description until an irreducible description is reached.  This irreducible
-description is the final result of the reaction.
+Theorem~\ref{thm.x.term}, the termination theorem for~$\trans[*]$.  The idea
+of the proof is that a sufficiently large sequence of~$\nst$ and~$\out$
+transitions eventually decreases the rank of the current description until
+an irreducible description is reached.  This irreducible description is the
+final result of the reaction.
 %%
-\begin{theorem}[Termination]\label{thm.x.term}\strut\\
+\begin{restatable}[Termination]{theorem}{thmxterm}
+  \label{thm.x.term}
   %%
   For any~$\delta$, there is a~$\delta'_\#$ such
   that~$\delta\trans[*]\delta'_\#$.
-\end{theorem}
+\end{restatable}
 \begin{proof}
   By lexicographic induction on~$\rank(\delta)$.  Let~$\delta=\<p,n,e>$ and
   $\rank(\delta)=\<i,j>$.
-  \begin{basis}
-    If~$\<i,j>=\<0,0>$ then~$\delta$ cannot be advanced by~$\out$, as~$j=0$
-    implies~$e=\nil$ and~$n=0$ (neither~\R{push} nor~\R{pop} can be
-    applied).  There are two possibilities:  either~$\delta$ is
-    nested-irreducible or it is not.  In the first case, the theorem is
-    trivially true, as~$\delta\nst[0]\delta_\Hnst$.  Suppose~$\delta$ is not
-    nested-irreducible.  Then, by Theorem~\ref{thm.x.term-nst-*},
-    $\delta\nst[*]\delta'_\Hnst$ for some~$\delta'_\Hnst$.  By
-    Theorem~\ref{thm.x.rank-nst-*},
-    $\<i,j>=\<0,0>\ge\rank(\delta')$,
+
+  For the basis, suppose $\<i,j>=\<0,0>$.  Then~$\delta$ cannot be advanced
+  by~$\out$, as~$j=0$ implies~$e=\nil$ and~$n=0$.  If~$\delta$ is
+  nested-irreducible, the theorem is trivially true,
+  as~$\delta\nst[0]\delta_\Hnst$ and~$\delta_\#$.  If~$\delta$ is not
+  nested-irreducible then, by Theorem~\ref{thm.x.term-nst-*},
+  $\delta\nst[*]\delta'_\Hnst$, for some~$\delta'_\Hnst$.  By
+  Theorem~\ref{thm.x.rank-nst-*}, $\rank(\delta)\ge\rank(\delta')$, which
+  implies~$\rank(\delta')=\<0,0>$, and so~$\delta'_\#$.
+
+  For the inductive step, suppose~$\<i,j>>\<0,0>$.
+  %%
+  Then, depending on whether or not $\delta$~is nested-irreducible, there
+  are two cases.
+  \begin{casex}
+  \item\label{thm.x.term.Hnst}$\delta$~is nested-irreducible.
     %%
-    % \[
-    %   \<i,j>=\<0,0>\ge\rank(\delta')\,,
-    % \]
-    %%
-    which implies~$\rank(\delta')=\<0,0>$.
-  \end{basis}
-  \begin{induction}
-    Let~$\<i,j>\ne\<0,0>$.
-    %%
-    There are two subcases depending on whether or not $\delta$~is
-    nested-irreducible.
-    \begin{case}
-      \label{thm.x.term.Hnst}
-      $\delta$~is nested-irreducible.
+    If~$j=0$, by Definition~\ref{def.x.H}, $\delta_\#$, and
+    so~$\delta\trans[0]\delta_\#$.  If~$j>0$, there are two subcases:
+    \begin{casex}
+    \item\label{thm.x.term.Hnst-j>0-nonnil}$e\ne\nil$.
       %%
-      If~$j=0$ then, by Definition~\ref{def.x.H}, $\delta_\#$, and
-      thus~$\delta\trans[0]\delta_\#$.  Suppose that is not the case, i.e.,
-      that $j>0$.  Then there are two subcases.
-      \begin{subcase}
-        \label{thm.x.term.Hnst-j>0-nonnil}
-        $e\ne\nil$.
-        %%
-        Then, by~\R{out} and by Theorem~\ref{thm.x.term-nst-*}, there
-        are~$\delta_1'$ and~$\delta'_\Hnst=\<p',n+1,e'>$ such that
-        $\delta\outpush\delta_1'\nst[*]\delta'_\Hnst$.  Thus, by
-        Lemma~\ref{lem.x.rank-out} and by Theorem~\ref{thm.x.rank-nst-*},
-        \begin{align*}
-          \rank(\delta)=\rank(\delta_1')=\<i,j>
-                                        \ge\rank(\delta')=\<i',j'>\,.
-        \end{align*}
-        If~$e'=\nil$, then $i=i'$ and~$j=j'$, and the rest of this proof is
-        similar to that of Case~\ref{thm.x.term.Hnst-j>0-nil} below.
-        Otherwise, if~$e'\ne\nil$ then $i>i'$, since an~$\ceu{\EmitInt(e')}$
-        was consumed by the nested transitions.  Thus,
-        $\rank(\delta)>\rank(\delta')$.  By the induction hypothesis,
-        $\delta'\trans[*]\delta''_\#$, for some~$\delta''_\#$.  Therefore,
-        $\delta\trans[*]\delta''_\#$.
-      \end{subcase}
-      \begin{subcase}
-        \label{thm.x.term.Hnst-j>0-nil}
-        $e=\nil$.
-        %%
-        Then, since~$j>0$, $\delta\outpop\delta'$, for some~$\delta'$.  By
-        item~\eqref{lem.rank-out-pop} of Lemma~\ref{lem.rank-out},
-        $\rank(\delta)>\rank(\delta')$.  Hence, by the induction hypothesis,
-        there is a~$\delta''_\#$ such that~$\delta'\trans[*]\delta''_\#$.
-        Therefore, $\delta\trans[*]\delta''_\#$.
-      \end{subcase}
-    \end{case}
-    \begin{case}
-      $\delta$~is not nested-irreducible.
+      Then, by~\R{push} and by Theorem~\ref{thm.x.term-nst-*}, there
+      are~$\delta_1'$ and~$\delta'_\Hnst=\<p',n+1,e'>$ such that
+      $\delta\outpush\delta_1'\nst[*]\delta'_\Hnst$.  Thus, by
+      Lemma~\ref{lem.x.rank-out} and by Theorem~\ref{thm.x.rank-nst-*},
+      \begin{align*}
+        \rank(\delta)=\rank(\delta_1')=\<i,j>
+        \ge\rank(\delta')=\<i',j'>\,.
+      \end{align*}
+      If~$e'=\nil$, then $i=i'$ and~$j=j'$, and the rest of this proof is
+      similar to that of Case~\ref{thm.x.term.Hnst-j>0-nil} below.
+      Otherwise, if~$e'\ne\nil$, then $i>i'$, as an~$\ceu{\EmitInt(e')}$ was
+      consumed by the nested transitions.  Thus,
+      $\rank(\delta)>\rank(\delta')$.  By the induction hypothesis,
+      $\delta'\trans[*]\delta''_\#$, for some~$\delta''_\#$.  Therefore,
+      $\delta\trans[*]\delta''_\#$.
       %%
-      Then~$e=\nil$ and, by Theorem~\ref{thm.x.term-nst-*}
-      and~\ref{thm.x.rank-nst-*}, there is a~$\delta'_\Hnst$ such
-      that~$\delta\nst[*]\delta'_\Hnst$
-      with~$\rank(\delta)\ge\rank(\delta'_\Hnst)$.  The rest of this proof
-      is similar to that of Case~\ref{thm.x.term.Hnst} above.\qedhere
-    \end{case}
-  \end{induction}
+    \item\label{thm.x.term.Hnst-j>0-nil}$e=\nil$.
+      %%
+      Then, as~$j>0$, $\delta\outpop\delta'$, for some~$\delta'$.  By
+      Lemma~\ref{lem.x.rank-out}, $\rank(\delta)>\rank(\delta')$.  Hence, by
+      the induction hypothesis, $\delta'\trans[*]\delta''_\#$, for
+      some~$\delta''_\#$.  And so, $\delta\trans[*]\delta''_\#$.
+    \end{casex}
+
+  \item$\delta$~is not nested-irreducible.
+    %%
+    Then~$e=\nil$ and, by Theorems~\ref{thm.x.term-nst-*}
+    and~\ref{thm.x.rank-nst-*}, there is a~$\delta'_\Hnst$ such
+    that~$\delta\nst[*]\delta'_\Hnst$
+    with~$\rank(\delta)\ge\rank(\delta'_\Hnst)$.  The rest of this proof is
+    similar to that of Case~\ref{thm.x.term.Hnst} above.\qedhere
+  \end{casex}
 \end{proof}
 
 
