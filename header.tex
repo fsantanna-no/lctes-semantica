@@ -102,48 +102,7 @@
 \makeatletter
 \AtEndPreamble{%
   \theoremstyle{definition}
-  \newtheorem{assumption}[theorem]{Assumption}
-  %%
-  \theoremstyle{remark}
-  \newtheorem*{basis}{Basis}
-  \newtheorem*{induction}{Induction}
-  \newtheorem{case}{Case}
-  \AtBeginEnvironment{proof}{\setcounter{case}{0}}
-  %%
-  \newtheoremstyle{subcase}%
-    {\thm@preskip\topsep \divide\thm@preskip\tw@}% space above
-    {\thm@postskip\thm@preskip}%                   space below
-    {\addtolength{\@totalleftmargin}{\parindent}%
-      \addtolength{\linewidth}{-\parindent}%
-      \parshape 1 \parindent \linewidth
-      \normalfont}% body font
-    {\z@}%          indent amount
-    {\itshape}%     head font
-    {.}%            punctuation after head
-    {.5em}%         spacing after head
-    {}%             head spec
-  \theoremstyle{subcase}
-  \newtheorem{subcase}{Case}
-  \numberwithin{subcase}{case}
-  \AtBeginEnvironment{case}{\setcounter{subcase}{0}}
-  %%
-  \newtheoremstyle{subsubcase}%
-    {\thm@preskip\topsep \divide\thm@preskip\tw@}% space above
-    {\thm@postskip\thm@preskip}%                   space below
-    {\addtolength{\@totalleftmargin}{\parindent}%
-      \addtolength{\linewidth}{-\parindent}%
-      \parshape 1 2\parindent \linewidth
-      \normalfont}% body font
-    {\z@}%          indent amount
-    {\itshape}%     head font
-    {.}%            punctuation after head
-    {.5em}%         spacing after head
-    {}%             head spec
-  \theoremstyle{subsubcase}
-  \newtheorem{subsubcase}{Case}
-  \numberwithin{subsubcase}{subcase}
-  \AtBeginEnvironment{subcase}{\setcounter{subsubcase}{0}}
-}
+  \newtheorem{assumption}[theorem]{Assumption}}
 \makeatother
 
 % Alternative enumerations and proof by cases.
@@ -153,11 +112,11 @@
 \newlist{enumerate:i}{enumerate}{4}
 \setlist[enumerate:i]{label=(\roman*)}
 %%
-\newlist{casex}{enumerate}{4}
-\SetLabelAlign{casex}{\emph{Case}~#1.\hfil}
-\setlist[casex]{itemsep=1ex,leftmargin=\parindent,labelindent=\parindent,
-labelwidth=*,align=casex,label*=.\arabic*}
-\setlist[casex,1]{label=\arabic*,leftmargin=0pt,labelindent=0pt}
+\newlist{case}{enumerate}{4}
+\SetLabelAlign{case}{\emph{Case}~#1.\hfil}
+\setlist[case]{itemsep=1ex,leftmargin=\parindent,labelindent=\parindent,
+labelwidth=*,align=case,label*=.\arabic*}
+\setlist[case,1]{label=\arabic*,leftmargin=0pt,labelindent=0pt}
 
 % Proof trees (used to typeset proofs and rules).
 \usepackage{bussproofs}

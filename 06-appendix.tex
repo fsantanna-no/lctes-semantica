@@ -8,13 +8,13 @@
   transitions.  Suppose that is not the case and let~$\delta=\<p,n,e>$,
   $\delta_1=\<p_1,n_1,e_1>$ and~$\delta_2=\<p_2,n_2,e_2>$.  Then, there are
   two possibilities.
-  \begin{casex}
+  \begin{case}
   \item $e\ne\nil$.  Both transitions are applications of~\R{push}.
     Hence~$p_1=p_2=\bcast(p,e)$, $n_1=n_2=n+1$, and~$e_1=e_2=\nil$.
     %%
   \item $e=\nil$.  Both transitions are applications of~\R{pop}.
     Hence $p_1=p_2=p$, $n_1=n_2=n-1$, and~$e_1=e_2=\nil$.\qedhere
-  \end{casex}
+  \end{case}
 \end{proof}
 
 
@@ -39,10 +39,10 @@
   Depending on the structure of program~$p$, the following~11 cases are
   possible.  (Note that~$p$ cannot be an~$\ceu{\AwaitExt}$,
   $\ceu{\AwaitInt}$, $\ceu{\Break}$, $\ceu{\Every}$, $\ceu{\Fin}$,
-  or~$\ceu{\Nop}$ statement as there are no~$\nst$ rules to transition such
+  or~$\ceu{\Nop}$ statement as there is no~$\nst$ rule to transition such
   programs.)
 
-  \begin{casex}
+  \begin{case}
   \item $p=\ceu{\Mem(\Id)}$.
     %%
     Then derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{mem},
@@ -62,7 +62,7 @@
   \item $p=\ceu{\IfElse{\Mem(\Id)}{p'}{p''}}$.
     %%
     There are two subcases.
-    \begin{casex}
+    \begin{case}
     \item$\eval(\ceu{\Mem(\Id)})$.
       %%
       Then~$\pi_1$ and~$\pi_2$ are instances of~\R{if-true}.
@@ -72,12 +72,12 @@
       %%
       Then~$\pi_1$ and~$\pi_2$ are instances of~\R{if-false}.
       Hence~$p_1=p_2=p''$ and~$e_1=e_2=\nil$.
-    \end{casex}
+    \end{case}
     %%
   \item$p=\ceu{p';\,p''}$.
     %%
     There are three subcases.
-    \begin{casex}
+    \begin{case}
     \item $p'=\ceu{\Nop}$.
       %%
       Then~$\pi_1$ and~$\pi_2$ are instances of~\R{seq-nop}.
@@ -100,7 +100,7 @@
       hypothesis, $p_1'=p_2'$ and~$e_1'=e_2'$.
       Hence~$p_1=\ceu{p_1';p''}=\ceu{p_2';p''}=p_2$
       and~$e_1=e_1'=e_2'=e_2$.
-    \end{casex}
+    \end{case}
     %%
   \item $p=\ceu{\Loop{p'}}$.
     %%
@@ -110,7 +110,7 @@
   \item $p=\ceu{p'\AtLoop{p''}}$.
     %%
     There are three subcases.
-    \begin{casex}
+    \begin{case}
     \item $p'=\ceu{\Nop}$.
       %%
       Then~$\pi_1$ and~$\pi_2$ are instances of~\R{loop-nop}.
@@ -133,7 +133,7 @@
       hypothesis, $p_1'=p_2'$ and~$e_1'=e_2'$.
       Hence~$p_1=\ceu{p_1'\AtLoop{p''}}=\ceu{p_2'\AtLoop{p''}}=p_2$
       and~$e_1=e_1'=e_2'=e_2$.
-    \end{casex}
+    \end{case}
   \item $p=\ceu{p'\And{p''}}$.
     %%
     Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-expd}.
@@ -143,11 +143,11 @@
   \item $p=\ceu{p'\AtAnd{p''}}$.
     %%
     There are two subcases.
-    \begin{casex}
+    \begin{case}
     \item$\lnot\isblocked(p',n)$.
       %%
       There are three subcases.
-      \begin{casex}
+      \begin{case}
       \item $p'=\ceu{\Nop}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-nop1}.
@@ -171,12 +171,12 @@
         hypothesis, $p_1'=p_2'$ and~$e_1'=e_2'$.
         Hence~$p_1=\ceu{{p_1'}\And{p''}}=\ceu{{p_2'}\And{p''}}=p_2$
         and~$e_1=e_1'=e_2'=e_2$.
-      \end{casex}
+      \end{case}
       %%
     \item$\isblocked(p',n)$.
       %%
       There are three subcases.
-      \begin{casex}
+      \begin{case}
       \item $p''=\ceu{\Nop}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-nop2}.
@@ -199,8 +199,8 @@
         hypothesis, $p_1''=p_2''$ and~$e_1''=e_2''$.
         Hence~$p_1=\ceu{{p'}\And{p_1''}}=\ceu{{p'}\And{p_2''}}=p_2$
         and~$e_1=e_1''=e_2''=e_2$.
-      \end{casex}
-    \end{casex}
+      \end{case}
+    \end{case}
     %%
   \item$p=\ceu{p'\Or{p''}}$.
     %%
@@ -211,11 +211,11 @@
   \item$p=\ceu{p'\AtOr{p''}}$.
     %%
     There are two subcases.
-    \begin{casex}
+    \begin{case}
     \item$\lnot\isblocked(p',n)$.
       %%
       There are three subcases.
-      \begin{casex}
+      \begin{case}
       \item $p'=\ceu{\Nop}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{or-nop1}.
@@ -228,12 +228,12 @@
       \item$p'\ne\ceu{\Nop},\ceu{\Break}$.
         %%
         Similar to Case~\ref{lem.x.det-nst.and-adv1}.
-      \end{casex}
+      \end{case}
       %%
     \item$\isblocked(p',n)$.
       %%
       There are three subcases.
-      \begin{casex}
+      \begin{case}
       \item $p''=\ceu{\Nop}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{or-nop1}.
@@ -247,9 +247,9 @@
         %%
         Similar to Case~\ref{lem.x.det-nst.and-adv2}.
         %%
-      \end{casex}
-    \end{casex}
-  \end{casex}
+      \end{case}
+    \end{case}
+  \end{case}
 \end{proof}
 
 
@@ -266,7 +266,7 @@
   \]
   for some~$i>1$, $\delta_1'$ and~$\delta_2'$.
   There are two possibilities.
-  \begin{casex}
+  \begin{case}
   \item $\delta\out[1]\delta_1'$ and~$\delta\out[1]\delta_2'$.  Then, by
     Lemma~\ref{lem.x.det-out}, $\delta_1'=\delta_2'$, and by the induction
     hypothesis, $\delta_1=\delta_2$.
@@ -274,7 +274,7 @@
   \item $\delta\nst[1]\delta_1'$ and~$\delta\nst[1]\delta_2'$.  Then, by
     Lemma~\ref{lem.x.det-nst}, $\delta_1'=\delta_2'$, and by the induction
     hypothesis, $\delta_1=\delta_2$.\qedhere
-  \end{casex}
+  \end{case}
 \end{proof}
 
 
@@ -285,7 +285,7 @@
   Let~$\delta\nst[i]\delta'_\Hnst$, for some~$i\ge0$.
   %%
   There are two cases.
-  \begin{casex}
+  \begin{case}
   \item\label{prop.x.irr-nst-i-case1}
     %%
     Suppose there are~$k>i$ and~$\delta''_\Hnst$ such
@@ -309,7 +309,7 @@
     Case~\ref{prop.x.irr-nst-i-case1}, $\delta'$~cannot exist, which is
     absurd.  Therefore, the assumption that there is such~$k$ is
     false.\qedhere
-  \end{casex}
+  \end{case}
 \end{proof}
 
 
@@ -465,7 +465,7 @@
   is not the case.  Then, depending on the structure of~$p$, there are~11
   possibilities.  In each one of them, we show that such~$\delta'_\Hnst$
   indeed exists.
-  \begin{casex}
+  \begin{case}
   \item $p=\ceu{\Mem(\Id)}$.
     %%
     Then, by~\R{mem},
@@ -490,7 +490,7 @@
   \item $p=\ceu{\IfElse{\Mem(\Id)}{p'}{p''}}$.
     %%
     There are two subcases.
-    \begin{casex}
+    \begin{case}
     \item\label{thm.x.term-nst-*.if-true} $\eval(\ceu{\Mem(\Id)})$.
       %%
       Then, by~\R{if-true} and by the induction hypothesis, there is
@@ -513,12 +513,12 @@
       %   &\nst[*]\delta'_\Hnst\,.
       % \end{align*}
       %%
-    \end{casex}
+    \end{case}
 
   \item $p=\ceu{p';\,p''}$.
     %%
     There are three subcases.
-    \begin{casex}
+    \begin{case}
     \item\label{thm.x.term-nst-*.seq-nop} $p'=\ceu{\Nop}$.
       %%
       Then, by~\R{seq-nop} and by the induction hypothesis, there is
@@ -551,7 +551,7 @@
       nested-irreducible.  There are four possibilities following from the
       fact that the simpler~$\<p_1',n,e>$ is nested-irreducible.
       %%
-      \begin{casex}
+      \begin{case}
       \item $e\ne\nil$.  Then, by the definition of~$\Hnst$,
         description~$\<\ceu{p_1';\,p''},n,e>$ is nested-irreducible.
         %%
@@ -582,8 +582,8 @@
         Hence, from~\eqref{thm.x.term-nst-*.seq-adv.eq1} and by the
         definition~$\Hnst$, description~$\<\ceu{p_1';\,p''},n,e>$ is
         nested-irreducible.
-      \end{casex}
-    \end{casex}
+      \end{case}
+    \end{case}
 
   \item\label{thm.x.term-nst-*.loop}
     $p=\ceu{\Loop{p'}}$.
@@ -595,7 +595,7 @@
     \end{equation}
     for some~$e$ and~$p_1'$ such that either~$p_1'=\ceu{\Break\AtLoop{p'}}$
     or~$\isblocked(p_1',n)$.
-    \begin{casex}
+    \begin{case}
     \item$p_1'=\ceu{\Break\AtLoop{p'}}$.
       %%
       From~\eqref{thm.x.term-nst-*.loop-expd.eq1}, by~\R{loop-brk},
@@ -608,12 +608,12 @@
     \item$\isblocked(p_1',n)$.  Hence,
       from~\eqref{thm.x.term-nst-*.loop-expd.eq1} and by the definition
       of~$\Hnst$, $\<p_1',n,e>_\Hnst$.
-    \end{casex}
+    \end{case}
 
   \item$p=\ceu{p'\AtLoop{p''}}$.
     %%
     There are three subcases.
-    \begin{casex}
+    \begin{case}
     \item$p'=\ceu{\Nop}$.
       %%
       Then, by~\R{loop-nop},
@@ -643,7 +643,7 @@
       It remains to be show that~$\<\ceu{p_1'\AtLoop{p''}},n,e>$ is
       nested-irreducible.  The rest of this proof is similar to that of
       Case~\ref{thm.x.term-nst-*.seq-adv}.
-    \end{casex}
+    \end{case}
 
   \item$p=\ceu{{p'}\And{p''}}$.
     %%
@@ -660,11 +660,11 @@
     $p=\ceu{{p'}\AtAnd{p''}}$.
     %%
     There are two subcases.
-    \begin{casex}
+    \begin{case}
     \item$\lnot\isblocked(p',n)$.
       %%
       There are three subcases.
-      \begin{casex}
+      \begin{case}
       \item\label{thm.x.term-nst-*.and-nop1}
         $p'=\ceu{\Nop}$.
         %%
@@ -721,13 +721,13 @@
         \item If~$\isblocked(p_1',n)$, this case is similar to
           Case~\ref{thm.x.term-nst-*.and2}.
         \end{enumerate}
-      \end{casex}
+      \end{case}
       %%
     \item\label{thm.x.term-nst-*.and2}
       $\isblocked(p',n)$.
       %%
       There are three subcases.
-      \begin{casex}
+      \begin{case}
       \item\label{thm.x.term-nst-*.and-nop2}
         $p''=\ceu{\Nop}$.
         %%
@@ -774,8 +774,8 @@
         \item If~$\isblocked(p_1'',n)$ then, as both sides are blocked, by
           definition, $\<\ceu{{p'}\AtAnd{p_1''}},n,e>_\Hnst$.
         \end{enumerate}
-      \end{casex}
-    \end{casex}
+      \end{case}
+    \end{case}
 
   \item$p=\ceu{{p'}\Or{p''}}$.
     %%
@@ -791,11 +791,11 @@
     $p=\ceu{{p'}\AtOr{p''}}$.
     %%
     There are two subcases.
-    \begin{casex}
+    \begin{case}
     \item$\lnot\isblocked(p',n)$.
       %%
       There are three subcases.
-      \begin{casex}
+      \begin{case}
       \item\label{thm.x.term-nst-*.or-nop1} $p'=\ceu{\Nop}$.  Then,
         by~\R{or-nop1},
         \begin{equation}
@@ -817,12 +817,12 @@
       \item$p'\ne\ceu{\Nop},\ceu{\Break}$.
         %%
         Similar to Case~\ref{thm.x.term-nst-*.and-adv1}.
-      \end{casex}
+      \end{case}
       %%
     \item\label{thm.x.term-nst-*.or-adv1}$\isblocked(p',n)$.
       %%
       There are three subcases.
-      \begin{casex}
+      \begin{case}
       \item$p''=\ceu{\Nop}$.
         %%
         Then, by~\R{or-nop2},
@@ -845,9 +845,9 @@
       \item$p''\ne\ceu{\Nop},\ceu{\Break}$.
         %%
         Similar to Case~\ref{thm.x.term-nst-*.and-adv2}.\qedhere
-      \end{casex}
-    \end{casex}
-  \end{casex}
+      \end{case}
+    \end{case}
+  \end{case}
 \end{proof}
 
 
@@ -903,7 +903,7 @@
   By definition of~$\nst$, $e=\nil$ and $n=n'$.  Depending on the structure
   of program~$p$, there are~11 possibilities.  In each one of them we show
   that~$\rank(\delta)\ge\rank(\delta')$.
-  \begin{casex}
+  \begin{case}
   \item$p=\ceu{\Mem(id)}$.
     %%
     Then~$\pi$ is an instance of~\R{mem}.  Hence~$p'=\ceu{\Nop}$
@@ -928,8 +928,8 @@
 
   \item$p=\ceu{\IfElse{p}{p_1}{p_2}}$.
     %%
-    There are two subcases, depending on the value of~$\ceu{\Mem(\Id)}$.
-    \begin{casex}
+    There are two subcases.
+    \begin{case}
     \item\label{lem.x.rank-nst.if-true}$\eval(\ceu{\Mem(\Id)})$.
       %%
       Then~$\pi$ is an instance of~\R{if-true}.  Hence~$p'=\ceu{p_1}$
@@ -942,12 +942,12 @@
     \item$\lnot\eval(\ceu{\Mem(\Id)})$.
       %%
       Similar to Case~\ref{lem.x.rank-nst.if-true}.
-    \end{casex}
+    \end{case}
 
   \item$p=\ceu{p_1;\,p_2}$.
     %%
-    There are three subcases, depending on the structure of~$p_1$
-    \begin{casex}
+    There are three subcases.
+    \begin{case}
     \item\label{lem.x.rank-nst.seq-nop}$p_1=\ceu{\Nop}$.
       %%
       Then~$\pi$ is an instance of~\R{seq-nop}.
@@ -978,9 +978,8 @@
         \label{lem.x.rank-nst.seq-adv.eq1}
         \rank(\<p_1,n,\nil>)\ge\rank(\<p_1',n,e_1'>)\,.
       \end{equation}
-      There are two subcases, depending on whether or not~$e'$ is the empty
-      event.
-      \begin{casex}
+      There are two subcases.
+      \begin{case}
       \item$e'=\nil$
         %%
         Then
@@ -1003,8 +1002,8 @@
           \rank(\delta)&=\<\pot'(p_1)+\pot'(p_2),n>\\
                        &>\<\pot'(p_1')+\pot'(p_2),n+1>=\rank(\delta')\,.
         \end{align*}
-      \end{casex}
-    \end{casex}
+      \end{case}
+    \end{case}
 
   \item\label{lem.x.rank-nst.loop-expd}$p=\ceu{\Loop{p_1}}$.
     %%
@@ -1021,8 +1020,8 @@
 
   \item$p=\ceu{{p_1}\AtLoop{p_2}}$.
     %%
-    There are three subcases, depending on the structure of~$p_1$.
-    \begin{casex}
+    There are three subcases.
+    \begin{case}
     \item$p_1=\ceu{\Nop}$.
       %%
       Similar to Case~\ref{lem.x.rank-nst.seq-nop}.
@@ -1047,8 +1046,8 @@
       %   \rank(\<p_1,n,\nil>)\ge\rank(\<p_1',n,e_1'>)\,.
       % \end{equation}
       %%
-      There are two subcases depending on the value of~$\pot'(p)$.
-      \begin{casex}
+      There are two subcases.
+      \begin{case}
       \item$\pot'(p)=\pot'(p_1)$.
         %%
         Then every execution path of~$p_1$ contains a~$\ceu{\Break}$
@@ -1068,8 +1067,8 @@
         or~$\ceu{\AwaitExt}$ does not occur.
         Hence~$\pot'(p')=\pot'(p_1')+\pot'(p_2)$.  The rest of this proof is
         similar to that of Case~\ref{lem.x.rank-nst.seq-adv}.
-      \end{casex}
-    \end{casex}
+      \end{case}
+    \end{case}
 
   \item\label{lem.x.rank-nst.and-expd}$p=\ceu{{p_1}\And{p_2}}$.
     %%
@@ -1082,13 +1081,13 @@
 
   \item\label{lem.x.rank-nst.and}$p=\ceu{{p_1}\AtAnd{p_2}}$.
     %%
-    There are two subcases, depending whether or not~$p_1$ is blocked at
+    There are two subcases.
     stack level~$n$.
-    \begin{casex}
+    \begin{case}
     \item\label{lem.x.rank-nst.and1}$\lnot\isblocked(p_1,n)$.
       %%
-      There are three subcases, depending on the structure of~$p_1$.
-      \begin{casex}
+      There are three subcases.
+      \begin{case}
       \item\label{lem.x.rank-nst.and-nop1}$p_1=\ceu{\Nop}$.
         %%
         Then~$\pi$ is an instance of~\R{and-nop1}.  Hence~$p'=p_2$
@@ -1115,12 +1114,12 @@
         and~$p_2\ne\ceu{\Break}$ (otherwise~\R{and-brk2} would have taken
         precedence), the rest of this proof is similar to that of
         Case~\ref{lem.x.rank-nst.seq-adv}.
-      \end{casex}
+      \end{case}
       %%
     \item$\isblocked(p_1,n)$.
       %%
       Similar to Case~\ref{lem.x.rank-nst.and1}
-    \end{casex}
+    \end{case}
 
   \item$p=\ceu{{p_1}\Or{p_2}}$.
     %%
@@ -1132,13 +1131,12 @@
 
   \item$p=\ceu{{p_1}\AtOr{p_2}}$.
     %%
-    There are two subcases, depending whether or not~$p_1$ is block at stack
-    level~$n$.
-    \begin{casex}
+    There are two subcases.
+    \begin{case}
     \item\label{lem.x.rank-nst.or1}$\lnot\isblocked(p_1,n)$.
       %%
-      There are three subcases, depending on the structure of~$p_1$.
-      \begin{casex}
+      There are three subcases.
+      \begin{case}
       \item$p_1=\ceu{\Nop}$.
         %%
         Then~$\pi$ is an instance of~\R{or-nop1}.  Hence~$p'=\clear(p_2)$
@@ -1156,12 +1154,12 @@
       \item$p_1\ne\ceu{\Nop},\ceu{\Break}$.
         %%
         Similar to Case~\ref{lem.x.rank-nst.and-adv1}.
-      \end{casex}
+      \end{case}
     \item$\isblocked(p_1,n)$.
       %%
       Similar to Case~\ref{lem.x.rank-nst.or1}.\qedhere
-    \end{casex}
-  \end{casex}
+    \end{case}
+  \end{case}
 \end{proof}
 
 
@@ -1184,85 +1182,85 @@
 \begin{proof}
   By lexicographic induction on~$rank(\delta)$.  Let~$\delta=\<p,n,e>$ and
   $\rank(\delta)=\<i,j>$.
+
+  \vskip\baselineskip
+  \noindent\emph{Basis}.
+  If~$\<i,j>=\<0,0>$ then~$\delta$ cannot be advanced by~$\out$, as~$j=0$
+  implies~$e=\nil$ and~$n=0$ (neither~\R{push} nor~\R{pop} can be applied).
+  There are two possibilities:  either~$\delta$ is nested-irreducible or it
+  is not.  In the first case, the theorem is trivially true,
+  as~$\delta\nst[0]\delta_\Hnst$.  Suppose~$\delta$ is not
+  nested-irreducible.  Then, by Theorem~\ref{thm.x.term-nst-*},
+  $\delta\nst[*]\delta'_\Hnst$, for some~$\delta'_\Hnst$.  By
+  Theorem~\ref{thm.x.rank-nst-*},
+  \[
+    \<i,j>=\<0,0>\ge\rank(\delta')\,,
+  \]
+  which implies~$\rank(\delta')=\<0,0>$.
+
+  \vskip\baselineskip
+  \noindent\emph{Induction}.
+  Let~$\<i,j>\ne\<0,0>$.
   %%
-  \begin{basis}
-    If~$\<i,j>=\<0,0>$ then~$\delta$ cannot be advanced by~$\out$, as~$j=0$
-    implies~$e=\nil$ and~$n=0$ (neither~\R{push} nor~\R{pop} can be
-    applied).  There are two possibilities:  either~$\delta$ is
-    nested-irreducible or it is not.  In the first case, the theorem is
-    trivially true, as~$\delta\nst[0]\delta_\Hnst$.  Suppose~$\delta$ is not
-    nested-irreducible.  Then, by Theorem~\ref{thm.x.term-nst-*},
-    $\delta\nst[*]\delta'_\Hnst$, for some~$\delta'_\Hnst$.  By
-    Theorem~\ref{thm.x.rank-nst-*},
-    \[
-      \<i,j>=\<0,0>\ge\rank(\delta')\,,
-    \]
-    which implies~$\rank(\delta')=\<0,0>$.
-  \end{basis}
-  \begin{induction}
-    Let~$\<i,j>\ne\<0,0>$.
+  There are two subcases.
+  \begin{case}
+  \item\label{thm.x.term.Hnst}$\delta$~is nested-irreducible.
     %%
-    There are two subcases, depending whether or not~$\delta$ is
-    nested-irreducible.
-    \begin{casex}
-    \item\label{thm.x.term.Hnst}$\delta$~is nested-irreducible.
+    There are two subcases.
+    \begin{case}
+    \item\label{thm.x.term.Hnst-j0}$j=0$.
       %%
-      There are two cases, depending on the value of~$j$.
-      \begin{casex}
-      \item\label{thm.x.term.Hnst-j0}$j=0$.
-        %%
-        By Definition~\ref{def.x.H}, $\delta_\#$.
-        Thus~$\delta\trans[0]\delta_\#$.
-        %%
-      \item\label{thm.x.term.Hnst-j>0}$j>0$.
-        %%
-        There are two subcases, depending whether or not~$e$ is the empty
-        event.
-        \begin{casex}
-        \item\label{thm.x.term.Hnst-j>0-nonnil}$e\ne\nil$.
-          %%
-          Then, by~\R{push} and by Theorem~\ref{thm.x.term-nst-*}, there
-          are~$\delta_1'$ and~$\delta'_\Hnst=\<p',n+1,e'>$ such that
-          \[
-            \delta\outpush\delta_1'\nst[*]\delta'_\Hnst\,.
-          \]
-          Thus, by item~\ref{lem.x.rank-out-push} of
-          Lemma~\ref{lem.x.rank-out} and by Theorem~\ref{thm.x.rank-nst-*},
-          \begin{align*}
-            \rank(\delta)=\rank(\delta_1')&=\<i,j>\\
-                                          &\ge\rank(\delta')=\<i',j'>\,.
-          \end{align*}
-          If~$e'=\nil$, then $i=i'$ and~$j=j'$, and the rest of this proof
-          is similar to that of Case~\ref{thm.x.term.Hnst-j>0-nil}.
-          Otherwise, if~$e'\ne\nil$ then $i>i'$, since
-          an~$\ceu{\EmitInt(e')}$ was consumed by the nested transitions.
-          Thus,
-          \[
-            \rank(\delta)>\rank(\delta')\,.
-          \]
-          By the induction hypothesis, $\delta'\trans[*]\delta''_\#$, for
-          some~$\delta''_\#$.  Therefore, $\delta\trans[*]\delta''_\#$.
-          %%
-        \item\label{thm.x.term.Hnst-j>0-nil}$e=\nil$.
-          %%
-          Then, since~$j>0$, $\delta\outpop\delta'$, for some~$\delta''$.
-          By item~\ref{lem.x.rank-out-pop} of Lemma~\ref{lem.x.rank-out},
-          \[
-            \rank(\delta)>\rank(\delta')\,.
-          \]
-          Hence, by the induction hypothesis, there is a~$\delta''_\#$ such
-          that~$\delta'\trans[*]\delta''_\#$.
-          Therefore, $\delta\trans[*]\delta''_\#$.
-        \end{casex}
-      \end{casex}
+      By Definition~\ref{def.x.H}, $\delta_\#$.
+      Thus~$\delta\trans[0]\delta_\#$.
       %%
-    \item$\delta$~is not nested-irreducible.
+    \item\label{thm.x.term.Hnst-j>0}$j>0$.
       %%
-      Then~$e=\nil$ and, by Theorems~\ref{thm.x.term-nst-*}
-      and~\ref{thm.x.rank-nst-*}, there is a~$\delta'_\Hnst$ such
-      that~$\delta\nst[*]\delta'_\Hnst$
-      with~$\rank(\delta)\ge\rank(\delta'_\Hnst)$.  The rest of this proof
-      is similar to that of Case~\ref{thm.x.term.Hnst}.\qedhere
-    \end{casex}
-  \end{induction}
+      There are two subcases.
+      event.
+      \begin{case}
+      \item\label{thm.x.term.Hnst-j>0-nonnil}$e\ne\nil$.
+        %%
+        Then, by~\R{push} and by Theorem~\ref{thm.x.term-nst-*}, there
+        are~$\delta_1'$ and~$\delta'_\Hnst=\<p',n+1,e'>$ such that
+        \[
+          \delta\outpush\delta_1'\nst[*]\delta'_\Hnst\,.
+        \]
+        Thus, by item~\ref{lem.x.rank-out-push} of
+        Lemma~\ref{lem.x.rank-out} and by Theorem~\ref{thm.x.rank-nst-*},
+        \begin{align*}
+          \rank(\delta)=\rank(\delta_1')&=\<i,j>\\
+                                        &\ge\rank(\delta')=\<i',j'>\,.
+        \end{align*}
+        If~$e'=\nil$, then $i=i'$ and~$j=j'$, and the rest of this proof
+        is similar to that of Case~\ref{thm.x.term.Hnst-j>0-nil}.
+        Otherwise, if~$e'\ne\nil$ then $i>i'$, since
+        an~$\ceu{\EmitInt(e')}$ was consumed by the nested transitions.
+        Thus,
+        \[
+          \rank(\delta)>\rank(\delta')\,.
+        \]
+        By the induction hypothesis, $\delta'\trans[*]\delta''_\#$, for
+        some~$\delta''_\#$.  Therefore, $\delta\trans[*]\delta''_\#$.
+        %%
+      \item\label{thm.x.term.Hnst-j>0-nil}$e=\nil$.
+        %%
+        Then, since~$j>0$, $\delta\outpop\delta'$, for some~$\delta''$.
+        By item~\ref{lem.x.rank-out-pop} of Lemma~\ref{lem.x.rank-out},
+        \[
+          \rank(\delta)>\rank(\delta')\,.
+        \]
+        Hence, by the induction hypothesis, there is a~$\delta''_\#$ such
+        that~$\delta'\trans[*]\delta''_\#$.
+        Therefore, $\delta\trans[*]\delta''_\#$.
+      \end{case}
+    \end{case}
+    %%
+  \item$\delta$~is not nested-irreducible.
+    %%
+    Then~$e=\nil$ and, by Theorems~\ref{thm.x.term-nst-*}
+    and~\ref{thm.x.rank-nst-*}, there is a~$\delta'_\Hnst$ such
+    that~$\delta\nst[*]\delta'_\Hnst$
+    with~$\rank(\delta)\ge\rank(\delta'_\Hnst)$.  The rest of this proof
+    is similar to that of Case~\ref{thm.x.term.Hnst}.\qedhere
+  \end{case}
 \end{proof}
