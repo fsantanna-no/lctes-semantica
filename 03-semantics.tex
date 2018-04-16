@@ -25,7 +25,7 @@ Side-effects and system calls are encapsulated in a memory access
 primitive and are assumed to behave like in conventional imperative
 languages.
 
-
+
 \subsection{Abstract Syntax}
 \label{sec.sem.syntax}
 
@@ -122,8 +122,8 @@ sufficient to describe all peculiarities of the language.
 \end{alignat*}
 \egroup
 
-The~$\ceu{\Mem(id)}$ primitive represents an assignment or system
-call that affects the memory location identified by~$id$.\footnotemark\
+The~$\ceu{\Mem(id)}$ primitive represents a read or write to the memory
+location identified by~$id$.\footnotemark\
 %
 Following the synchronous hypothesis, $\ceu{\Mem}$ statements and
 expressions are considered to be atomic and instantaneous.
@@ -144,12 +144,12 @@ expressions are considered to be atomic and instantaneous.
 Most statements in the abstract language are mapped to their counterparts in
 the concrete language.  The exceptions are the finalization
 block~$\ceu{\Fin{p}}$ and the \texttt{@}-statements which do not exist in
-the concrete language.  (These result from the expansion of the transition
-rules to be presented.)
+the concrete language.  These result from the expansion of the transition
+rules to be presented.
 
 A further difference between the concrete and abstract languages regards the
 emit-await pair.  In the concrete language, the \code{await} can be used as
-an expression which evaluates to the value stored in the emitted
+an expression which evaluates to the value stored in the corresponding emitted
 event, e.g., an
 ``\code{emit a(10)}'' awakes a ``\code{v=await a}'' setting
 variable~\code{v} to~10.  Although the abstract $\ceu{\AwaitInt}$
@@ -168,7 +168,9 @@ need an explicit \code{or} to execute~$C$ in parallel, whose termination
 aborts ``$\ceu{\Fin B}$'', which finally causes~$B$ to execute (by the
 semantic rules below).
 
+
 \subsection{Operational Semantics}
+\label{sec.sem.opsem}
 
 The operational semantics is a mathematical model that describes how an
 abstract \CEU\ programs reacts to a single external input event, i.e., how
@@ -179,7 +181,7 @@ The formalism we use here is that of small-step operational
 semantics~\cite{Plotkin-G-D-1981} in which the meaning of programs is
 defined in terms of transitions of an abstract machine.  Each transition
 transforms a triple consisting of a program~$p$, a stack level~$n$, and an
-emitted event~$e$ into a modified triple as follows:
+emitted event~$e$ into a possibly different triple, i.e.,
 \[
   \<p,n,e>\trans\<p',n',e'>\,,
 \]
@@ -212,7 +214,7 @@ initialized with stack level~0 ($n=0$) and with the externally emitted event~$e=
 %, but \code{emitInt} expressions can increase the stack level.
 At the end of a reaction, after an arbitrary but finite number of transitions,
 the last output description will block with a possibly modified program~$p'$ at stack
-level~0 and with no event emitted:
+level~0 and no event emitted:
 \[
   \<p,0,e>\mathbin{\trans[*]}\<p',0,\nil>\,.
 \]
@@ -263,11 +265,11 @@ that manipulate the stack level.
 Rule \R{push} can be applied whenever there is a nonempty event in the input
 description,
 and instantly broadcasts the event to the program, which means
-    (a)~awaking any active $\ceu{\AwaitExt}$ or $\ceu{\AwaitInt}$ statements
+    (i)~awaking any active $\ceu{\AwaitExt}$ or $\ceu{\AwaitInt}$ statements
     (see $\bcast$ in
         Figure~\ref{fig.bcast}),
-    (b)~creating a nested reaction by increasing the stack level, and, at the same time,
-    (c)~consuming the event ($e$ becomes~$\nil$).
+    (ii)~creating a nested reaction by increasing the stack level, and, at the same time,
+    (iii)~consuming the event ($e$ becomes~$\nil$).
 %
 Rule \R{push} is the only rule that matches an
 emitted event and also immediately consumes it.
@@ -443,8 +445,8 @@ The rules for conditionals and sequences are the following:
 % }
 %-
 
-Given that our semantics focuses on control, rules \R{if-true} and
-\R{if-false} are the only to query~$\ceu{\Mem}$ as expressions.
+Rules \R{if-true} and \R{if-false} are the only rules that use~$\ceu{\Mem}$
+in a way that affects the control flow.
 %
 Function~$\eval$ evaluates a~$\ceu{\Mem}$ expression to a boolean value.
 %
@@ -722,8 +724,8 @@ A reaction eventually blocks in~$\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$,
 $\ceu{\Every}$, $\ceu{\Fin}$, and~$\ceu{\CanRun}$ statements in parallel
 trails.
 %
-Then, if none of the trails is blocked in~$\ceu{\CanRun}$ statements, it means
-that the program cannot advance in the current reaction.
+Then, if none of the trails is blocked in~$\ceu{\CanRun}$, it means that the
+program cannot advance in the current reaction.
 %
 However, $\ceu{\CanRun}$ statements can still resume at lower stack indexes
 and will eventually resume in the current reaction (see rule \R{pop}).
@@ -926,21 +928,25 @@ and will eventually resume in the current reaction (see rule \R{pop}).
 
 
 \subsection{Properties}
+\label{sec.sem.props}
 
 
 \subsubsection{Determinism}
 
 Transitions~$\out$ and~$\nst$ are defined in such a way that given an input
 description either no rule is applicable or exactly one of them can be
-applied.  This means that the resulting transition relation~$\trans$ is in
-fact a partial function.
+applied (no choice involved).  This coupled with the fact that the output of
+every rule is a function of its input implies that transitions are
+deterministic: the same input description, if it can transition, will always
+result in the same output description.  In other words, the transition
+relation~$\trans$ is in fact a partial function.
 
 The next two lemmas establish the determinism of a single application
 of~$\out$ and~$\nst$.  Lemma~\ref{lem.x.det-out} follows from a simple
 inspection of rules~\R{push} and~\R{pop}.  The proof of
-Lemma~\ref{lem.x.det-nst} follows by induction on the structure
-of the derivation trees produced by the rules for~$\nst$.  Both lemmas are
-used in the proof of the next theorem.
+Lemma~\ref{lem.x.det-nst} follows by induction on the structure of the
+derivation trees produced by the rules for~$\nst$.  Both lemmas are used in
+the proof of the Theorem~\ref{thm.x.det}.
 
 \begin{restatable}{lemma}{lemxdetout}
   \label{lem.x.det-out}
@@ -956,8 +962,8 @@ used in the proof of the next theorem.
 
 The main result of this section, Theorem~\ref{thm.x.det}, establishes that
 any given number~$i\ge0$ of applications of arbitrary transition rules,
-starting from the same input description, will always lead to the same output
-description.  In other words, any finite sequence of transitions behave
+starting from the same input description, will always lead to the same
+output description, i.e., any finite sequence of transitions behave
 deterministically.
 
 \begin{restatable}[Determinism]{theorem}{thmxdet}
@@ -1044,7 +1050,7 @@ transitions~$\nst$ and~$\out$.
   %%
   A description~$\delta=\<p,n,e>$ is \emph{nested-irre\-ducible}
   iff~$e\ne\nil$ or~$p=\ceu{\Nop}$ or~$p=\ceu{\Break}$
-  or~$\isblocked(p,n)$.\footnote{We often abbreviate ``$p=\ceu{\Nop}$
+  or~$\isblocked(p,n)$.\footnote{We sometimes abbreviate ``$p=\ceu{\Nop}$
     or~$p=\ceu{\Break}$'' as~``$p=\ceu{\Nop,\Break}$''.}
 \end{definition}
 
@@ -1129,19 +1135,19 @@ proof follows by induction on~$i$.
 % \end{proof}
 %%
 
-The syntactic restriction discussed in Section~\ref{sec.ceu.evts}, regarding
-the body of loops, and the restriction mentioned earlier in this section,
-regarding the body of~$\ceu{\Fin}$ statements, are formalized in
-Assumption~\ref{ass.x.syn-rest} below.  These restrictions are essential to
-prove the next theorem, Theorem~\ref{thm.x.term-nst-*}.
+The syntactic restriction discussed in Section~\ref{sec.ceu.evts} regarding
+the body of loops and the restriction mentioned in
+Section~\ref{sec.sem.opsem} about the body of~$\ceu{\Fin}$ statements are
+formalized in Assumption~\ref{ass.x.syn-rest} below.  These restrictions are
+essential to prove the next theorem.
 
 \begin{assumption}[Syntactic restrictions]\strut
   \label{ass.x.syn-rest}
   %%
   \begin{enumerate:a}
   \item\label{ass.x.syn-rest.fin} If~$p=\ceu{\Fin{p_1}}$ then~$p_1$ contains
-    no occurrences of~$\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$, $\ceu{\Every}$,
-    or~$\ceu{\Fin}$ expressions.  Consequently, for any~$n$,
+    no occurrences of statements~$\ceu{\AwaitExt}$, $\ceu{\AwaitInt}$,
+    $\ceu{\Every}$, or~$\ceu{\Fin}$.  And so, for any~$n$,
     $\<\clear(p_1),n,\nil>\nst[*]\<\ceu{\Nop},n,\nil>$.
     %%
     % \[
@@ -1181,28 +1187,28 @@ Lemma~\ref{lem.x.props-nst-i} and Assumption~\ref{ass.x.syn-rest}.
 The main result of this section, Theorem~\ref{thm.x.term}, is similar to
 Theorem~\ref{thm.x.term-nst-*} but applies to transitions~$\trans$ in
 general.  Before stating and proving it, we need to characterize irreducible
-descriptions in general.  This characterization depends on the notions of
-potency and rank.
+descriptions in general.  This characterization, Definition~\ref{def.x.H},
+and depends on the notions of potency and rank.
 
 \begin{definition}
   \label{def.x.pot}
   %%
   The \emph{potency} of a program~$p$ in reaction to event~$e$,
-  denoted~$\pot(p,e)$, is the maximum number of~$\ceu{\EmitInt}$ expressions
-  that can be executed during a reaction of~$p$ to~$e$.
-
-  More formally, $\pot(p,e)=\pot'(\bcast(p,e))$ where~$\pot'$ is an
-  auxiliary function that counts the maximum number of
+  denoted~$\pot(p,e)$, is the maximum number of~$\ceu{\EmitInt}$ statements
+  that can be executed in a reaction of~$p$ to~$e$, i.e.,
+  \[
+    \pot(p,e)=\pot'(\bcast(p,e))\,,
+  \]
+  where~$\pot'$ is an auxiliary function that counts the maximum number of
   reachable~$\ceu{\EmitInt}$ expressions in the program resulting from the
   broadcast of event~$e$ to~$p$.
 
-  The auxiliary function~$\pot'$ is defined by
-  clauses~\eqref{def.x.pot.first}--\eqref{def.x.pot.last}:
+  The function~$\pot'$ is defined by the following clauses:
   \begin{enumerate:a}
   \item\label{def.x.pot.first}$\pot'(\ceu{\EmitInt}(e))=1$.
     %%
-  \item$\pot'(\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}})
-    =\max\{\pot'(p_1),\pot'(p_2)\}$.
+  \item$\pot'(\ceu{\IfElse{\Mem(\Id)}{p_1}{p_2}})=$\\
+    \strut\quad$\max\{\pot'(p_1),\pot'(p_2)\}$.
     %%
   \item$\pot'(\ceu{\Loop{p_1}})=\pot'(p_1)$.
     %%
@@ -1222,7 +1228,7 @@ potency and rank.
     where~(\dag) stands for: ``a~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$ occurs
     in all execution paths of~$p_1$''.
     %%
-  \item If~$p_1,p_2\ne\ceu{\Break}$.
+  \item If~$p_1,p_2\ne\ceu{\Break}$,
     \[
       \pot'(\ceu{{p_1}\AtAnd{p_2}})=\pot'(p_1)+\pot'(p_2)\,.
     \]
@@ -1234,7 +1240,7 @@ potency and rank.
     \]
     %%
   \item\label{def.x.pot.last} Otherwise, if none
-    of~\eqref{def.x.pot.first}--\eqref{def.x.pot.before-last} applies,
+    of~\ref{def.x.pot.first}--\ref{def.x.pot.before-last} applies,
     $\pot(\_)=0$.
   \end{enumerate:a}
 \end{definition}
@@ -1254,6 +1260,10 @@ potency and rank.
        \end{cases}
   \end{alignat*}
 \end{definition}
+
+Intuitively, the rank of a description~$\delta$ is a measure of the maximum
+amount of ``work'' (transitions) required to transform~$\delta$ into an
+irreducible description, as defined bellow.
 
 \begin{definition}
   \label{def.x.H}
@@ -1279,8 +1289,8 @@ The proof of Lemma~\ref{lem.x.rank-out} follows directly from~\R{push}
 and~\R{pop} and from Definitions~\ref{def.x.pot} and~\ref{def.x.rank}.  The
 proof of Lemma~\ref{lem.x.rank-nst}, however, is by induction on the
 structure of~$\nst$ derivations.  Since Lemma~\ref{lem.x.rank-nst} is of
-fundamental importance for the termination result, we detail the proof of
-one of its cases.
+fundamental importance for the termination result, we present a sketch of its
+proof.
 
 \begin{lemma}\strut
   \label{lem.x.rank-out}
