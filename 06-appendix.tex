@@ -1051,7 +1051,7 @@
       \item$\pot'(p)=\pot'(p_1)$.
         %%
         Then every execution path of~$p_1$ contains a~$\ceu{\Break}$
-        or~$\ceu{\AwaitExt}$ expression.  A single~$\nst$ cannot terminate
+        or~$\ceu{\AwaitExt}$ statement.  A single~$\nst$ cannot terminate
         the loop, since~$p_1\ne\ceu{\Break}$, nor can it consume
         an~$\ceu{\AwaitExt}$, which means that all execution paths in~$p_1'$
         still contain a~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$.
@@ -1061,7 +1061,7 @@
       \item$\pot'(p)=\pot'(p_1)+\pot'(p_2)$.
         %%
         Then some execution path in~$p_1$ does not contain a~$\ceu{\Break}$
-        or~$\ceu{\AwaitExt}$ expression.  Since~$p_1\ne\ceu{\Nop}$, a
+        or~$\ceu{\AwaitExt}$ statement.  Since~$p_1\ne\ceu{\Nop}$, a
         single~$\nst$ cannot restart the loop, which means that~$p_1'$ still
         contain some execution path in which a~$\ceu{\Break}$
         or~$\ceu{\AwaitExt}$ does not occur.
@@ -1103,7 +1103,7 @@
         Hence~$p'=\ceu{\clear(p_2);\,\Break}$ and~$e'=\nil$.  By
         item~\ref{ass.x.syn-rest.fin} of Assumption~\ref{ass.x.syn-rest} and
         by the definition of~$\clear$, $\clear(p_2)$ does not
-        contain~$\ceu{\EmitInt}$ expressions.  Thus
+        contain~$\ceu{\EmitInt}$ statements.  Thus
         \[
           \rank(\delta)=\rank(\delta')=\<0,n>\,.
         \]
@@ -1142,7 +1142,7 @@
         Then~$\pi$ is an instance of~\R{or-nop1}.  Hence~$p'=\clear(p_2)$
         and~$e'=\nil$.  By item~\ref{ass.x.syn-rest.fin} of
         Assumption~\ref{ass.x.syn-rest} and by the definition of~$\clear$,
-        $p'$ does not contain~$\ceu{\EmitInt}$ expressions.  Thus
+        $p'$ does not contain~$\ceu{\EmitInt}$ statements.  Thus
         \[
           \rank(\delta)=\rank(\delta')=\<0,n>\,.
         \]

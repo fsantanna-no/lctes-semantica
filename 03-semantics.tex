@@ -857,13 +857,13 @@ and will eventually resume in the current reaction (see rule \R{pop}).
   (i)~Function~$\bcast$ awakes awaiting trails matching the event by
   converting~$\ceu{\protect\AwaitExt}$ and~$\ceu{\protect\AwaitInt}$
   to~$\ceu{\protect\Nop}$, and by unwinding $\ceu{\protect\Every}$
-  expressions.
+  statements.
   %%
   \space(ii)~Predicate~$\isblocked$ is true only if all branches in parallel
   are blocked waiting for events, finalization clauses, or certain
   stack levels.
   %%
-  \space(iii)~Function~$\clear$ extracts~$\ceu{\protect\Fin}$ expressions in
+  \space(iii)~Function~$\clear$ extracts~$\ceu{\protect\Fin}$ statements in
   parallel and put their bodies in sequence.
   %%
   In~(i), (ii), and~(iii),~``$\_$'' denotes the omitted cases and~``$\xi$''
@@ -1203,7 +1203,7 @@ Definition~\ref{def.x.H}, depends on the notions of potency and rank.
     \pot(p,e)=\pot'(\bcast(p,e))\,,
   \]
   where~$\pot'$ is an auxiliary function that counts the maximum number of
-  reachable~$\ceu{\EmitInt}$ expressions in the program resulting from the
+  reachable~$\ceu{\EmitInt}$ statements in the program resulting from the
   broadcast of event~$e$ to~$p$.
 
   Function~$\pot'$ is defined by the following clauses:
