@@ -92,7 +92,7 @@ external to them).
 %control of concurrent activities, i.e., in between every reaction, the whole
 %system is idle and consistent~\cite{esterel.preemption}.
 %
-The finalization mechanism extends orthogonal abortion to also work with
+The finalization mechanism extends orthogonal abortion to %also work with
 activities that use stateful resources from the environment (such as files and
 network handlers), as we discuss in Section~\ref{sec.ceu.fin}.
 %
@@ -460,9 +460,11 @@ defining shared variables (ln.~3), and assigning to them in parallel trails
 In \ax, the two assignments to \code{x} can only execute in
 reactions to different events \code{A} and \code{B} (ln.~5, 8), which cannot
 occur simultaneously by definition.
-Hence, for the sequence of events \code{A->B}, \code{x} becomes \code{4}
-(\code{(1+1)*2}), while for \code{B->A}, \code{x} becomes \code{3}
-(\code{(1*2)+1}).
+Hence, for the sequence of events \code{A->B}, \code{x} becomes \code{4}% TODO-FULL
+%(\code{(1+1)*2})
+, while for \code{B->A}, \code{x} becomes \code{3}% TODO-FULL
+%(\code{(1*2)+1})
+.
 
 In \bx, the two assignments to \code{y} are simultaneous because
 they execute in reaction to the same event \code{A}.
@@ -494,10 +496,10 @@ Immediate orthogonal abortion is a distinctive feature of synchronous languages
 and cannot be expressed effectively in traditional (asynchronous)
 multi-threaded languages~\cite{esterel.preemption,sync_async.threadsstop}.
 
-However, aborting lines of execution that deal with external resources may lead
-to inconsistencies.
+However, aborting lines of execution that deal with resources may lead to
+inconsistencies.
 %
-For this reason, \CEU provides a \code{finalize} construct to unconditionally
+Therefore, \CEU provides a \code{finalize} construct to unconditionally
 execute a series of statements even if the enclosing block is externally
 aborted.
 
@@ -531,8 +533,7 @@ If the block aborts (ln.~12) during the \code{await A} (ln.~9), the file
 remains open as a \emph{memory leak}.
 The finalization ensures that the file closes properly (ln.~6).
 %
-In both cases, the code does not compile without the \code{finalize}
-construct.%
+In both cases, the code does not compile without the \code{finalize}.%
 \footnote{%
 The compiler only forces the programmer to write the finalization clause, but
 cannot check if it actually handles the resource properly.}

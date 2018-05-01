@@ -36,11 +36,11 @@ formalizations for these ideas for a deeper comparison with \CEU.
 
 Like \CEU, many other synchronous languages%
 ~\cite{rp.rc,wsn.protothreads,wsn.sol,rp.synchc,rp.pretc}
-also rely on lexical scheduling to preserve determinism.
+rely on lexical scheduling to preserve determinism.
 %
 In contrast, in Esterel, the execution order for operations within a reaction
 is non-deterministic: \emph{``if there is no control dependency, as in
-\code{(call~f1()~||~call~f2())},
+{\scriptsize\code{(call~f1()||call~f2())}},
 the order is unspecified and it would be an error to rely on
 it''}~\cite{esterel.primer}.
 %
