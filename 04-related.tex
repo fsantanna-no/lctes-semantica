@@ -27,12 +27,13 @@ during the same external reaction.
 The synchronous languages Statecharts~\cite{statecharts.variants} and
 Statemate~\cite{statecharts.statemate} also distinguish internal from external
 events.
-In the former, \emph{``reactions to external and internal events (...) can be
-sensed only after completion of the step''}.
-In the latter, \emph{``the receiving state (of the internal event) acts here as
-a function''}.
+% TODO-FULL
+%In the former, \emph{``reactions to external and internal events (...) can be
+%sensed only after completion of the step''}.
+%In the latter, \emph{``the receiving state (of the internal event) acts here as
+%a function''}.
 Although the descriptions suggest a stack-based semantics, we are not aware of
-formalizations for these ideas for a deeper comparison with \CEU.
+formalizations or more precision for a deeper comparison with \CEU.
 
 Like \CEU, many other synchronous languages%
 ~\cite{rp.rc,wsn.protothreads,wsn.sol,rp.synchc,rp.pretc}
@@ -56,6 +57,7 @@ specification as a pragmatic design decision to enforce determinism.
 However, since \CEU statically detects trails not sharing memory, an optimized
 scheduler could exploit real parallelism in such cases.
 
+% TODO-FULL
 Regarding the integration with $C$ language-based environments, \CEU
 supports a finalization mechanism for external resources.
 %
