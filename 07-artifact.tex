@@ -49,7 +49,16 @@ The evaluation platform is a Linux/Intel with Lua-5.3 and GCC-7.2 installed.
 \subsubsection{How delivered}
 
 The compiler/distribution of \CEU is available on GitHub:
+
 \url{https://github.com/fsantanna/ceu}
+
+The website of \CEU includes an introductory video and an online tutorial:
+
+\url{http://www.ceu-lang.org/}
+
+The language also provides extensive documentation online:
+
+\url{http://fsantanna.github.io/ceu/out/manual/v0.30/}
 
 \subsubsection{Hardware dependencies}
 
@@ -71,7 +80,7 @@ Install all required software (assuming an Ubuntu-based distribution):
 
 \begin{verbatim}
 $ sudo apt-get install git lua5.3 lua-lpeg liblua5.3-0 \
-                       liblua5.3-dev
+                          liblua5.3-dev
 \end{verbatim}
 
 Clone the repository of \CEU:
@@ -110,16 +119,18 @@ $ cd tst/
 $ ./run.lua
 <...> # output with the test programs
 stats = {
-    count  = 3483,
-    trails = 9094,
-    bytes  = 52555128,
+    count = 3478,
+    trails = 9082,
+    bytes = 50803896,
     bcasts = 0,
-    visits = 4065937,
+    visits = 5189770,
 }
 \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Experiment customization}
+
+\subsubsection{Test Cases}
 
 The file \code{tst/tests.lua} includes all test cases.
 Each test case contains a program in \CEU as well as the expected result, e.g.:
@@ -141,6 +152,46 @@ This test case should compile and run successfully yielding \code{10}.
 
 To customize the experiment, include a new test case at line \code{440}, after
 the string ``\code{--~OK:~well~tested}''.
+
+\subsubsection{Sample Programs}
+
+The distribution of \CEU comes with sample programs that can be executed as
+follows:
+
+\begin{verbatim}
+$ cd /<...>/ceu/               # change to the Céu repository
+$ make samples                  # execute all samples one by one
+\end{verbatim}
+
+\subsubsection{Single File}
+
+It is also possible to compile a single file with a program in \CEU:
+
+\begin{verbatim}
+$ cd /<...>/ceu/                         # change to the Céu repository
+$ make one CEU_SRC=/tmp/tst.ceu # compile a program
+$ /tmp/tst                      # execute it
+\end{verbatim}
+
+As an example, the file \code{/tmp/tst.ceu} may contain a program such as
+follows:
+
+\begin{verbatim}
+input int A; // two input events
+input int B;
+
+spawn do     // generates test inputs asynchronously
+    await async do
+        emit A(10);
+        emit B(100);
+    end
+end
+
+var int a = await A; // main program
+var int b = await B;
+
+escape a+b;  // 110 is the result of the program back to the OS
+\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\subsection{Notes}
