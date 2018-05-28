@@ -97,12 +97,28 @@ activities that use stateful resources from the environment (such as files and
 network handlers), as we discuss in Section~\ref{sec.ceu.fin}.
 %
 
+In \CEU, any identifier prefixed with an underscore (e.g., \code{\_led}) is
+passed unchanged to the underlying~C compiler.
+%
+Therefore, access to~C is straightforward and syntactically traceable.
+%
+To ensure that programs operate under the synchronous hypothesis, the compiler
+environment should only provide access to~C operations that can be assumed to
+be instantaneous, such as non-blocking~I/O and simple data structure accessors.%
+\footnote {
+The actual implementation of \CEU supports a command-line option that accepts a
+white list of library calls.
+If a program tries to use a function not in the list, the compiler raises an
+error.
+}
+
 \begin{lstlisting}[
+  xleftmargin=1em,
   numbers=left,
   basicstyle=\ttfamily\small,
   float=h,
-  caption={A \CEU program that toggles a LED on radio receive,
-           terminating on a button press always with the LED~off.},
+  caption={A \CEU program that toggles a LED on receive,
+           terminating on a button always with the LED~off.},
   label={lst.ceu},
 ]
 input void BUTTON;
@@ -122,21 +138,7 @@ with
 end
 \end{lstlisting}
 
-In \CEU, any identifier prefixed with an underscore (e.g., \code{\_led}) is
-passed unchanged to the underlying~C compiler.
-%
-Therefore, access to~C is straightforward and syntactically traceable.
-%
-To ensure that programs operate under the synchronous hypothesis, the compiler
-environment should only provide access to~C operations that can be assumed to
-be instantaneous, such as non-blocking~I/O and simple data structure accessors.%
-\footnote {
-The actual implementation of \CEU supports a command-line option that accepts a
-white list of library calls.
-If a program tries to use a function not in the list, the compiler raises an
-error.
-}
-
+\vspace{-0.5cm}
 \subsection{External and Internal Events}
 \label{sec.ceu.evts}
 
@@ -174,7 +176,7 @@ In practice, if a new external input event occurs while a reaction executes,
 the event is saved on a queue, which effectively schedules it to be processed
 in a subsequent reaction.
 
-\subsubsection*{External events and discrete time}
+\subsubsection{External Events and Discrete Time}
 
 The sequential processing of external input events induces a discrete notion of
 time in \CEU, as illustrated in Figure~\ref{fig.ticks}.
@@ -205,7 +207,7 @@ at \code{D-4}.
 %handled in the subsequent reactions~\code{E-5} and~\code{E-6}.
 
 \begingroup
-\begin{figure}[h]
+\begin{figure}[b!]
 \centering
 \begin{tikzpicture}[x=1em,y=1em,
   font=\footnotesize\sffamily,>=stealth,
@@ -306,7 +308,7 @@ Note that the synchronous semantics is also the norm in typical event-driven
 systems, such as event dispatching in UI toolkits, game loops in game engines,
 and clock ticks in embedded systems.
 
-\subsubsection*{Internal events as subroutines}
+\subsubsection{Internal Events as Subroutines}
 
 In \CEU, queue-based processing of events applies only to external input
 events, i.e., events submitted to the program by the environment.
@@ -317,28 +319,6 @@ Internal events, which are events generated internally by the program via
 Internal events provide a fine-grained execution control, and, because of their
 stack-based processing, can be used to implement a limited form of subroutines,
 as illustrated in Listing~\ref{lst.sub}.
-
-\begin{lstlisting}[
-  numbers=left,
-  basicstyle=\ttfamily\small,
-  float=h,
-  caption={A ``subroutine'' that increments its argument.},
-  label={lst.sub},
-]
-event int* inc;       |\C{declares subroutine "inc"}|
-par/or do
-    var int* p;
-    every p in inc do |\C{implements "inc" through event iterator}|
-        *p = *p + 1;
-    end
-with
-    var int v = 1;
-    emit inc(&v);     |\C{calls "inc"}|
-    emit inc(&v);     |\C{calls "inc"}|
-    _assert(v==3);    |\C{asserts result after the two returns}|
-end
-\end{lstlisting}
-%\vskip-\baselineskip
 
 In the example, the ``subroutine'' \code{inc} is defined as an event iterator
 (ln.~4--6) that continuously awaits its identifying event (ln.~4), and
@@ -354,6 +334,29 @@ again).
 %
 Only after this sequence does the calling trail resumes (ln.~9), makes a new
 invocation (ln.~10), and passes the assertion test (ln.~11).
+
+\begin{lstlisting}[
+  xleftmargin=1em,
+  numbers=left,
+  basicstyle=\ttfamily\small,
+  float=h,
+  caption={A ``subroutine'' that increments its argument.},
+  label={lst.sub},
+]
+event int* inc;       |\C{declares subroutine "inc"}|
+par/or do
+    var int* p;
+    every p in inc do |\C{implements "inc" as event iterator}|
+        *p = *p + 1;
+    end
+with
+    var int v = 1;
+    emit inc(&v);     |\C{calls "inc"}|
+    emit inc(&v);     |\C{calls "inc"}|
+    _assert(v==3);    |\C{asserts result after the two returns}|
+end
+\end{lstlisting}
+%\vskip-\baselineskip
 
 %- multiple executions
 %- footnote to distinguish from TECS
@@ -403,7 +406,7 @@ with concurrent lines of execution sharing memory and interacting with the
 environment.
 
 \begingroup
-\begin{figure}[t]
+\begin{figure}[b!]
 \begin{minipage}[t]{0.45\linewidth}
 \begin{lstlisting}[numbers=right,basicstyle=\ttfamily\small]
 input void A;
@@ -538,7 +541,8 @@ In both cases, the code does not compile without the \code{finalize}.%
 The compiler only forces the programmer to write the finalization clause, but
 cannot check if it actually handles the resource properly.}
 
-\begin{figure}[t]
+%\vspace{2cm}
+\begin{figure}[b!]
 \begin{minipage}[t]{0.45\linewidth}
 \begin{lstlisting}[numbers=right,basicstyle=\ttfamily\small]
 par/or do

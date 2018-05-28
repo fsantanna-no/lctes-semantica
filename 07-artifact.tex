@@ -16,7 +16,7 @@ The script is customizable and allows to create new tests providing inputs and
 expected outputs.
 The evaluation platform is a Linux/Intel with Lua-5.3 and GCC-7.2 installed.
 
-\subsection{Artifact check-list (meta-information)}
+\subsection{Artifact Check-List (Meta-Information)}
 
 {\small
 \begin{itemize}
@@ -46,7 +46,7 @@ The evaluation platform is a Linux/Intel with Lua-5.3 and GCC-7.2 installed.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Description}
 
-\subsubsection{How delivered}
+\subsubsection{How Delivered}
 
 The compiler/distribution of \CEU is available on GitHub:
 
@@ -60,15 +60,15 @@ The language also provides extensive documentation online:
 
 \url{http://fsantanna.github.io/ceu/out/manual/v0.30/}
 
-\subsubsection{Hardware dependencies}
+\subsubsection{Hardware Dependencies}
 
 An off-the-shelf Intel machine.
 
-\subsubsection{Software dependencies}
+\subsubsection{Software Dependencies}
 
 Linux, Lua-5.3 (with lpeg-1.0.0), and GCC-7.2.
 
-\subsubsection{Data sets}
+\subsubsection{Data Sets}
 
 A set of more than 3500 programs packed in a single script file which is
 included with the compiler distribution.
@@ -99,7 +99,7 @@ $ sudo make install     # install as "/usr/local/bin/ceu"
 \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Experiment workflow}
+\subsection{Experiment Workflow}
 
 Run the experiment:
 
@@ -109,7 +109,7 @@ $ ./run.lua
 \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Evaluation and expected result}
+\subsection{Evaluation and Expected Result}
 
 The experiment will execute all test cases.
 In about 5-10 minutes, a summary will be printed on screen:
@@ -128,7 +128,7 @@ stats = {
 \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Experiment customization}
+\subsection{Experiment Customization}
 
 \subsubsection{Test Cases}
 
@@ -159,8 +159,8 @@ The distribution of \CEU comes with sample programs that can be executed as
 follows:
 
 \begin{verbatim}
-$ cd /<...>/ceu/               # change to the Céu repository
-$ make samples                  # execute all samples one by one
+$ cd /<...>/ceu/         # change to the Céu repository
+$ make samples                # execute all samples one by one
 \end{verbatim}
 
 \subsubsection{Single File}
@@ -168,11 +168,12 @@ $ make samples                  # execute all samples one by one
 It is also possible to compile a single file with a program in \CEU:
 
 \begin{verbatim}
-$ cd /<...>/ceu/                         # change to the Céu repository
+$ cd /<...>/ceu/               # change to the Céu repository
 $ make one CEU_SRC=/tmp/tst.ceu # compile a program
-$ /tmp/tst                      # execute it
+$ /tmp/tst               # execute it
 \end{verbatim}
 
+%\balance
 As an example, the file \code{/tmp/tst.ceu} may contain a program such as
 follows:
 
@@ -190,7 +191,7 @@ end
 var int a = await A; // main program
 var int b = await B;
 
-escape a+b;  // 110 is the result of the program back to the OS
+escape a+b;  // 110 is the result of the program
 \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

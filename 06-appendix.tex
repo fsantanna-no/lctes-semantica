@@ -10,7 +10,7 @@
   two possibilities.
   \begin{case}
   \item $e\ne\nil$.  Both transitions are applications of~\R{push}.
-    Hence~$p_1=p_2=\bcast(p,e)$, $n_1=n_2=n+1$, and~$e_1=e_2=\nil$.
+    Hence $p_1=p_2=\bcast(p,e)$, $n_1=n_2=n+1$, and~$e_1=e_2=\nil$.
     %%
   \item $e=\nil$.  Both transitions are applications of~\R{pop}.
     Hence $p_1=p_2=p$, $n_1=n_2=n-1$, and~$e_1=e_2=\nil$.\qedhere
@@ -47,17 +47,17 @@
     %%
     Then derivations~$\pi_1$ and~$\pi_2$ are instances of rule~\R{mem},
     i.e., their conclusions are obtained by an application of this rule.
-    Hence~$p_1=p_2=\ceu{\Nop}$ and~$e_1=e_2=\nil$.
+    Hence $p_1=p_2=\ceu{\Nop}$ and~$e_1=e_2=\nil$.
     %%
   \item $p=\ceu{\EmitInt(e')}$.
     %%
     Then~$\pi_1$ and~$\pi_2$ are instances of~\R{emit-int}.
-    Hence~$p_1=p_2=\ceu{\CanRun(n)}$ and~$e_1=e_2=e'$.
+    Hence $p_1=p_2=\ceu{\CanRun(n)}$ and~$e_1=e_2=e'$.
     %%
   \item $p=\ceu{\CanRun(n)}$.
     %% \
     Then~$\pi_1$ and~$\pi_2$ are instances of~\R{can-run}.
-    Hence~$p_1=p_2=\ceu{\Nop}$ and~$e_1=e_2=\nil$.
+    Hence $p_1=p_2=\ceu{\Nop}$ and~$e_1=e_2=\nil$.
     %%
   \item $p=\ceu{\IfElse{\Mem(\Id)}{p'}{p''}}$.
     %%
@@ -66,12 +66,12 @@
     \item$\eval(\ceu{\Mem(\Id)})$.
       %%
       Then~$\pi_1$ and~$\pi_2$ are instances of~\R{if-true}.
-      Hence~$p_1=p_2=p'$ and~$e_1=e_2=\nil$.
+      Hence $p_1=p_2=p'$ and~$e_1=e_2=\nil$.
       %%
     \item$\lnot\eval(\ceu{\Mem(\Id)})$.
       %%
       Then~$\pi_1$ and~$\pi_2$ are instances of~\R{if-false}.
-      Hence~$p_1=p_2=p''$ and~$e_1=e_2=\nil$.
+      Hence $p_1=p_2=p''$ and~$e_1=e_2=\nil$.
     \end{case}
     %%
   \item$p=\ceu{p';\,p''}$.
@@ -81,12 +81,12 @@
     \item $p'=\ceu{\Nop}$.
       %%
       Then~$\pi_1$ and~$\pi_2$ are instances of~\R{seq-nop}.
-      Hence~$p_1=p_2=p''$ and~$e_1=e_2=\nil$.
+      Hence $p_1=p_2=p''$ and~$e_1=e_2=\nil$.
       %%
     \item $p'=\ceu{\Break}$.
       %%
       Then~$\pi_1$ and~$\pi_2$ are instances of~\R{seq-brk}.
-      Hence~$p_1=p_2=\ceu{\Break}$ and~$e_1=e_2=\nil$.
+      Hence $p_1=p_2=\ceu{\Break}$ and~$e_1=e_2=\nil$.
       %%
     \item $p'\ne\ceu{\Nop},\ceu{\Break}$.
       %%
@@ -98,14 +98,14 @@
       \end{align*}
       for some~$p_1'$, $p_2'$, $e_1'$, and~$e_2'$.  By the induction
       hypothesis, $p_1'=p_2'$ and~$e_1'=e_2'$.
-      Hence~$p_1=\ceu{p_1';p''}=\ceu{p_2';p''}=p_2$
+      Hence $p_1=\ceu{p_1';p''}=\ceu{p_2';p''}=p_2$
       and~$e_1=e_1'=e_2'=e_2$.
     \end{case}
     %%
   \item $p=\ceu{\Loop{p'}}$.
     %%
     Then~$\pi_1$ and~$\pi_2$ are instances of~\R{loop-expd}.
-    Hence~$p_1=p_2=\ceu{p'\AtLoop{p'}}$ and~$e_1=e_2=\nil$.
+    Hence $p_1=p_2=\ceu{p'\AtLoop{p'}}$ and~$e_1=e_2=\nil$.
     %%
   \item $p=\ceu{p'\AtLoop{p''}}$.
     %%
@@ -114,12 +114,12 @@
     \item $p'=\ceu{\Nop}$.
       %%
       Then~$\pi_1$ and~$\pi_2$ are instances of~\R{loop-nop}.
-      Hence~$p_1=p_2=\ceu{\Loop{p''}}$ and~$e_1=e_2=\nil$.
+      Hence $p_1=p_2=\ceu{\Loop{p''}}$ and~$e_1=e_2=\nil$.
       %%
     \item $p'=\ceu{\Break}$.
       %%
       Then~$\pi_1$ and~$\pi_2$ are instances of~\R{loop-brk}.
-      Hence~$p_1=p_2=\ceu{\Nop}$ and~$e_1=e_2=\nil$.
+      Hence $p_1=p_2=\ceu{\Nop}$ and~$e_1=e_2=\nil$.
       %%
     \item $p'\ne\ceu{\Nop},\ceu{\Break}$.
       %%
@@ -131,13 +131,13 @@
       \end{align*}
       for some~$p_1'$, $p_2'$, $e_1'$, and~$e_2'$.  By the induction
       hypothesis, $p_1'=p_2'$ and~$e_1'=e_2'$.
-      Hence~$p_1=\ceu{p_1'\AtLoop{p''}}=\ceu{p_2'\AtLoop{p''}}=p_2$
+      Hence $p_1=\ceu{p_1'\AtLoop{p''}}=\ceu{p_2'\AtLoop{p''}}=p_2$
       and~$e_1=e_1'=e_2'=e_2$.
     \end{case}
   \item $p=\ceu{p'\And{p''}}$.
     %%
     Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-expd}.
-    Hence~$p_1=p_2=\ceu{{p'}\AtAnd{(\CanRun(n);\,p'')}}$
+    Hence $p_1=p_2=\ceu{{p'}\AtAnd{(\CanRun(n);\,p'')}}$
     and~$e_1=e_2=\nil$.
     %%
   \item $p=\ceu{p'\AtAnd{p''}}$.
@@ -151,13 +151,13 @@
       \item $p'=\ceu{\Nop}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-nop1}.
-        Hence~$p_1=p_2=p''$ and~$e_1=e_2=\nil$.
+        Hence $p_1=p_2=p''$ and~$e_1=e_2=\nil$.
         %%
       \item\label{lem.x.det-nst.and-brk1}
         $p'=\ceu{\Break}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-brk1}.
-        Hence~$p_1=p_2=\ceu{\clear(p'');\Break}$ and~$e_1=e_2=\nil$.
+        Hence $p_1=p_2=\ceu{\clear(p'');\Break}$ and~$e_1=e_2=\nil$.
         %%
       \item\label{lem.x.det-nst.and-adv1}$p'\ne\ceu{\Nop},\ceu{\Break}$.
         %%
@@ -169,7 +169,7 @@
         \end{align*}
         for some~$p_1'$, $p_2'$, $e_1'$, $e_2'$.  By the induction
         hypothesis, $p_1'=p_2'$ and~$e_1'=e_2'$.
-        Hence~$p_1=\ceu{{p_1'}\And{p''}}=\ceu{{p_2'}\And{p''}}=p_2$
+        Hence $p_1=\ceu{{p_1'}\And{p''}}=\ceu{{p_2'}\And{p''}}=p_2$
         and~$e_1=e_1'=e_2'=e_2$.
       \end{case}
       %%
@@ -180,12 +180,12 @@
       \item $p''=\ceu{\Nop}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-nop2}.
-        Hence~$p_1=p_2=p'$ and~$e_1=e_2=\nil$.
+        Hence $p_1=p_2=p'$ and~$e_1=e_2=\nil$.
         %%
       \item\label{lem.x.det-nst.and-brk2}$p''=\ceu{\Break}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{and-brk2}.
-        Hence~$p_1=p_2=\ceu{\clear(p');\Break}$ and~$e_1=e_2=\nil$.
+        Hence $p_1=p_2=\ceu{\clear(p');\Break}$ and~$e_1=e_2=\nil$.
         %%
       \item\label{lem.x.det-nst.and-adv2}$p''\ne\ceu{\Nop},\ceu{\Break}$.
         %%
@@ -197,7 +197,7 @@
         \end{align*}
         for some~$p_1''$, $p_2''$, $e_1''$, and~$e_2''$.  By the induction
         hypothesis, $p_1''=p_2''$ and~$e_1''=e_2''$.
-        Hence~$p_1=\ceu{{p'}\And{p_1''}}=\ceu{{p'}\And{p_2''}}=p_2$
+        Hence $p_1=\ceu{{p'}\And{p_1''}}=\ceu{{p'}\And{p_2''}}=p_2$
         and~$e_1=e_1''=e_2''=e_2$.
       \end{case}
     \end{case}
@@ -205,7 +205,7 @@
   \item$p=\ceu{p'\Or{p''}}$.
     %%
     Then~$\pi_1$ and~$\pi_2$ are instances of~\R{or-expd}.
-    Hence~$p_1=p_2=\ceu{{p'}\AtOr{(\CanRun(n);\,p'')}}$
+    Hence $p_1=p_2=\ceu{{p'}\AtOr{(\CanRun(n);\,p'')}}$
     and~$e_1=e_2=\nil$.
     %%
   \item$p=\ceu{p'\AtOr{p''}}$.
@@ -219,7 +219,7 @@
       \item $p'=\ceu{\Nop}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{or-nop1}.
-        Hence~$p_1=p_2=\clear(p'')$ and~$e_1=e_2=\nil$.
+        Hence $p_1=p_2=\clear(p'')$ and~$e_1=e_2=\nil$.
         %%
       \item $p'=\ceu{\Break}$.
         %%
@@ -237,7 +237,7 @@
       \item $p''=\ceu{\Nop}$.
         %%
         Then~$\pi_1$ and~$\pi_2$ are instances of~\R{or-nop1}.
-        Hence~$p_1=p_2=\clear(p')$ and~$e_1=e_2=\nil$.
+        Hence $p_1=p_2=\clear(p')$ and~$e_1=e_2=\nil$.
         %%
       \item $p''=\ceu{\Break}$.
         %%
@@ -579,7 +579,7 @@
         \[
           \isblocked(\ceu{p_1';p''},n)=\isblocked(p_1',n)=\mathit{true}\,.
         \]
-        Hence, from~\eqref{thm.x.term-nst-*.seq-adv.eq1} and by the
+        Hence from~\eqref{thm.x.term-nst-*.seq-adv.eq1} and by the
         definition~$\Hnst$, description~$\<\ceu{p_1';\,p''},n,e>$ is
         nested-irreducible.
       \end{case}
@@ -605,7 +605,7 @@
         &\nst[1]\<\ceu{\Nop},n,e>_\Hnst\,.
       \end{align*}
       %%
-    \item$\isblocked(p_1',n)$.  Hence,
+    \item$\isblocked(p_1',n)$.  Hence
       from~\eqref{thm.x.term-nst-*.loop-expd.eq1} and by the definition
       of~$\Hnst$, $\<p_1',n,e>_\Hnst$.
     \end{case}
@@ -859,7 +859,7 @@
   \item Suppose~$\<p,n,e>\outpush\<p',n',e'>$.  Then, by~\R{push},
     $e\ne\nil$, $p'=\bcast(p,e)$, $n'=n+1$, and~$e'=\nil$.  By
     Definition~\ref{def.x.rank}, $j=n+1$, as~$e\ne\nil$, and~$j'=n+1$,
-    as~$e'=\nil$ and~$n'=n+1$; hence~$j=j'$.
+    as~$e'=\nil$ and~$n'=n+1$; hence $j=j'$.
     %%
     It remains to be shown that~$i=i'$:
     \begin{align*}
@@ -884,8 +884,8 @@
     $n>0$, $n'=n-1$, and~$e=e'=\nil$.
     %%
     By Definition~\ref{def.x.pot}, $\pot(\bcast(p,e))=\pot(\bcast(p',e'))$;
-    hence~$i=i'$.  And by Definition~\ref{def.x.rank}, $j=n$, as~$e=\nil$,
-    and~$j'=n-1$, as~$e'=\nil$ and~$n'=n-1$; hence~$j>j'$.
+    hence $i=i'$.  And by Definition~\ref{def.x.rank}, $j=n$, as~$e=\nil$,
+    and~$j'=n-1$, as~$e'=\nil$ and~$n'=n-1$; hence $j>j'$.
     Therefore, ${\<i,j>}>{\<i',j'>}$.\qedhere
   \end{enumerate:a}
 \end{proof}
@@ -906,12 +906,12 @@
   \begin{case}
   \item$p=\ceu{\Mem(id)}$.
     %%
-    Then~$\pi$ is an instance of~\R{mem}.  Hence~$p'=\ceu{\Nop}$
+    Then~$\pi$ is an instance of~\R{mem}.  Hence $p'=\ceu{\Nop}$
     and~$e'=\nil$.  Thus $\rank(\delta)=\rank(\delta')=\<0,n>$.
 
   \item$p=\ceu{\EmitInt(e_1)}$.
     %%
-    Then~$\pi$ is an instance of~\R{emit-int}.  Hence~$p'=\ceu{\CanRun}$
+    Then~$\pi$ is an instance of~\R{emit-int}.  Hence $p'=\ceu{\CanRun}$
     and~$e'=e_1\ne\nil$.
     Thus
     \[
@@ -920,7 +920,7 @@
 
   \item$p=\ceu{\CanRun(n)}$.
     %%
-    Then~$\pi$ is an instance of~\R{can-run}.  Hence~$p'=\ceu{\Nop}$
+    Then~$\pi$ is an instance of~\R{can-run}.  Hence $p'=\ceu{\Nop}$
     and~$e'=\nil$.  Thus
     \[
       \rank(\delta)=\rank(\delta')=\<0,n>\,.
@@ -932,7 +932,7 @@
     \begin{case}
     \item\label{lem.x.rank-nst.if-true}$\eval(\ceu{\Mem(\Id)})$.
       %%
-      Then~$\pi$ is an instance of~\R{if-true}.  Hence~$p'=\ceu{p_1}$
+      Then~$\pi$ is an instance of~\R{if-true}.  Hence $p'=\ceu{p_1}$
       and~$e'=\nil$.  Thus
       \begin{align*}
         \rank(\delta)&=\<\max\{pot'(p_1),pot'(p_2)\},n>\\
@@ -951,7 +951,7 @@
     \item\label{lem.x.rank-nst.seq-nop}$p_1=\ceu{\Nop}$.
       %%
       Then~$\pi$ is an instance of~\R{seq-nop}.
-      Hence~$p'=p_2$ and~$e'=\nil$.  Thus
+      Hence $p'=p_2$ and~$e'=\nil$.  Thus
       \begin{align*}
         \rank(\delta)&=\<\pot'(p_1)+\pot'(p_2),n>\\
                      &\ge\<pot'(p_2),n>=\rank(\delta')\,.
@@ -960,7 +960,7 @@
     \item\label{lem.x.rank-nst.seq-brk}$p_1=\ceu{\Break}$.
       %%
       Then~$\pi$ is an instance of~\R{seq-brk}.
-      Hence~$p'=p_1$ and~$e'=\nil$.  Thus
+      Hence $p'=p_1$ and~$e'=\nil$.  Thus
       \[
         \rank(\delta)=\rank(\delta')=\<0,n>\,.
       \]
@@ -1008,7 +1008,7 @@
   \item\label{lem.x.rank-nst.loop-expd}$p=\ceu{\Loop{p_1}}$.
     %%
     Then~$\pi$ is an instance of~\R{loop-expd}.
-    Hence~$p'=\ceu{p_1\AtLoop{p_1}}$ and~$e'=\nil$.
+    Hence $p'=\ceu{p_1\AtLoop{p_1}}$ and~$e'=\nil$.
     %%
     By item~\ref{ass.x.syn-rest.loop} of Assumption~\ref{ass.x.syn-rest},
     all execution paths of~$p_1$ contain at least one occurrence
@@ -1055,7 +1055,7 @@
         the loop, since~$p_1\ne\ceu{\Break}$, nor can it consume
         an~$\ceu{\AwaitExt}$, which means that all execution paths in~$p_1'$
         still contain a~$\ceu{\Break}$ or~$\ceu{\AwaitExt}$.
-        Hence~$\pot'(p')=\pot'(p_1')$.  The rest of this proof is similar to
+        Hence $\pot'(p')=\pot'(p_1')$.  The rest of this proof is similar to
         that of Case~\ref{lem.x.rank-nst.seq-adv}.
         %%
       \item$\pot'(p)=\pot'(p_1)+\pot'(p_2)$.
@@ -1065,7 +1065,7 @@
         single~$\nst$ cannot restart the loop, which means that~$p_1'$ still
         contain some execution path in which a~$\ceu{\Break}$
         or~$\ceu{\AwaitExt}$ does not occur.
-        Hence~$\pot'(p')=\pot'(p_1')+\pot'(p_2)$.  The rest of this proof is
+        Hence $\pot'(p')=\pot'(p_1')+\pot'(p_2)$.  The rest of this proof is
         similar to that of Case~\ref{lem.x.rank-nst.seq-adv}.
       \end{case}
     \end{case}
@@ -1073,7 +1073,7 @@
   \item\label{lem.x.rank-nst.and-expd}$p=\ceu{{p_1}\And{p_2}}$.
     %%
     Then~$\pi$ is an instance of~\R{and-expd}.
-    Hence~$p'=\ceu{{p_1}\AtAnd(\CanRun(n);\,p_2)}$ and~$e'=\nil$.
+    Hence $p'=\ceu{{p_1}\AtAnd(\CanRun(n);\,p_2)}$ and~$e'=\nil$.
     Thus
     \[
       \rank(\delta)=\rank(\delta')=\<\pot'(p_1)+\pot'(p_2),n>\,.
@@ -1090,7 +1090,7 @@
       \begin{case}
       \item\label{lem.x.rank-nst.and-nop1}$p_1=\ceu{\Nop}$.
         %%
-        Then~$\pi$ is an instance of~\R{and-nop1}.  Hence~$p'=p_2$
+        Then~$\pi$ is an instance of~\R{and-nop1}.  Hence $p'=p_2$
         and~$e'=\nil$.  Thus
         \[
           \rank(\delta)=\rank(\delta')=\<0+\pot'(p_2),n>\,.
@@ -1100,7 +1100,7 @@
         $p_1=\ceu{\Break}$.
         %%
         Then~$\pi$ is an instance of~\R{and-brk1}.
-        Hence~$p'=\ceu{\clear(p_2);\,\Break}$ and~$e'=\nil$.  By
+        Hence $p'=\ceu{\clear(p_2);\,\Break}$ and~$e'=\nil$.  By
         item~\ref{ass.x.syn-rest.fin} of Assumption~\ref{ass.x.syn-rest} and
         by the definition of~$\clear$, $\clear(p_2)$ does not
         contain~$\ceu{\EmitInt}$ statements.  Thus
@@ -1124,7 +1124,7 @@
   \item$p=\ceu{{p_1}\Or{p_2}}$.
     %%
     Then~$\pi$ is an instance of~\R{or-expd}.
-    Hence~$p'=\ceu{{p_1}\AtOr(\CanRun(n);\,p_2)}$ and~$e'=\nil$.  Thus
+    Hence $p'=\ceu{{p_1}\AtOr(\CanRun(n);\,p_2)}$ and~$e'=\nil$.  Thus
     \[
       \rank(\delta)=\rank(\delta')=\<\pot'(p_1)+\pot'(p_2),n>\,.
     \]
@@ -1139,7 +1139,7 @@
       \begin{case}
       \item$p_1=\ceu{\Nop}$.
         %%
-        Then~$\pi$ is an instance of~\R{or-nop1}.  Hence~$p'=\clear(p_2)$
+        Then~$\pi$ is an instance of~\R{or-nop1}.  Hence $p'=\clear(p_2)$
         and~$e'=\nil$.  By item~\ref{ass.x.syn-rest.fin} of
         Assumption~\ref{ass.x.syn-rest} and by the definition of~$\clear$,
         $p'$ does not contain~$\ceu{\EmitInt}$ statements.  Thus
@@ -1177,6 +1177,7 @@
   \]
 \end{proof}
 
+%\balance
 
 \thmxterm*
 \begin{proof}
@@ -1187,10 +1188,10 @@
   \noindent\emph{Basis}.
   If~$\<i,j>=\<0,0>$ then~$\delta$ cannot be advanced by~$\out$, as~$j=0$
   implies~$e=\nil$ and~$n=0$ (neither~\R{push} nor~\R{pop} can be applied).
-  There are two possibilities:  either~$\delta$ is nested-irreducible or it
+  There are two possibilities:  either~$\delta$ is nested irreducible or it
   is not.  In the first case, the theorem is trivially true,
   as~$\delta\nst[0]\delta_\Hnst$.  Suppose~$\delta$ is not
-  nested-irreducible.  Then, by Theorem~\ref{thm.x.term-nst-*},
+  nested irreducible.  Then, by Theorem~\ref{thm.x.term-nst-*},
   $\delta\nst[*]\delta'_\Hnst$, for some~$\delta'_\Hnst$.  By
   Theorem~\ref{thm.x.rank-nst-*},
   \[
@@ -1249,7 +1250,7 @@
         \[
           \rank(\delta)>\rank(\delta')\,.
         \]
-        Hence, by the induction hypothesis, there is a~$\delta''_\#$ such
+        Hence by the induction hypothesis, there is a~$\delta''_\#$ such
         that~$\delta'\trans[*]\delta''_\#$.
         Therefore, $\delta\trans[*]\delta''_\#$.
       \end{case}

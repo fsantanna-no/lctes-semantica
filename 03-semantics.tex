@@ -225,7 +225,7 @@ We now proceed to give the rules for possible the transitions.  We
 distinguish between two types of transitions:  \emph{outermost transitions}
 $\out$ and \emph{nested transitions} $\nst$\,.
 
-\subsubsection*{Outermost transitions}
+\subsubsection{Outermost Transitions}
 
 The rules \R{push} and \R{pop} for~$\out$ transitions are non-recursive
 definitions that apply to the program as a whole.  These are the only rules
@@ -290,7 +290,7 @@ successive applications of
 rule~\R{pop} will lead to a description with this
 same program at stack level~0.
 
-\subsubsection*{Nested transitions}
+\subsubsection{Nested Transitions}
 
 The~$\nst$ rules are recursive definitions of the form
 \[
@@ -1392,7 +1392,7 @@ final result of the reaction.
 \end{proof}
 
 
-\subsubsection{Memory bound}
+\subsubsection{Memory Boundedness}
 
 As \CEU has no mechanism for heap allocation, unbounded iteration, or
 general recursion, the maximum memory usage of a given \CEU program is
